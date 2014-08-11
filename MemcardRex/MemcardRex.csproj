@@ -14,7 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <StartupObject>MemcardRex.Program</StartupObject>
-    <ApplicationIcon>Additional\old_icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -182,8 +183,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
@@ -266,7 +267,6 @@
     <None Include="Resources\closeallcards.png" />
     <None Include="Resources\savecardas.png" />
     <None Include="Resources\closecard.png" />
-    <None Include="Additional\old_icon.ico" />
     <None Include="Resources\naflag.bmp" />
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +301,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\formatsave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Additional\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

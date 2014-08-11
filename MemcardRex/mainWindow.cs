@@ -1271,9 +1271,6 @@ namespace MemcardRex
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //Load the application icon
-            this.Icon = Properties.Resources.old_icon;
-
             //Show name of the application on the mainWindow
             this.Text = appName + " " + appVersion;
 
