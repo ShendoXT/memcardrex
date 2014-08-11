@@ -1,0 +1,317 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{39B94E8A-7BD1-4072-8A60-D90464326B18}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MemcardRex</RootNamespace>
+    <AssemblyName>MemcardRex</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <StartupObject>MemcardRex.Program</StartupObject>
+    <ApplicationIcon>Additional\old_icon.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="aboutWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="aboutWindow.designer.cs">
+      <DependentUpon>aboutWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BuildTrack.cs" />
+    <Compile Include="CardLink.cs" />
+    <Compile Include="commentsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="commentsWindow.Designer.cs">
+      <DependentUpon>commentsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="compareWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="compareWindow.Designer.cs">
+      <DependentUpon>compareWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DexDrive.cs" />
+    <Compile Include="cardReaderWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="cardReaderWindow.designer.cs">
+      <DependentUpon>cardReaderWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="glassSupport.cs" />
+    <Compile Include="headerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="headerWindow.Designer.cs">
+      <DependentUpon>headerWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="iconWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="iconWindow.Designer.cs">
+      <DependentUpon>iconWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="informationWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="informationWindow.Designer.cs">
+      <DependentUpon>informationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainWindow.Designer.cs">
+      <DependentUpon>mainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MemCARDduino.cs" />
+    <Compile Include="messageWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="messageWindow.designer.cs">
+      <DependentUpon>messageWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="pluginsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="pluginsWindow.Designer.cs">
+      <DependentUpon>pluginsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="preferencesWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="preferencesWindow.Designer.cs">
+      <DependentUpon>preferencesWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="xmlSettingsEditor.cs" />
+    <EmbeddedResource Include="aboutWindow.resx">
+      <DependentUpon>aboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="commentsWindow.resx">
+      <DependentUpon>commentsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="compareWindow.resx">
+      <DependentUpon>compareWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cardReaderWindow.resx">
+      <DependentUpon>cardReaderWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="headerWindow.resx">
+      <DependentUpon>headerWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="iconWindow.resx">
+      <DependentUpon>iconWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="informationWindow.resx">
+      <DependentUpon>informationWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainWindow.resx">
+      <DependentUpon>mainWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="messageWindow.resx">
+      <DependentUpon>messageWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="pluginsWindow.resx">
+      <DependentUpon>pluginsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="preferencesWindow.resx">
+      <DependentUpon>preferencesWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\amflag.bmp" />
+    <None Include="Resources\euflag.bmp" />
+    <None Include="Resources\jpflag.bmp" />
+    <None Include="Resources\linked disabled.bmp" />
+    <None Include="Resources\linked.bmp" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="ps1card.cs" />
+    <Compile Include="rexPluginSystem.cs" />
+    <Compile Include="sjisConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\comments.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\exportsave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\headeredit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconedit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\importsave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\opencard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\savecard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\newcard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\quiticon.png" />
+    <None Include="Resources\infoicon.png" />
+    <None Include="Resources\closeallcards.png" />
+    <None Include="Resources\savecardas.png" />
+    <None Include="Resources\closecard.png" />
+    <None Include="Additional\old_icon.ico" />
+    <None Include="Resources\naflag.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dxdread.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dxdwrite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\comparetemp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plugin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\options.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\readicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\copycard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pastecard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deletesave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\undeletesave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\formatsave.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>
