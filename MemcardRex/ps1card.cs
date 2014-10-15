@@ -584,6 +584,9 @@ namespace MemcardRex
                     iconPalette[slotNumber, colorCounter] = Color.FromArgb(redChannel, greenChannel, blueChannel);
                     colorCounter++;
                 }
+
+                //Fix for icon transparency. First entry in palette should be transparent on pure black.
+                if (iconPalette[slotNumber, 0] == Color.FromArgb(0, 0, 0)) iconPalette[slotNumber, 0] = Color.Transparent;
             }
         }
 
