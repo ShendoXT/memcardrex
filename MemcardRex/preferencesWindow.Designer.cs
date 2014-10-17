@@ -49,12 +49,14 @@
             this.restorePositionCheckbox = new System.Windows.Forms.CheckBox();
             this.formatCombo = new System.Windows.Forms.ComboBox();
             this.formatLabel = new System.Windows.Forms.Label();
+            this.backgroundCombo = new System.Windows.Forms.ComboBox();
+            this.backgroundLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // okButton
             // 
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(224, 140);
+            this.okButton.Location = new System.Drawing.Point(224, 184);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(76, 24);
             this.okButton.TabIndex = 99;
@@ -65,7 +67,7 @@
             // cancelButton
             // 
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(304, 140);
+            this.cancelButton.Location = new System.Drawing.Point(304, 184);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(76, 24);
             this.cancelButton.TabIndex = 0;
@@ -76,7 +78,7 @@
             // applyButton
             // 
             this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.applyButton.Location = new System.Drawing.Point(384, 140);
+            this.applyButton.Location = new System.Drawing.Point(384, 184);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(76, 24);
             this.applyButton.TabIndex = 1;
@@ -129,7 +131,7 @@
             this.gridCheckbox.Location = new System.Drawing.Point(248, 12);
             this.gridCheckbox.Name = "gridCheckbox";
             this.gridCheckbox.Size = new System.Drawing.Size(125, 17);
-            this.gridCheckbox.TabIndex = 8;
+            this.gridCheckbox.TabIndex = 9;
             this.gridCheckbox.Text = "Show grid on slot list.";
             this.gridCheckbox.UseVisualStyleBackColor = true;
             // 
@@ -181,7 +183,7 @@
             this.backupWarningCheckBox.Location = new System.Drawing.Point(248, 60);
             this.backupWarningCheckBox.Name = "backupWarningCheckBox";
             this.backupWarningCheckBox.Size = new System.Drawing.Size(212, 17);
-            this.backupWarningCheckBox.TabIndex = 10;
+            this.backupWarningCheckBox.TabIndex = 11;
             this.backupWarningCheckBox.Text = "Show warning messages (save editing).";
             this.backupWarningCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -191,7 +193,7 @@
             this.glassCheckbox.Location = new System.Drawing.Point(248, 84);
             this.glassCheckbox.Name = "glassCheckbox";
             this.glassCheckbox.Size = new System.Drawing.Size(101, 17);
-            this.glassCheckbox.TabIndex = 11;
+            this.glassCheckbox.TabIndex = 12;
             this.glassCheckbox.Text = "Glass status bar";
             this.glassCheckbox.UseVisualStyleBackColor = true;
             // 
@@ -201,7 +203,7 @@
             this.backupCheckbox.Location = new System.Drawing.Point(248, 36);
             this.backupCheckbox.Name = "backupCheckbox";
             this.backupCheckbox.Size = new System.Drawing.Size(204, 17);
-            this.backupCheckbox.TabIndex = 9;
+            this.backupCheckbox.TabIndex = 10;
             this.backupCheckbox.Text = "Backup Memory Cards upon opening.";
             this.backupCheckbox.UseVisualStyleBackColor = true;
             // 
@@ -209,16 +211,16 @@
             // 
             this.dexDriveCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dexDriveCombo.FormattingEnabled = true;
-            this.dexDriveCombo.Location = new System.Drawing.Point(4, 108);
+            this.dexDriveCombo.Location = new System.Drawing.Point(4, 152);
             this.dexDriveCombo.Name = "dexDriveCombo";
             this.dexDriveCombo.Size = new System.Drawing.Size(116, 21);
-            this.dexDriveCombo.TabIndex = 6;
+            this.dexDriveCombo.TabIndex = 7;
             this.dexDriveCombo.SelectedIndexChanged += new System.EventHandler(this.dexDriveCombo_SelectedIndexChanged);
             // 
             // hardwarePortLabel
             // 
             this.hardwarePortLabel.AutoSize = true;
-            this.hardwarePortLabel.Location = new System.Drawing.Point(4, 92);
+            this.hardwarePortLabel.Location = new System.Drawing.Point(4, 136);
             this.hardwarePortLabel.Name = "hardwarePortLabel";
             this.hardwarePortLabel.Size = new System.Drawing.Size(103, 13);
             this.hardwarePortLabel.TabIndex = 6;
@@ -227,7 +229,7 @@
             // spacerLabel
             // 
             this.spacerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.spacerLabel.Location = new System.Drawing.Point(4, 135);
+            this.spacerLabel.Location = new System.Drawing.Point(4, 179);
             this.spacerLabel.Name = "spacerLabel";
             this.spacerLabel.Size = new System.Drawing.Size(456, 2);
             this.spacerLabel.TabIndex = 8;
@@ -238,7 +240,7 @@
             this.restorePositionCheckbox.Location = new System.Drawing.Point(248, 108);
             this.restorePositionCheckbox.Name = "restorePositionCheckbox";
             this.restorePositionCheckbox.Size = new System.Drawing.Size(191, 17);
-            this.restorePositionCheckbox.TabIndex = 12;
+            this.restorePositionCheckbox.TabIndex = 13;
             this.restorePositionCheckbox.Text = "Restore window position on startup";
             this.restorePositionCheckbox.UseVisualStyleBackColor = true;
             // 
@@ -249,25 +251,50 @@
             this.formatCombo.Items.AddRange(new object[] {
             "Quick format",
             "Full format"});
-            this.formatCombo.Location = new System.Drawing.Point(124, 108);
+            this.formatCombo.Location = new System.Drawing.Point(124, 152);
             this.formatCombo.Name = "formatCombo";
             this.formatCombo.Size = new System.Drawing.Size(116, 21);
-            this.formatCombo.TabIndex = 7;
+            this.formatCombo.TabIndex = 8;
             // 
             // formatLabel
             // 
             this.formatLabel.AutoSize = true;
-            this.formatLabel.Location = new System.Drawing.Point(124, 92);
+            this.formatLabel.Location = new System.Drawing.Point(124, 136);
             this.formatLabel.Name = "formatLabel";
             this.formatLabel.Size = new System.Drawing.Size(111, 13);
             this.formatLabel.TabIndex = 101;
             this.formatLabel.Text = "Hardware format type:";
             // 
+            // backgroundCombo
+            // 
+            this.backgroundCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.backgroundCombo.FormattingEnabled = true;
+            this.backgroundCombo.Items.AddRange(new object[] {
+            "Transparent",
+            "Black (Slim PS1 models)",
+            "Gray (Older european PS1 models)",
+            "Blue (Standard BIOS color)"});
+            this.backgroundCombo.Location = new System.Drawing.Point(4, 108);
+            this.backgroundCombo.Name = "backgroundCombo";
+            this.backgroundCombo.Size = new System.Drawing.Size(236, 21);
+            this.backgroundCombo.TabIndex = 6;
+            // 
+            // backgroundLabel
+            // 
+            this.backgroundLabel.AutoSize = true;
+            this.backgroundLabel.Location = new System.Drawing.Point(4, 92);
+            this.backgroundLabel.Name = "backgroundLabel";
+            this.backgroundLabel.Size = new System.Drawing.Size(117, 13);
+            this.backgroundLabel.TabIndex = 102;
+            this.backgroundLabel.Text = "Icon background color:";
+            // 
             // preferencesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(463, 168);
+            this.ClientSize = new System.Drawing.Size(463, 212);
+            this.Controls.Add(this.backgroundCombo);
+            this.Controls.Add(this.backgroundLabel);
             this.Controls.Add(this.formatLabel);
             this.Controls.Add(this.formatCombo);
             this.Controls.Add(this.restorePositionCheckbox);
@@ -324,5 +351,7 @@
         private System.Windows.Forms.CheckBox restorePositionCheckbox;
         private System.Windows.Forms.ComboBox formatCombo;
         private System.Windows.Forms.Label formatLabel;
+        private System.Windows.Forms.ComboBox backgroundCombo;
+        private System.Windows.Forms.Label backgroundLabel;
     }
 }

@@ -69,6 +69,7 @@ namespace MemcardRex
             public int showListGrid;               //List grid settings
             public int iconInterpolationMode;      //Icon iterpolation mode settings
             public int iconPropertiesSize;         //Icon size settings in save properties
+            public int iconBackgroundColor;        //Various colors based on PS1 BIOS backgrounds
             public int backupMemcards;             //Backup Memory Card settings
             public int warningMessage;             //Warning message settings
             public int restoreWindowPosition;      //Restore window position
@@ -192,6 +193,9 @@ namespace MemcardRex
                 //Load icon size settings
                 mainSettings.iconPropertiesSize = xmlAppSettings.readXmlEntryInt("IconSize", 0, 1);
 
+                //Load icon background color
+                mainSettings.iconBackgroundColor = xmlAppSettings.readXmlEntryInt("IconBackgroundColor", 0, 4);
+
                 //Load backup Memory Cards value
                 mainSettings.backupMemcards = xmlAppSettings.readXmlEntryInt("BackupMemoryCards", 0, 1);
 
@@ -247,6 +251,9 @@ namespace MemcardRex
 
             //Set icon size options
             xmlAppSettings.writeXmlEntry("IconSize", mainSettings.iconPropertiesSize.ToString());
+
+            //Set icon background color
+            xmlAppSettings.writeXmlEntry("IconBackgroundColor", mainSettings.iconBackgroundColor.ToString());
 
             //Set backup Memory Cards value
             xmlAppSettings.writeXmlEntry("BackupMemoryCards", mainSettings.backupMemcards.ToString());
@@ -596,7 +603,7 @@ namespace MemcardRex
 
                         //Load values to dialog
                         informationDlg.initializeDialog(saveTitle, saveProdCode, saveIdentifier,
-                            saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, PScard[listIndex].findSaveLinks(slotNumber));
+                            saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, PScard[listIndex].findSaveLinks(slotNumber), mainSettings.iconBackgroundColor);
 
                         informationDlg.ShowDialog(this);
 
@@ -1020,7 +1027,7 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2014", "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini.\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2014", "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
 
@@ -1158,6 +1165,22 @@ namespace MemcardRex
         {
             Bitmap iconBitmap = new Bitmap(48, 16);
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
+
+            //Check what background color should be set
+            switch (mainSettings.iconBackgroundColor)
+            {
+                case 1:     //Black
+                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(new Rectangle(0, 0, 16, 16)));
+                    break;
+
+                case 2:     //Gray
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(new Rectangle(0, 0, 16, 16)));
+                    break;
+
+                case 3:     //Blue
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(new Rectangle(0, 0, 16, 16)));
+                    break;
+            }
 
             //Draw icon
             iconGraphics.DrawImage(PScard[listIndex].iconData[slotNumber, 0], 0, 0, 16, 16);

@@ -563,6 +563,7 @@ namespace MemcardRex
             int greenChannel = 0;
             int blueChannel = 0;
             int colorCounter = 0;
+            int blackFlag = 0;
 
             //Clear existing data
             iconPalette = new Color[15,16];
@@ -579,14 +580,13 @@ namespace MemcardRex
                     redChannel = (saveData[slotNumber, byteCount + 96] & 0x1F) << 3;
                     greenChannel = ((saveData[slotNumber, byteCount + 97] & 0x3) << 6) | ((saveData[slotNumber, byteCount + 96] & 0xE0) >> 2);
                     blueChannel = ((saveData[slotNumber, byteCount + 97] & 0x7C) << 1);
-
+                    blackFlag = (saveData[slotNumber, byteCount + 97] & 0x80);
+                    
                     //Get the color value
-                    iconPalette[slotNumber, colorCounter] = Color.FromArgb(redChannel, greenChannel, blueChannel);
+                    if ((redChannel | greenChannel | blueChannel | blackFlag) == 0) iconPalette[slotNumber, colorCounter] = Color.Transparent;
+                    else iconPalette[slotNumber, colorCounter] = Color.FromArgb(redChannel, greenChannel, blueChannel);
                     colorCounter++;
                 }
-
-                //Fix for icon transparency. First entry in palette should be transparent on pure black.
-                if (iconPalette[slotNumber, 0] == Color.FromArgb(0, 0, 0)) iconPalette[slotNumber, 0] = Color.Transparent;
             }
         }
 

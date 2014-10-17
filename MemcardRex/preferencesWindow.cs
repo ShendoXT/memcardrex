@@ -28,6 +28,7 @@ namespace MemcardRex
             encodingCombo.SelectedIndex = progSettings.titleEncoding;
             interpolationCombo.SelectedIndex = progSettings.iconInterpolationMode;
             iconSizeCombo.SelectedIndex = progSettings.iconPropertiesSize;
+            backgroundCombo.SelectedIndex = progSettings.iconBackgroundColor;
             formatCombo.SelectedIndex = progSettings.formatType;
             SavedComPort = progSettings.communicationPort;
             if (progSettings.showListGrid == 1) gridCheckbox.Checked = true; else gridCheckbox.Checked = false;
@@ -67,6 +68,7 @@ namespace MemcardRex
             progSettings.titleEncoding = encodingCombo.SelectedIndex;
             progSettings.iconInterpolationMode = interpolationCombo.SelectedIndex;
             progSettings.iconPropertiesSize = iconSizeCombo.SelectedIndex;
+            progSettings.iconBackgroundColor = backgroundCombo.SelectedIndex;
             progSettings.formatType = formatCombo.SelectedIndex;
             progSettings.communicationPort = SavedComPort;
 

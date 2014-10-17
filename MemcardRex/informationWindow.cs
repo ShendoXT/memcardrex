@@ -17,6 +17,7 @@ namespace MemcardRex
         int maxCount = 1;
         int iconInterpolationMode = 0;
         int iconSize = 0;
+        int iconBackColor = 0;
 
         public informationWindow()
         {
@@ -29,7 +30,7 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, ushort saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize,  Bitmap[] saveIcons, int[] slotNumbers)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, ushort saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize,  Bitmap[] saveIcons, int[] slotNumbers, int backColor)
         {
             string ocupiedSlots = null;
 
@@ -42,6 +43,7 @@ namespace MemcardRex
             iconFramesLabel.Text = iconFrames.ToString();
             maxCount = iconFrames;
             iconData = saveIcons;
+            iconBackColor = backColor;
 
             //Show region string
             switch(saveRegion)
@@ -90,6 +92,22 @@ namespace MemcardRex
             else iconGraphics.InterpolationMode = InterpolationMode.Bilinear;
 
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
+
+            //Check what background color should be set
+            switch (iconBackColor)
+            {
+                case 1:     //Black
+                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(new Rectangle(0, 0, 48, 48)));
+                    break;
+
+                case 2:     //Gray
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(new Rectangle(0, 0, 48, 48)));
+                    break;
+
+                case 3:     //Blue
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(new Rectangle(0, 0, 48, 48)));
+                    break;
+            }
 
             iconGraphics.DrawImage(iconData[selectedIndex], 0, 0, 32 + (iconSize * 16), 32 + (iconSize * 16));
 
