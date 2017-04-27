@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Shendo")]
 [assembly: AssemblyProduct("MemcardRex")]
-[assembly: AssemblyCopyright("Copyright © Shendo 2014")]
+[assembly: AssemblyCopyright("Copyright © Shendo 2007 - 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
