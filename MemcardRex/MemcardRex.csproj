@@ -36,7 +36,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'WinForms debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -45,13 +45,31 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'WinForms release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'GTKsharp debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\GTKsharp debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'GTKsharp release|AnyCPU'">
+    <OutputPath>bin\GTKsharp release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,75 +80,74 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="aboutWindow.cs">
+    <Compile Include="GUI\aboutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="aboutWindow.designer.cs">
+    <Compile Include="GUI\aboutWindow.designer.cs">
       <DependentUpon>aboutWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="BuildTrack.cs" />
-    <Compile Include="CardLink.cs" />
-    <Compile Include="commentsWindow.cs">
+    <Compile Include="Hardware\CardLink.cs" />
+    <Compile Include="GUI\commentsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="commentsWindow.Designer.cs">
+    <Compile Include="GUI\commentsWindow.Designer.cs">
       <DependentUpon>commentsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="compareWindow.cs">
+    <Compile Include="GUI\compareWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="compareWindow.Designer.cs">
+    <Compile Include="GUI\compareWindow.Designer.cs">
       <DependentUpon>compareWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="DexDrive.cs" />
-    <Compile Include="cardReaderWindow.cs">
+    <Compile Include="Hardware\DexDrive.cs" />
+    <Compile Include="GUI\cardReaderWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="cardReaderWindow.designer.cs">
+    <Compile Include="GUI\cardReaderWindow.designer.cs">
       <DependentUpon>cardReaderWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="glassSupport.cs" />
-    <Compile Include="headerWindow.cs">
+    <Compile Include="Extras\glassSupport.cs" />
+    <Compile Include="GUI\headerWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="headerWindow.Designer.cs">
+    <Compile Include="GUI\headerWindow.Designer.cs">
       <DependentUpon>headerWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="iconWindow.cs">
+    <Compile Include="GUI\iconWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="iconWindow.Designer.cs">
+    <Compile Include="GUI\iconWindow.Designer.cs">
       <DependentUpon>iconWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="informationWindow.cs">
+    <Compile Include="GUI\informationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="informationWindow.Designer.cs">
+    <Compile Include="GUI\informationWindow.Designer.cs">
       <DependentUpon>informationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="mainWindow.cs">
+    <Compile Include="GUI\mainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="mainWindow.Designer.cs">
+    <Compile Include="GUI\mainWindow.Designer.cs">
       <DependentUpon>mainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MemCARDduino.cs" />
-    <Compile Include="messageWindow.cs">
+    <Compile Include="Hardware\MemCARDduino.cs" />
+    <Compile Include="GUI\messageWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="messageWindow.designer.cs">
+    <Compile Include="GUI\messageWindow.designer.cs">
       <DependentUpon>messageWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="pluginsWindow.cs">
+    <Compile Include="GUI\pluginsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="pluginsWindow.Designer.cs">
+    <Compile Include="GUI\pluginsWindow.Designer.cs">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="preferencesWindow.cs">
+    <Compile Include="GUI\preferencesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="preferencesWindow.Designer.cs">
+    <Compile Include="GUI\preferencesWindow.Designer.cs">
       <DependentUpon>preferencesWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -141,43 +158,43 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="xmlSettingsEditor.cs" />
-    <EmbeddedResource Include="aboutWindow.resx">
+    <EmbeddedResource Include="GUI\aboutWindow.resx">
       <DependentUpon>aboutWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="commentsWindow.resx">
+    <EmbeddedResource Include="GUI\commentsWindow.resx">
       <DependentUpon>commentsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="compareWindow.resx">
+    <EmbeddedResource Include="GUI\compareWindow.resx">
       <DependentUpon>compareWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="cardReaderWindow.resx">
+    <EmbeddedResource Include="GUI\cardReaderWindow.resx">
       <DependentUpon>cardReaderWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="headerWindow.resx">
+    <EmbeddedResource Include="GUI\headerWindow.resx">
       <DependentUpon>headerWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="iconWindow.resx">
+    <EmbeddedResource Include="GUI\iconWindow.resx">
       <DependentUpon>iconWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="informationWindow.resx">
+    <EmbeddedResource Include="GUI\informationWindow.resx">
       <DependentUpon>informationWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="mainWindow.resx">
+    <EmbeddedResource Include="GUI\mainWindow.resx">
       <DependentUpon>mainWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="messageWindow.resx">
+    <EmbeddedResource Include="GUI\messageWindow.resx">
       <DependentUpon>messageWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="pluginsWindow.resx">
+    <EmbeddedResource Include="GUI\pluginsWindow.resx">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="preferencesWindow.resx">
+    <EmbeddedResource Include="GUI\preferencesWindow.resx">
       <DependentUpon>preferencesWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
