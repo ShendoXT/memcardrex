@@ -1,5 +1,6 @@
 # MemcardRex
 ### Advanced PlayStation 1 Memory Card editor
+![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
 
 <b>Requirements:</b>
 * .NET Framework 3.5.
