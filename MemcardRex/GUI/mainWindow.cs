@@ -1,20 +1,5 @@
-﻿/*
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-//Main window of the MemcardRex application
-//Shendo 2009 - 2014
+﻿//Main window of the MemcardRex application
+//Shendo 2009 - 2017
 
 using System;
 using System.Collections.Generic;
@@ -80,6 +65,9 @@ namespace MemcardRex
 
         //All program settings
         programSettings mainSettings = new programSettings();
+
+        //List of opened Memory Cards
+        List<ps1mc> MemCards = new List<ps1mc>();
 
         //List of opened Memory Cards
         List<ps1card> PScard = new List<ps1card>();
@@ -1035,13 +1023,14 @@ namespace MemcardRex
         {
             //Add a new ImageList to hold the card icons
             iconList.Add(new ImageList());
-            iconList[iconList.Count - 1].ImageSize = new Size(48, 16);
+            iconList[iconList.Count - 1].ImageSize = new Size(48, 48);
             iconList[iconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
             iconList[iconList.Count - 1].TransparentColor = Color.Magenta;
 
             cardList.Add(new ListView());
             cardList[cardList.Count - 1].Location = new Point(0, 3);
-            cardList[cardList.Count - 1].Size = new Size(492, 286);
+            //cardList[cardList.Count - 1].Size = new Size(492, 286);
+            cardList[cardList.Count - 1].Dock = DockStyle.Fill;
             cardList[cardList.Count - 1].SmallImageList = iconList[iconList.Count - 1];
             cardList[cardList.Count - 1].ContextMenuStrip = mainContextMenu;
             cardList[cardList.Count - 1].FullRowSelect = true;
@@ -1162,7 +1151,7 @@ namespace MemcardRex
         //Prepare icons for drawing (add flags and make them transparent if save is deleted)
         private Bitmap prepareIcons(int listIndex, int slotNumber)
         {
-            Bitmap iconBitmap = new Bitmap(48, 16);
+            Bitmap iconBitmap = new Bitmap(16, 16);
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
 
             //Check what background color should be set
@@ -1185,7 +1174,7 @@ namespace MemcardRex
             iconGraphics.DrawImage(PScard[listIndex].iconData[slotNumber, 0], 0, 0, 16, 16);
 
             //Draw flag depending of the region
-            switch (PScard[listIndex].saveRegion[slotNumber])
+            /*switch (PScard[listIndex].saveRegion[slotNumber])
             {
                 default:        //Formatted save, Corrupted save, Unknown region
                     iconGraphics.DrawImage(Properties.Resources.naflag, 17, 0, 30, 16);
@@ -1202,7 +1191,7 @@ namespace MemcardRex
                 case 0x4942:    //Japanese region
                     iconGraphics.DrawImage(Properties.Resources.jpflag, 17, 0, 30, 16);
                     break;
-            }
+            }*/
 
             //Check if save is deleted and color the icon
             if(PScard[listIndex].saveType[slotNumber] == 4)

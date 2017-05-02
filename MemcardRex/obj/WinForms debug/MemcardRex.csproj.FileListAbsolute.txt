@@ -16,3 +16,4 @@ C:\Users\Sinisa\Documents\GitHub\memcardrex\MemcardRex\obj\WinForms debug\Memcar
 C:\Users\Sinisa\Documents\GitHub\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.csproj.GenerateResource.Cache
 C:\Users\Sinisa\Documents\GitHub\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.exe
 C:\Users\Sinisa\Documents\GitHub\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.pdb
+C:\Users\Sinisa\Documents\GitHub\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.csprojResolveAssemblyReference.cache

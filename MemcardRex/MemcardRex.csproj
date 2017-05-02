@@ -157,6 +157,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ps1mc.cs" />
     <Compile Include="xmlSettingsEditor.cs" />
     <EmbeddedResource Include="GUI\aboutWindow.resx">
       <DependentUpon>aboutWindow.cs</DependentUpon>
