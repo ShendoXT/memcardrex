@@ -748,6 +748,7 @@
             // 
             // mainStatusStrip
             // 
+            this.mainStatusStrip.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.mainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolString});
             this.mainStatusStrip.Location = new System.Drawing.Point(0, 528);
@@ -759,6 +760,7 @@
             // 
             // toolString
             // 
+            this.toolString.ForeColor = System.Drawing.SystemColors.Window;
             this.toolString.Name = "toolString";
             this.toolString.Size = new System.Drawing.Size(0, 17);
             // 

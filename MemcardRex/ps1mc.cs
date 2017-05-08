@@ -21,6 +21,21 @@ namespace MemcardRex
         public bool active = true;
         public int size = 0;
         public string comments = "";
+
+        //Return size in kilobytes
+        public string sizeKB()
+        {
+            return (size / 1024).ToString() + " KB";
+        }
+
+        //Return size in slots (blocks)
+        public string sizeSlot()
+        {
+            int slotCount = size / 8192;
+
+            if (slotCount == 1) return slotCount.ToString() + " slot";
+            else return slotCount.ToString() + " slots";
+        }
     };
 
     public class ps1mc
@@ -217,18 +232,6 @@ namespace MemcardRex
 
                         canvas.SetPixel(x, y, paletteData[leftIndex]);
                         canvas.SetPixel(x + 1, y, paletteData[rightIndex]);
-
-                        //Left pixel
-                        /*imageData[colorCount] = paletteData[leftIndex].b;
-                        imageData[colorCount + 1] = paletteData[leftIndex].g;
-                        imageData[colorCount + 2] = paletteData[leftIndex].r;
-                        //imageData[colorCount + 3] = 0xFF;
-
-                        //Right pixel
-                        imageData[colorCount + 3] = paletteData[rightIndex].b;
-                        imageData[colorCount + 4] = paletteData[rightIndex].g;
-                        imageData[colorCount + 5] = paletteData[rightIndex].r;*/
-                        //imageData[colorCount + 7] = 0xFF;
 
                         byteCount2++;
                         colorCount += 6;

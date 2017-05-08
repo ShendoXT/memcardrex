@@ -1041,9 +1041,11 @@ namespace MemcardRex
             cardList[cardList.Count - 1].Columns.Add("Title");
             cardList[cardList.Count - 1].Columns.Add("Product code");
             cardList[cardList.Count - 1].Columns.Add("Identifier");
+            cardList[cardList.Count - 1].Columns.Add("Size");
             cardList[cardList.Count - 1].Columns[0].Width = 315;
             cardList[cardList.Count - 1].Columns[1].Width = 87;
             cardList[cardList.Count - 1].Columns[2].Width = 84;
+            cardList[cardList.Count - 1].Columns[3].Width = 84;
             cardList[cardList.Count - 1].View = View.Tile;
             cardList[cardList.Count - 1].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
             cardList[cardList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);
@@ -1076,9 +1078,10 @@ namespace MemcardRex
             foreach (singleSave singleSave in MemCards[listIndex].saves)
             {
                 cardList[listIndex].Items.Add(singleSave.title);
-                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.productCode);
-                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.identifier);
-                iconList[listIndex].Images.Add(prepareIcon(singleSave.icons[0], singleSave.region));
+                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.productCode + ", " + singleSave.identifier);
+                //cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.identifier);
+                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.sizeKB() + " (" + singleSave.sizeSlot() + ")");
+                iconList[listIndex].Images.Add(prepareIcon(singleSave.icons[0], singleSave.region, singleSave.active));
                 cardList[listIndex].Items[iconIndex].ImageIndex = iconIndex;
                 iconIndex++;
             }
@@ -1166,13 +1169,15 @@ namespace MemcardRex
         }
 
         //Prepare icons for list drawing
-        private Bitmap prepareIcon(Bitmap saveIcon, string saveRegion)
+        private Bitmap prepareIcon(Bitmap saveIcon, string saveRegion, bool saveEnabled)
         {
             int imageDimensions = 48;
             Bitmap iconBitmap = new Bitmap(64, 64);
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
-            Bitmap regionTag = new Bitmap(42, 18);
+            Bitmap regionTag = new Bitmap(48, 19);
             Graphics regionGraphics = Graphics.FromImage(regionTag);
+            Color regionColor = Color.Transparent;
+            string regionText = "";
 
             iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
@@ -1200,30 +1205,70 @@ namespace MemcardRex
             switch (saveRegion)
             {
                 default:        //Formatted save, Corrupted save, Unknown region
-                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x00, 0x79, 0x6B)), new Region(new Rectangle(0, 0, 42, 18)));
+                    regionColor = Color.FromArgb(0xCF, 0x00, 0x79, 0x6B);
+                    regionText = "Custom";
                     break;
 
                 case "BA":    //American region
-                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x45, 0x5A, 0x64)), new Region(new Rectangle(0, 0, 42, 18)));
+                    regionColor = Color.FromArgb(0xCF, 0x45, 0x5A, 0x64);
+                    regionText = "America";
                     break;
 
                 case "BE":    //European region
-                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x19, 0x76, 0xd2)), new Region(new Rectangle(0, 0, 42, 18)));
+                    regionColor = Color.FromArgb(0xCF, 0x19, 0x76, 0xd2);
+                    regionText = "Europe";
                     break;
 
                 case "BI":    //Japanese region
-                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0xd3, 0x2f, 0x2f)), new Region(new Rectangle(0, 0, 42, 18)));
+                    regionColor = Color.FromArgb(0xCF, 0xd3, 0x2f, 0x2f);
+                    regionText = "Japan";
                     break;
             }
 
-            iconGraphics.DrawImage(regionTag, 2, 42, 42, 18);
+            DrawRoundedRectangle(regionGraphics, new Rectangle(0, 0, 48, 19), 4, new Pen(regionColor), regionColor);
+
+            using (Font font2 = new Font("Arial", 11, FontStyle.Regular, GraphicsUnit.Pixel))
+            {
+                Rectangle rect2 = new Rectangle(2, 0, 48, 19);
+
+                // Create a TextFormatFlags with word wrapping, horizontal center and
+                // vertical center specified.
+                TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+
+                regionGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                // Draw the text and the surrounding rectangle.
+                TextRenderer.DrawText(regionGraphics, regionText, font2, rect2, Color.White, flags);
+            }
 
             //Draw active, inactive marker
+            if (saveEnabled) iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x00, 0x79, 0x6b)), new Region(new Rectangle(4, 8, 4, 48)));
+            else iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0xd3, 0x2f, 0x2f)), new Region(new Rectangle(4, 8, 4, 48)));
+
+            iconGraphics.DrawImage(regionTag, 0, 40, 48, 19);
 
             regionGraphics.Dispose();
             iconGraphics.Dispose();
 
             return iconBitmap;
+        }
+
+        private void DrawRoundedRectangle(Graphics gfx, Rectangle Bounds, int CornerRadius, Pen DrawPen, Color FillColor)
+        {
+            int strokeOffset = Convert.ToInt32(Math.Ceiling(DrawPen.Width));
+            Bounds = Rectangle.Inflate(Bounds, -strokeOffset, -strokeOffset);
+
+            DrawPen.EndCap = DrawPen.StartCap = LineCap.Round;
+
+            GraphicsPath gfxPath = new GraphicsPath();
+            gfxPath.AddArc(Bounds.X, Bounds.Y, CornerRadius, CornerRadius, 180, 90);
+            gfxPath.AddArc(Bounds.X + Bounds.Width - CornerRadius, Bounds.Y, CornerRadius, CornerRadius, 270, 90);
+            gfxPath.AddArc(Bounds.X + Bounds.Width - CornerRadius, Bounds.Y + Bounds.Height - CornerRadius, CornerRadius, CornerRadius, 0, 90);
+            gfxPath.AddArc(Bounds.X, Bounds.Y + Bounds.Height - CornerRadius, CornerRadius, CornerRadius, 90, 90);
+            gfxPath.CloseAllFigures();
+
+            gfx.FillPath(new SolidBrush(FillColor), gfxPath);
+            gfx.DrawPath(DrawPen, gfxPath);
         }
 
         //Refresh the toolstrip
