@@ -131,8 +131,8 @@ namespace MemcardRex
         private void applySettings()
         {
             //Refresh all active lists
-            for (int i = 0; i < cardList.Count; i++)
-                refreshListView(i, cardList[i].SelectedIndices[0]);
+            /*for (int i = 0; i < cardList.Count; i++)
+                refreshListView(i, cardList[i].SelectedIndices[0]);*/
 
             //Refresh status of Aero glass
             applyGlass();
@@ -330,9 +330,9 @@ namespace MemcardRex
             string errorMsg = null;
 
             //Check if the card already exists
-            foreach (ps1card checkCard in PScard)
+            foreach (ps1mc checkCard in MemCards)
             {
-                if (checkCard.cardLocation == fileName && fileName != null)
+                if (checkCard.path == fileName && fileName != null)
                 {
                     //Card is already opened, display message and exit
                     new messageWindow().ShowMessage(this, appName, "'" + Path.GetFileName(fileName) + "' is already opened.", "OK", null, true);
@@ -341,10 +341,10 @@ namespace MemcardRex
             }
 
             //Create a new card
-            PScard.Add(new ps1card());
+            MemCards.Add(new ps1mc());
 
             //Try to open card
-            errorMsg = PScard[PScard.Count - 1].openMemoryCard(fileName);
+            errorMsg = MemCards[MemCards.Count - 1].openMemoryCard(fileName);
 
             //If card is sucesfully opened proceed further, else destroy it
             if (errorMsg == null)
@@ -358,7 +358,7 @@ namespace MemcardRex
             else
             {
                 //Remove the last card created
-                PScard.RemoveAt(PScard.Count-1);
+                MemCards.RemoveAt(MemCards.Count - 1);
 
                 //Display error message
                 new messageWindow().ShowMessage(this, appName, errorMsg, "OK", null, true);
@@ -384,10 +384,10 @@ namespace MemcardRex
             tabPage.Controls.Add(cardList[cardList.Count - 1]);
 
             //Delete the initial "Untitled" card
-            if (PScard[PScard.Count - 1].cardLocation != null) filterNullCard();
+            if (MemCards[MemCards.Count - 1].path != null) filterNullCard();
 
             //Switch the active tab to the currently opened card
-            mainTabControl.SelectedIndex = PScard.Count - 1;
+            mainTabControl.SelectedIndex = MemCards.Count - 1;
 
             //Show the location of the card in the tool strip
             refreshStatusStrip();
@@ -1023,7 +1023,7 @@ namespace MemcardRex
         {
             //Add a new ImageList to hold the card icons
             iconList.Add(new ImageList());
-            iconList[iconList.Count - 1].ImageSize = new Size(48, 48);
+            iconList[iconList.Count - 1].ImageSize = new Size(64, 64);
             iconList[iconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
             iconList[iconList.Count - 1].TransparentColor = Color.Magenta;
 
@@ -1031,19 +1031,20 @@ namespace MemcardRex
             cardList[cardList.Count - 1].Location = new Point(0, 3);
             //cardList[cardList.Count - 1].Size = new Size(492, 286);
             cardList[cardList.Count - 1].Dock = DockStyle.Fill;
-            cardList[cardList.Count - 1].SmallImageList = iconList[iconList.Count - 1];
+            cardList[cardList.Count - 1].LargeImageList = iconList[iconList.Count - 1];
             cardList[cardList.Count - 1].ContextMenuStrip = mainContextMenu;
             cardList[cardList.Count - 1].FullRowSelect = true;
             cardList[cardList.Count - 1].MultiSelect = false;
             cardList[cardList.Count - 1].HeaderStyle = ColumnHeaderStyle.Nonclickable;
             cardList[cardList.Count - 1].HideSelection = false;
-            cardList[cardList.Count - 1].Columns.Add("Icon, region and title");
+            cardList[cardList.Count - 1].HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            cardList[cardList.Count - 1].Columns.Add("Title");
             cardList[cardList.Count - 1].Columns.Add("Product code");
             cardList[cardList.Count - 1].Columns.Add("Identifier");
             cardList[cardList.Count - 1].Columns[0].Width = 315;
             cardList[cardList.Count - 1].Columns[1].Width = 87;
             cardList[cardList.Count - 1].Columns[2].Width = 84;
-            cardList[cardList.Count - 1].View = View.Details;
+            cardList[cardList.Count - 1].View = View.Tile;
             cardList[cardList.Count - 1].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
             cardList[cardList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);
 
@@ -1057,7 +1058,7 @@ namespace MemcardRex
             FontFamily tempFontFamily = null;
 
             //Place cardName on the tab
-            mainTabControl.TabPages[listIndex].Text = PScard[listIndex].cardName;
+            mainTabControl.TabPages[listIndex].Text = MemCards[listIndex].title;
 
             //Remove all icons from the list
             iconList[listIndex].Images.Clear();
@@ -1066,11 +1067,27 @@ namespace MemcardRex
             cardList[listIndex].Items.Clear();
 
             //Add linked slot icons to iconList
-            iconList[listIndex].Images.Add(Properties.Resources.linked);
-            iconList[listIndex].Images.Add(Properties.Resources.linked_disabled);
+            //iconList[listIndex].Images.Add(Properties.Resources.linked);
+            //iconList[listIndex].Images.Add(Properties.Resources.linked_disabled);
+
+            int iconIndex = 0;
+
+            //List all saves on the Memory Card
+            foreach (singleSave singleSave in MemCards[listIndex].saves)
+            {
+                cardList[listIndex].Items.Add(singleSave.title);
+                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.productCode);
+                cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.identifier);
+                iconList[listIndex].Images.Add(prepareIcon(singleSave.icons[0], singleSave.region));
+                cardList[listIndex].Items[iconIndex].ImageIndex = iconIndex;
+                iconIndex++;
+            }
+
+            //cardList[listIndex].SmallImageList = iconList[listIndex];
+
 
             //Add 15 List items along with icons
-            for (int i = 0; i < 15; i++)
+            /*for (int i = 0; i < 15; i++)
             {
                 //Add save icons to the list
                 iconList[listIndex].Images.Add(prepareIcons(listIndex,i));
@@ -1114,10 +1131,10 @@ namespace MemcardRex
                         break;
 
                 }
-            }
+            }*/
 
             //Select the active item in the list
-            cardList[listIndex].Items[slotNumber].Selected = true;
+            //cardList[listIndex].Items[slotNumber].Selected = true;
 
             //Set font for the list
             if (mainSettings.listFont != null)
@@ -1148,55 +1165,62 @@ namespace MemcardRex
             enableSelectiveEditItems();
         }
 
-        //Prepare icons for drawing (add flags and make them transparent if save is deleted)
-        private Bitmap prepareIcons(int listIndex, int slotNumber)
+        //Prepare icons for list drawing
+        private Bitmap prepareIcon(Bitmap saveIcon, string saveRegion)
         {
-            Bitmap iconBitmap = new Bitmap(16, 16);
+            int imageDimensions = 48;
+            Bitmap iconBitmap = new Bitmap(64, 64);
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
+            Bitmap regionTag = new Bitmap(42, 18);
+            Graphics regionGraphics = Graphics.FromImage(regionTag);
+
+            iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
 
             //Check what background color should be set
             switch (mainSettings.iconBackgroundColor)
             {
                 case 1:     //Black
-                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(new Rectangle(0, 0, 16, 16)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(new Rectangle(8, 8, imageDimensions, imageDimensions)));
                     break;
 
                 case 2:     //Gray
-                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(new Rectangle(0, 0, 16, 16)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(new Rectangle(8, 8, imageDimensions, imageDimensions)));
                     break;
 
                 case 3:     //Blue
-                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(new Rectangle(0, 0, 16, 16)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(new Rectangle(8, 8, imageDimensions, imageDimensions)));
                     break;
             }
 
             //Draw icon
-            iconGraphics.DrawImage(PScard[listIndex].iconData[slotNumber, 0], 0, 0, 16, 16);
+            iconGraphics.DrawImage(saveIcon, 8, 8, imageDimensions, imageDimensions);
 
             //Draw flag depending of the region
-            /*switch (PScard[listIndex].saveRegion[slotNumber])
+            switch (saveRegion)
             {
                 default:        //Formatted save, Corrupted save, Unknown region
-                    iconGraphics.DrawImage(Properties.Resources.naflag, 17, 0, 30, 16);
+                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x00, 0x79, 0x6B)), new Region(new Rectangle(0, 0, 42, 18)));
                     break;
 
-                case 0x4142:    //American region
-                    iconGraphics.DrawImage(Properties.Resources.amflag, 17, 0, 30, 16);
+                case "BA":    //American region
+                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x45, 0x5A, 0x64)), new Region(new Rectangle(0, 0, 42, 18)));
                     break;
 
-                case 0x4542:    //European region
-                    iconGraphics.DrawImage(Properties.Resources.euflag, 17, 0, 30, 16);
+                case "BE":    //European region
+                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0x19, 0x76, 0xd2)), new Region(new Rectangle(0, 0, 42, 18)));
                     break;
 
-                case 0x4942:    //Japanese region
-                    iconGraphics.DrawImage(Properties.Resources.jpflag, 17, 0, 30, 16);
+                case "BI":    //Japanese region
+                    regionGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xCF, 0xd3, 0x2f, 0x2f)), new Region(new Rectangle(0, 0, 42, 18)));
                     break;
-            }*/
+            }
 
-            //Check if save is deleted and color the icon
-            if(PScard[listIndex].saveType[slotNumber] == 4)
-                iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xA0,0xFF,0xFF,0xFF)), new Region(new Rectangle(0, 0, 16, 16)));
+            iconGraphics.DrawImage(regionTag, 2, 42, 42, 18);
 
+            //Draw active, inactive marker
+
+            regionGraphics.Dispose();
             iconGraphics.Dispose();
 
             return iconBitmap;
@@ -1205,14 +1229,22 @@ namespace MemcardRex
         //Refresh the toolstrip
         private void refreshStatusStrip()
         {
+            string cardPath;
+
             //Show the location of the active card in the tool strip (if there are any cards)
-            if (PScard.Count > 0)
-                toolString.Text = PScard[mainTabControl.SelectedIndex].cardLocation;
+            if (MemCards.Count > 0)
+            {
+                cardPath = MemCards[mainTabControl.SelectedIndex].path;
+                if (cardPath != null) toolString.Text = cardPath;
+                else toolString.Text = "Unsaved card";
+            }
             else
+            {
                 toolString.Text = null;
+            }
 
             //If glass is enabled repaint the form
-            if(windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)this.Refresh();
+            if(windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1) this.Refresh();
         }
 
         //Save work and close the application
@@ -1320,7 +1352,7 @@ namespace MemcardRex
         //Refresh plugin menu
         private void refreshPluginBindings()
         {
-
+            return;
             //Clear the menus
             editWithPluginToolStripMenuItem.DropDownItems.Clear();
             editWithPluginToolStripMenuItem.Enabled = false;
@@ -1500,6 +1532,8 @@ namespace MemcardRex
         //Enable only supported edit operations
         private void enableSelectiveEditItems()
         {
+            return;
+
             //Check if there are any cards
             if (cardList.Count > 0)
             {

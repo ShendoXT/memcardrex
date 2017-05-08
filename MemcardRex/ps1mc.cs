@@ -5,9 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 namespace MemcardRex
 {
+    //Properties of a single save
+    public class singleSave
+    {
+        public string title = "";
+        public string region = "";
+        public Bitmap[] icons;
+        public string productCode = "";
+        public string identifier = "";
+        public byte[] data;
+        public bool active = true;
+        public int size = 0;
+        public string comments = "";
+    };
+
     public class ps1mc
     {
         public enum cardTypes {container, mcr, gme, vgs, vmp};
@@ -17,21 +32,7 @@ namespace MemcardRex
         public string path = null;
         public cardTypes type = cardTypes.container;
         public bool changed = false;
-        public List<singleSave> saves;
-
-        //Properties of a single save
-        public struct singleSave
-        {
-            public string title;
-            public string region;
-            public byte[] icons;
-            public string productCode;
-            public string identifier;
-            public byte[] data;
-            public bool active;
-            public int size;
-            public string comments;
-        };
+        public List<singleSave> saves = new List<singleSave>();
 
         //Read entire file to memory
         public byte[] ReadAllBytes(BinaryReader reader)
@@ -60,7 +61,7 @@ namespace MemcardRex
             BinaryReader binReader = null;
             byte[] cardArray;
 
-            if (fileName == null) return "No file specified";
+            if (fileName == null) return null;
 
             //Check if the file is allowed to be opened
             try
@@ -94,6 +95,7 @@ namespace MemcardRex
         {
             int startOffset;
             string magicId;
+            int saveCount = 15;
 
             //Check the format of the card and if it's supported load it (filter illegal characters from types)
             magicId = Encoding.ASCII.GetString(data, 0, 11).Trim((char)0x0, (char)0x1, (char)0x3F);
@@ -126,7 +128,118 @@ namespace MemcardRex
                     break;
             }
 
+
+            //Go through each block and fetch saves
+            for(int i = 0; i < saveCount; i++)
+            {
+                singleSave newSingleSave = new singleSave();
+                int currentOffset = (128 * (i + 1)) + startOffset;
+                string tempTitle = "";
+                int titleIndex = 0;
+                byte[] iconData = new byte[512];
+
+                switch (data[currentOffset])
+                {
+                    case 0xA1:      //Deleted regular save
+                    case 0x51:      //Regular save
+                        if (data[currentOffset] == 0xA1) newSingleSave.active = false;
+
+                        newSingleSave.size = data[currentOffset + 4] | (data[currentOffset + 5] << 8) | (data[currentOffset + 6] << 16);
+
+                        //Get title and trim everything after a null character
+                        tempTitle = Encoding.GetEncoding(932).GetString(data, (8192 * (i + 1)) + startOffset + 4, 0x40);
+                        titleIndex = tempTitle.IndexOf("\0");
+                        if (titleIndex > 0) newSingleSave.title = tempTitle.Substring(0, titleIndex);
+                        else newSingleSave.title = tempTitle;
+
+                        newSingleSave.region = Encoding.Default.GetString(data, currentOffset + 10, 2);
+                        newSingleSave.productCode = Encoding.Default.GetString(data, currentOffset + 12, 10);
+                        newSingleSave.identifier = Encoding.Default.GetString(data, currentOffset + 22, 8);
+
+                        Array.Copy(data, (8192 * (i + 1)) + startOffset, iconData, 0, 512);
+                        newSingleSave.icons = getIcons(iconData);
+
+                        saves.Add(newSingleSave);       //Push new save to the Memory Card
+                        break;
+                }
+
+
+            }
+
+
             return null;
+        }
+
+
+        //Fetch icons from save data
+        public Bitmap[] getIcons(byte[] data)
+        {
+            int frameCount = 1;
+            Bitmap canvas = new Bitmap(16, 16);
+            List<Bitmap> outputData = new List<Bitmap>();
+
+            if (data[2] == 0x12) frameCount = 2;
+            else if (data[2] == 0x13) frameCount = 3;
+
+            var colorCount = 0;
+            var byteCount2 = 128;
+            List<Color> paletteData = new List<Color>();
+
+            //Fetch two bytes at a time
+            for (var byteCount = 0; byteCount < 32; byteCount += 2)
+            {
+                int redChannel, greenChannel, blueChannel, alphaChannel;
+
+                redChannel = (data[byteCount + 96] & 0x1F) << 3;
+                greenChannel = ((data[byteCount + 97] & 0x3) << 6) | ((data[byteCount + 96] & 0xE0) >> 2);
+                blueChannel = ((data[byteCount + 97] & 0x7C) << 1);
+                alphaChannel = (data[byteCount + 97] & 0x80);
+
+                paletteData.Add(Color.FromArgb(redChannel, greenChannel, blueChannel));
+            }
+
+            colorCount = 0;
+
+            for (var i = 0; i < frameCount; i++)
+            {
+                canvas = new Bitmap(16, 16);
+                byteCount2 = 128 * (i + 1);
+                colorCount = 0;
+
+                //Construct the icon
+                for (var y = 0; y < 16; y++)
+                {
+                    for (var x = 0; x < 16; x += 2)
+                    {
+
+                        var leftIndex = data[byteCount2] & 0x0F;
+                        var rightIndex = (data[byteCount2] & 0xF0) >> 4;
+
+                        canvas.SetPixel(x, y, paletteData[leftIndex]);
+                        canvas.SetPixel(x + 1, y, paletteData[rightIndex]);
+
+                        //Left pixel
+                        /*imageData[colorCount] = paletteData[leftIndex].b;
+                        imageData[colorCount + 1] = paletteData[leftIndex].g;
+                        imageData[colorCount + 2] = paletteData[leftIndex].r;
+                        //imageData[colorCount + 3] = 0xFF;
+
+                        //Right pixel
+                        imageData[colorCount + 3] = paletteData[rightIndex].b;
+                        imageData[colorCount + 4] = paletteData[rightIndex].g;
+                        imageData[colorCount + 5] = paletteData[rightIndex].r;*/
+                        //imageData[colorCount + 7] = 0xFF;
+
+                        byteCount2++;
+                        colorCount += 6;
+                    }
+                }
+
+                outputData.Add(canvas);
+            }
+
+            //Return array of bitmaps
+            return outputData.ToArray();
         }
 
         //Export Memory Card to file
