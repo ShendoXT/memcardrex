@@ -83,7 +83,7 @@
     <Compile Include="GUI\aboutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\aboutWindow.designer.cs">
+    <Compile Include="GUI\aboutWindow.Designer.cs">
       <DependentUpon>aboutWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Hardware\CardLink.cs" />
