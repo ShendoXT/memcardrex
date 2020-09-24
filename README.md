@@ -3,7 +3,7 @@
 ![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
 
 <b>Requirements:</b>
-* .NET Framework 3.5.
+* .NET Framework 4.5.
 * Windows® Vista™ or 7 for the glass status bar.
 
 <b>Supported Memory Card formats:</b>
@@ -50,6 +50,19 @@ To select a COM port DexDrive is connected to go to "Options"->"Preferences".
 <br>It requires an official or home made TTL serial cable for communication with PC.
 
 With it your console becomes a Memory Card reader similar to the DexDrive and MemCARDuino.
+
+<b>4. PS3 Memory Card Adaptor</b>
+<br>The PS3 Memory Card Adaptor is an official Sony USB adapter that allows reading and writing PS1 Memory Cards on a PlayStation 3.
+<br>To use it on a Windows PC, a custom USB driver needs to be installed.
+ 
+This USB driver can be easily created and installed using [Zadig](https://zadig.akeo.ie) by following these steps:
+* Plug the PS3 Memory Card Adaptor into a free USB port and start Zadig.
+* Zadig should display the PS3 MCA as an "Unknown Device". Verify that the USB ID matches: 054C 02EA
+* Click the Edit checkbox and name the device "PS3 Memory Card Adaptor"
+* Ensure that "WinUSB" is selected from the list of Driver options and click the Install Driver button.
+* After about 30 seconds Zadig should show a message that the driver was installed successfully.
+
+With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you should now be able to read, write and format PS1 Memory Cards.
 
 ### Credits
 <b>Beta testers:</b>
