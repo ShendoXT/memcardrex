@@ -377,6 +377,46 @@ namespace MemcardRex
             }
         }
 
+        //Open a memory card image selection dialog.
+        //Return the raw data of the memory card image, or null if the dialog is canceled or if the file is not exactly 131072 bytes in size.
+        //Throw an exception if it is not possible to read the file.
+        private byte[] openCardImageDialog()
+        {
+            OpenFileDialog openFileDlg = new OpenFileDialog();
+            openFileDlg.Title = "Open Memory Card image";
+            openFileDlg.Filter = "Memory card image|*.mcr;*.mcd|All files (*.*)|*.*";
+            openFileDlg.Multiselect = false;
+
+            //If user selected a card open it
+            if (openFileDlg.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    BinaryReader binReader = new BinaryReader(File.Open(openFileDlg.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                    const int expectedSize = 131072;
+                    byte[] data = binReader.ReadBytes(expectedSize);
+                    if (data.Length != expectedSize)
+                    {
+                        new messageWindow().ShowMessage(this, appName, "Memory card image must have a size of " + expectedSize + " bytes, " + openFileDlg.FileName + " has a size of " + data.Length + " bytes.", "OK", null, true);
+                        return null;
+                    }
+                    else
+                    {
+                        return data;
+                    }
+                }
+                catch (Exception errorException)
+                {
+                    new messageWindow().ShowMessage(this, appName, "Error reading " + openFileDlg.FileName + ": " + errorException.Message, "OK", null, true);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         //Create a new tab page for the Memory Card
         private void createTabPage()
         {
@@ -2058,6 +2098,11 @@ namespace MemcardRex
             }
         }
 
+        private void dexDriveMenuWriteRaw_Click(object sender, EventArgs e)
+        {
+            writeRawDataToCard(0);
+        }
+
         private void compareWithTempBufferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Compare selected save to a temp buffer save
@@ -2091,6 +2136,11 @@ namespace MemcardRex
             }
         }
 
+        private void memCARDuinoMenuWriteRaw_Click(object sender, EventArgs e)
+        {
+            writeRawDataToCard(1);
+        }
+
         private void pS1CardLinkMenuRead_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from PS1CardLink
@@ -2109,6 +2159,39 @@ namespace MemcardRex
             {
                 //Open a DexDrive communication window
                 new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(), 1024);
+            }
+        }
+
+        private void pS1CardLinkMenuWriteRaw_Click(object sender, EventArgs e)
+        {
+            writeRawDataToCard(2);
+        }
+
+        //Write a raw image to a Memory Card on the hardware interface (0 - DexDrive, 1 - MemCARDuino, 2 - PS1CardLink)
+        private void writeRawDataToCard(int hardDevice)
+        {
+            byte[] data = openCardImageDialog();
+            if (data != null)
+            {
+                //Show warning message
+                if (new messageWindow().ShowMessage(this, appName, "Writing raw data will delete all saves on the Memory Card.\nDo you want to proceed with this operation?", "No", "Yes", true) == "No") return;
+
+                const int frameNumber = 1024;
+                //Check what device to use
+                switch (hardDevice)
+                {
+                    case 0:         //DexDrive
+                        new cardReaderWindow().writeMemoryCardDexDrive(this, appName, mainSettings.communicationPort, data, frameNumber);
+                        break;
+
+                    case 1:         //MemCARDuino
+                        new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, data, frameNumber);
+                        break;
+
+                    case 2:         //PS1CardLink
+                        new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, data, frameNumber);
+                        break;
+                }
             }
         }
 

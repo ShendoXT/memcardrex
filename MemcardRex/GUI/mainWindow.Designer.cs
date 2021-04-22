@@ -126,6 +126,12 @@
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.writeRawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dexDriveMenuWriteRaw = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.memCARDuinoMenuWriteRaw = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS1CardLinkMenuWriteRaw = new System.Windows.Forms.ToolStripMenuItem();
             dexDriveMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolbar.SuspendLayout();
@@ -391,6 +397,7 @@
             this.hardwareToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.readFromToolStripMenuItem,
             this.writeToToolStripMenuItem,
+            this.writeRawToolStripMenuItem,
             this.toolStripMenuItem21,
             this.formatMemoryCardToolStripMenuItem});
             this.hardwareToolStripMenuItem.Name = "hardwareToolStripMenuItem";
@@ -916,6 +923,49 @@
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
             // 
+            // writeRawToolStripMenuItem
+            // 
+            this.writeRawToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dexDriveMenuWriteRaw,
+            this.toolStripSeparator5,
+            this.memCARDuinoMenuWriteRaw,
+            this.toolStripSeparator6,
+            this.pS1CardLinkMenuWriteRaw});
+            this.writeRawToolStripMenuItem.Name = "writeRawToolStripMenuItem";
+            this.writeRawToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.writeRawToolStripMenuItem.Text = "Write raw data";
+            // 
+            // dexDriveMenuWriteRaw
+            // 
+            this.dexDriveMenuWriteRaw.Name = "dexDriveMenuWriteRaw";
+            this.dexDriveMenuWriteRaw.Size = new System.Drawing.Size(180, 22);
+            this.dexDriveMenuWriteRaw.Text = "DexDrive";
+            this.dexDriveMenuWriteRaw.Click += new System.EventHandler(this.dexDriveMenuWriteRaw_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            // 
+            // memCARDuinoMenuWriteRaw
+            // 
+            this.memCARDuinoMenuWriteRaw.Name = "memCARDuinoMenuWriteRaw";
+            this.memCARDuinoMenuWriteRaw.Size = new System.Drawing.Size(180, 22);
+            this.memCARDuinoMenuWriteRaw.Text = "MemCARDuino";
+            this.memCARDuinoMenuWriteRaw.Click += new System.EventHandler(this.memCARDuinoMenuWriteRaw_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            // 
+            // pS1CardLinkMenuWriteRaw
+            // 
+            this.pS1CardLinkMenuWriteRaw.Name = "pS1CardLinkMenuWriteRaw";
+            this.pS1CardLinkMenuWriteRaw.Size = new System.Drawing.Size(180, 22);
+            this.pS1CardLinkMenuWriteRaw.Text = "PS1CardLink";
+            this.pS1CardLinkMenuWriteRaw.Click += new System.EventHandler(this.pS1CardLinkMenuWriteRaw_Click);
+            // 
             // mainWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1043,6 +1093,12 @@
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkMenuFormat;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem20;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem23;
+        private System.Windows.Forms.ToolStripMenuItem writeRawToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dexDriveMenuWriteRaw;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem memCARDuinoMenuWriteRaw;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem pS1CardLinkMenuWriteRaw;
     }
 }
 
