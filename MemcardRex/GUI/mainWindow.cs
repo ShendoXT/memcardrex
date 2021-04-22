@@ -322,7 +322,7 @@ namespace MemcardRex
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
             openFileDlg.Title = "Open Memory Card";
-            openFileDlg.Filter = "All supported|*.mcr;*.gme;*.bin;*.mcd;*.mem;*.vgs;*.mc;*.ddf;*.ps;*.psm;*.mci;*.VMP;*.VM1|ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PSP virtual Memory Card (*.VMP)|*.VMP|PS3 virtual Memory Card (*.VM1)|*.VM1|All files (*.*)|*.*";
+            openFileDlg.Filter = "All supported|*.mcr;*.gme;*.bin;*.mcd;*.mem;*.vgs;*.mc;*.ddf;*.ps;*.psm;*.mci;*.VMP;*.VM1;*.srm|ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PSP virtual Memory Card (*.VMP)|*.VMP|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm|All files (*.*)|*.*";
             openFileDlg.Multiselect = true;
 
             //If user selected a card open it
@@ -421,7 +421,7 @@ namespace MemcardRex
                 byte memoryCardType = 0;
                 SaveFileDialog saveFileDlg = new SaveFileDialog();
                 saveFileDlg.Title = "Save Memory Card";
-                saveFileDlg.Filter = "ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 virtual Memory Card (*.VM1)|*.VM1";
+                saveFileDlg.Filter = "ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm";
 
                 //If user selected a card save to it
                 if (saveFileDlg.ShowDialog() == DialogResult.OK)
