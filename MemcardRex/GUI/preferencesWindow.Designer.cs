@@ -92,7 +92,8 @@
             this.encodingCombo.FormattingEnabled = true;
             this.encodingCombo.Items.AddRange(new object[] {
             "ASCII",
-            "UTF-16"});
+            "UTF-16",
+            "Auto by region"});
             this.encodingCombo.Location = new System.Drawing.Point(4, 20);
             this.encodingCombo.Name = "encodingCombo";
             this.encodingCombo.Size = new System.Drawing.Size(116, 21);

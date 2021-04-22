@@ -76,7 +76,7 @@
             this.slotLabelInfo.Name = "slotLabelInfo";
             this.slotLabelInfo.Size = new System.Drawing.Size(128, 13);
             this.slotLabelInfo.TabIndex = 5;
-            this.slotLabelInfo.Text = "Slot:";
+            this.slotLabelInfo.Text = "Slots:";
             this.slotLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // iconFramesLabel

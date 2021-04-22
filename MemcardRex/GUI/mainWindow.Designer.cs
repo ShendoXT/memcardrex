@@ -80,6 +80,8 @@
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -127,8 +129,6 @@
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.detailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             dexDriveMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolbar.SuspendLayout();
@@ -537,6 +537,20 @@
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
+            // detailsToolStripMenuItem
+            // 
+            this.detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
+            this.detailsToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
+            this.detailsToolStripMenuItem.Text = "Details";
+            // 
+            // tilesToolStripMenuItem
+            // 
+            this.tilesToolStripMenuItem.Checked = true;
+            this.tilesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tilesToolStripMenuItem.Name = "tilesToolStripMenuItem";
+            this.tilesToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
+            this.tilesToolStripMenuItem.Text = "Tiles";
+            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -787,7 +801,7 @@
             this.toolStripMenuItem14,
             this.saveInformationToolStripMenuItem});
             this.mainContextMenu.Name = "mainContextMenu";
-            this.mainContextMenu.Size = new System.Drawing.Size(226, 326);
+            this.mainContextMenu.Size = new System.Drawing.Size(224, 348);
             // 
             // editSaveHeaderToolStripMenuItem1
             // 
@@ -849,8 +863,8 @@
             // deleteSaveToolStripMenuItem1
             // 
             this.deleteSaveToolStripMenuItem1.Name = "deleteSaveToolStripMenuItem1";
-            this.deleteSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
-            this.deleteSaveToolStripMenuItem1.Text = "Delete save";
+            this.deleteSaveToolStripMenuItem1.Size = new System.Drawing.Size(223, 22);
+            this.deleteSaveToolStripMenuItem1.Text = "Mark inactive";
             this.deleteSaveToolStripMenuItem1.Click += new System.EventHandler(this.deleteSaveToolStripMenuItem1_Click);
             // 
             // restoreSaveToolStripMenuItem1
@@ -863,8 +877,8 @@
             // removeSaveformatSlotsToolStripMenuItem1
             // 
             this.removeSaveformatSlotsToolStripMenuItem1.Name = "removeSaveformatSlotsToolStripMenuItem1";
-            this.removeSaveformatSlotsToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
-            this.removeSaveformatSlotsToolStripMenuItem1.Text = "Remove save (format slot(s))";
+            this.removeSaveformatSlotsToolStripMenuItem1.Size = new System.Drawing.Size(223, 22);
+            this.removeSaveformatSlotsToolStripMenuItem1.Text = "Remove save";
             this.removeSaveformatSlotsToolStripMenuItem1.Click += new System.EventHandler(this.removeSaveformatSlotsToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem9
@@ -933,20 +947,6 @@
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
-            // 
-            // detailsToolStripMenuItem
-            // 
-            this.detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
-            this.detailsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.detailsToolStripMenuItem.Text = "Details";
-            // 
-            // tilesToolStripMenuItem
-            // 
-            this.tilesToolStripMenuItem.Checked = true;
-            this.tilesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tilesToolStripMenuItem.Name = "tilesToolStripMenuItem";
-            this.tilesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.tilesToolStripMenuItem.Text = "Tiles";
             // 
             // mainWindow
             // 

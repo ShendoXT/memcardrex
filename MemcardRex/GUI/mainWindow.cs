@@ -90,6 +90,8 @@ namespace MemcardRex
         //Apply glass effect on the client area
         private void applyGlass()
         {
+            return;
+
             //Reset margins to zero
             windowMargins.top = 0;
             windowMargins.bottom = 0;
@@ -166,7 +168,7 @@ namespace MemcardRex
                 mainSettings.communicationPort = xmlAppSettings.readXmlEntry("ComPort");
 
                 //Load Title Encoding
-                mainSettings.titleEncoding = xmlAppSettings.readXmlEntryInt("TitleEncoding", 0, 1);
+                mainSettings.titleEncoding = xmlAppSettings.readXmlEntryInt("TitleEncoding", 0, 2);
 
                 //Load List Grid settings
                 mainSettings.showListGrid = xmlAppSettings.readXmlEntryInt("ShowGrid", 0, 1);
@@ -558,46 +560,30 @@ namespace MemcardRex
         private void showInformation()
         {
             //Check if there are any cards
-            if (PScard.Count > 0)
-            {
-                int listIndex = mainTabControl.SelectedIndex;
+            if (MemCards.Count < 1) return;
 
-                //Check if a save is selected
-                if (cardList[listIndex].SelectedIndices.Count == 0) return;
+            int listIndex = mainTabControl.SelectedIndex;
 
-                int slotNumber = cardList[listIndex].SelectedIndices[0];
-                ushort saveRegion = PScard[listIndex].saveRegion[slotNumber];
-                int saveSize = PScard[listIndex].saveSize[slotNumber];
-                int iconFrames = PScard[listIndex].iconFrames[slotNumber];
-                string saveProdCode = PScard[listIndex].saveProdCode[slotNumber];
-                string saveIdentifier = PScard[listIndex].saveIdentifier[slotNumber];
-                string saveTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
-                Bitmap[] saveIcons = new Bitmap[3];
+            //Check if a save is selected
+            if (cardList[listIndex].SelectedIndices.Count == 0) return;
 
-                //Get all 3 bitmaps for selected save
-                for (int i = 0; i < 3; i++)
-                    saveIcons[i] = PScard[listIndex].iconData[slotNumber, i];
+            int slotNumber = cardList[listIndex].SelectedIndices[0];
+            string saveRegion = MemCards[listIndex].saves[slotNumber].region;
+            string saveSize = MemCards[listIndex].saves[slotNumber].sizeKB();
+            string slotCount = MemCards[listIndex].saves[slotNumber].sizeSlot();
+            int iconFrames = MemCards[listIndex].saves[slotNumber].icons.Length;
+            string saveProdCode = MemCards[listIndex].saves[slotNumber].productCode;
+            string saveIdentifier = MemCards[listIndex].saves[slotNumber].identifier;
+            string saveTitle = MemCards[listIndex].saves[slotNumber].saveTitle(mainSettings.titleEncoding);
+            Bitmap[] saveIcons = MemCards[listIndex].saves[slotNumber].icons;
 
-                //Check if slot is "legal"
-                switch (PScard[listIndex].saveType[slotNumber])
-                {
-                    default:        //Not allowed
-                        break;
+            informationWindow informationDlg = new informationWindow();
 
-                    case 1:
-                    case 4:
-                        informationWindow informationDlg = new informationWindow();
+            informationDlg.initializeDialog(saveTitle, saveProdCode, saveIdentifier,
+                                        saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, slotCount, mainSettings.iconBackgroundColor);
 
-                        //Load values to dialog
-                        informationDlg.initializeDialog(saveTitle, saveProdCode, saveIdentifier,
-                            saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, PScard[listIndex].findSaveLinks(slotNumber), mainSettings.iconBackgroundColor);
-
-                        informationDlg.ShowDialog(this);
-
-                        informationDlg.Dispose();
-                        break;
-                }
-            }
+            informationDlg.ShowDialog(this);
+            informationDlg.Dispose();
         }
 
         //Restore selected save
@@ -1047,6 +1033,7 @@ namespace MemcardRex
             cardList[cardList.Count - 1].Columns[2].Width = 84;
             cardList[cardList.Count - 1].Columns[3].Width = 84;
             cardList[cardList.Count - 1].View = View.Tile;
+            //cardList[cardList.Count - 1].View = View.Details;
             cardList[cardList.Count - 1].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
             cardList[cardList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);
 
@@ -1077,7 +1064,7 @@ namespace MemcardRex
             //List all saves on the Memory Card
             foreach (singleSave singleSave in MemCards[listIndex].saves)
             {
-                cardList[listIndex].Items.Add(singleSave.title);
+                cardList[listIndex].Items.Add(singleSave.saveTitle(mainSettings.titleEncoding));
                 cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.productCode + ", " + singleSave.identifier);
                 //cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.identifier);
                 cardList[listIndex].Items[iconIndex].SubItems.Add(singleSave.sizeKB() + " (" + singleSave.sizeSlot() + ")");

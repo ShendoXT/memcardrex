@@ -30,7 +30,7 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, ushort saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize,  Bitmap[] saveIcons, int[] slotNumbers, int backColor)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, string saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize,  Bitmap[] saveIcons, string slotNumber, int backColor)
         {
             string ocupiedSlots = null;
 
@@ -39,40 +39,34 @@ namespace MemcardRex
             saveTitleLabel.Text = saveTitle;
             productCodeLabel.Text = saveProdCode;
             identifierLabel.Text = saveIdentifier;
-            sizeLabel.Text = saveSize.ToString() + " KB";
+            sizeLabel.Text = saveSize;
             iconFramesLabel.Text = iconFrames.ToString();
             maxCount = iconFrames;
             iconData = saveIcons;
             iconBackColor = backColor;
 
             //Show region string
-            switch(saveRegion)
+            switch (saveRegion)
             {
-                default:        //Region custom, show hex
-                    regionLabel.Text = "0x" + saveRegion.ToString("X4");
+                default:        //Formatted save, Corrupted save, Unknown region
+                    regionLabel.Text = "Custom";
                     break;
 
-                case 0x4142:    //America
+                case "BA":    //American region
                     regionLabel.Text = "America";
                     break;
 
-                case 0x4542:    //Europe
+                case "BE":    //European region
                     regionLabel.Text = "Europe";
                     break;
 
-                case 0x4942:    //Japan
+                case "BI":    //Japanese region
                     regionLabel.Text = "Japan";
                     break;
             }
 
-            //Get ocupied slots
-            for (int i = 0; i < slotNumbers.Length; i++)
-            {
-                ocupiedSlots += (slotNumbers[i] + 1).ToString() + ", ";
-            }
-
-            //Show ocupied slots
-            slotLabel.Text = ocupiedSlots.Remove(ocupiedSlots.Length-2);
+            //Show slot count
+            slotLabel.Text = slotNumber;
 
             //Draw first icon so there is no delay
             drawIcons(iconIndex);

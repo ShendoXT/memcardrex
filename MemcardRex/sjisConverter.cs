@@ -1,5 +1,5 @@
 ﻿//Shift-JIS converter class
-//Shendo 2009-2012
+//Shendo 2009-2021
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,8 @@ namespace MemcardRex
         {
             string output = null;
 
-            for (int bCounter = 0; bCounter < bData.Length; bCounter+=2)
+            //Start from title offset
+            for (int bCounter = 4; bCounter < 0x44; bCounter+=2)
             {
                 switch ((bData[bCounter]<<8) | bData[bCounter+1])
                 {

@@ -1,28 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex", "MemcardRex\MemcardRex.csproj", "{39B94E8A-7BD1-4072-8A60-D90464326B18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		GTKsharp debug|Any CPU = GTKsharp debug|Any CPU
-		GTKsharp release|Any CPU = GTKsharp release|Any CPU
-		WinForms debug|Any CPU = WinForms debug|Any CPU
-		WinForms release|Any CPU = WinForms release|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.GTKsharp debug|Any CPU.ActiveCfg = GTKsharp debug|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.GTKsharp debug|Any CPU.Build.0 = GTKsharp debug|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.GTKsharp release|Any CPU.ActiveCfg = GTKsharp release|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.GTKsharp release|Any CPU.Build.0 = GTKsharp release|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.WinForms debug|Any CPU.ActiveCfg = WinForms debug|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.WinForms debug|Any CPU.Build.0 = WinForms debug|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.WinForms release|Any CPU.ActiveCfg = WinForms release|Any CPU
-		{39B94E8A-7BD1-4072-8A60-D90464326B18}.WinForms release|Any CPU.Build.0 = WinForms release|Any CPU
+		{39B94E8A-7BD1-4072-8A60-D90464326B18}.Debug|Any CPU.ActiveCfg = WinForms debug|Any CPU
+		{39B94E8A-7BD1-4072-8A60-D90464326B18}.Debug|Any CPU.Build.0 = WinForms debug|Any CPU
+		{39B94E8A-7BD1-4072-8A60-D90464326B18}.Release|Any CPU.ActiveCfg = WinForms release|Any CPU
+		{39B94E8A-7BD1-4072-8A60-D90464326B18}.Release|Any CPU.Build.0 = WinForms release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB983099-0CAE-404B-8339-A1A4F4AA198E}
 	EndGlobalSection
 EndGlobal

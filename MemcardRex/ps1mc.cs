@@ -22,6 +22,28 @@ namespace MemcardRex
         public int size = 0;
         public string comments = "";
 
+        //Return save title in UTF-16, ASCII or auto by region
+        public string saveTitle(int option)
+        {
+            charConverter SJISC = new charConverter();
+
+            switch (option)
+            {
+                case 0:     //ASCII
+                    return SJISC.convertSJIStoASCII(this.data);
+                    //break;
+
+                case 1:     //UTF-16
+                    return this.title;
+
+                case 2:     //Auto
+                    break;
+            }
+
+            //Fail-safe, should't be reached
+            return "";
+        }
+
         //Return size in kilobytes
         public string sizeKB()
         {
@@ -173,6 +195,10 @@ namespace MemcardRex
 
                         Array.Copy(data, (8192 * (i + 1)) + startOffset, iconData, 0, 512);
                         newSingleSave.icons = getIcons(iconData);
+
+                        //Get save data
+                        newSingleSave.data = new byte[8192];
+                        Array.Copy(data, (8192 * (i + 1)) + startOffset, newSingleSave.data, 0, 8192);
 
                         saves.Add(newSingleSave);       //Push new save to the Memory Card
                         break;

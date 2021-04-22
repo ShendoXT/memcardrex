@@ -1,0 +1,20 @@
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\bin\Debug\MemcardRex.exe.config
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\bin\Debug\MemcardRex.exe
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\bin\Debug\MemcardRex.pdb
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.csprojAssemblyReference.cache
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.AboutWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.commentsWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.compareWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.cardReaderWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.headerWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.iconWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.informationWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.mainWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.messageWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.pluginsWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.preferencesWindow.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.Properties.Resources.resources
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.csproj.GenerateResource.cache
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.csproj.CoreCompileInputs.cache
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.exe
+C:\Users\Sinisa\Source\Repos\memcardrex\MemcardRex\obj\WinForms debug\MemcardRex.pdb
