@@ -1,5 +1,5 @@
 ﻿//PS1 Memory Card class
-//Shendo 2009-2013
+//Shendo 2009-2021
 
 using System;
 using System.Collections.Generic;
@@ -88,20 +88,25 @@ namespace MemcardRex
         }
 
         //Recreate raw Memory Card
-        private void loadDataToRawCard()
+        private void loadDataToRawCard(bool fixData)
         {
-            //Clear existing data
-            rawMemoryCard = new byte[131072];
+            //Check if data needs to be fixed or left as is (mandatory for FreePSXBoot)
+            if (fixData)
+            {
+                //Clear existing data
+                rawMemoryCard = new byte[131072];
 
-            //Recreate the signature
-            rawMemoryCard[0] = 0x4D;        //M
-            rawMemoryCard[1] = 0x43;        //C
-            rawMemoryCard[127] = 0x0E;      //XOR (precalculated)
+                //Recreate the signature
+                rawMemoryCard[0] = 0x4D;        //M
+                rawMemoryCard[1] = 0x43;        //C
+                rawMemoryCard[127] = 0x0E;      //XOR (precalculated)
 
-            rawMemoryCard[8064] = 0x4D;     //M
-            rawMemoryCard[8065] = 0x43;     //C
-            rawMemoryCard[8191] = 0x0E;     //XOR (precalculated)
+                rawMemoryCard[8064] = 0x4D;     //M
+                rawMemoryCard[8065] = 0x43;     //C
+                rawMemoryCard[8191] = 0x0E;     //XOR (precalculated)
+            }
 
+            //This can be copied freely without fixing
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
             {
                 //Load header data
@@ -116,6 +121,10 @@ namespace MemcardRex
                     rawMemoryCard[8192 + (slotNumber * 8192) + currentByte] = saveData[slotNumber, currentByte];
                 }
             }
+
+
+            //Skip fixing data if it's not needed
+            if (!fixData) return;
 
             //Create authentic data (just for completeness)
             for (int i = 0; i < 20; i++)
@@ -901,7 +910,7 @@ namespace MemcardRex
         }
 
         //Save Memory Card to the given filename
-        public bool saveMemoryCard(string fileName, int memoryCardType)
+        public bool saveMemoryCard(string fileName, int memoryCardType, bool fixData)
         {
             BinaryWriter binWriter = null;
 
@@ -916,7 +925,7 @@ namespace MemcardRex
             }
 
             //Prepare data for saving
-            loadDataToRawCard();
+            loadDataToRawCard(fixData);
 
             //Check what kind of file to output according to memoryCardType
             switch (memoryCardType)
@@ -953,10 +962,10 @@ namespace MemcardRex
         }
 
         //Save (export) Memory Card to a given byte stream
-        public byte[] saveMemoryCardStream()
+        public byte[] saveMemoryCardStream(bool fixData)
         {
             //Prepare data for saving
-            loadDataToRawCard();
+            loadDataToRawCard(fixData);
 
             //Return complete Memory Card data
             return rawMemoryCard;
@@ -964,7 +973,7 @@ namespace MemcardRex
 
 
         //Open memory card from the given byte stream
-        public void openMemoryCardStream(byte[] memCardData)
+        public void openMemoryCardStream(byte[] memCardData, bool fixData)
         {
             //Set the reference for the recieved data
             rawMemoryCard = memCardData;
@@ -974,7 +983,7 @@ namespace MemcardRex
 
             cardName = "Untitled";
 
-            calculateXOR();
+            if(fixData) calculateXOR();
             loadStringData();
             loadGMEComments();
             loadSlotTypes();
@@ -989,7 +998,7 @@ namespace MemcardRex
         }
 
         //Open Memory Card from the given filename (return error message if operation is not sucessfull)
-        public string openMemoryCard(string fileName)
+        public string openMemoryCard(string fileName, bool fixData)
         {
             //Check if the Memory Card should be opened or created
             if (fileName != null)
@@ -1070,7 +1079,7 @@ namespace MemcardRex
             }
 
             //Calculate XOR checksum (in case if any of the saveHeaders have corrputed XOR)
-            calculateXOR();
+            if(fixData) calculateXOR();
 
             //Convert various Memory Card data to strings
             loadStringData();

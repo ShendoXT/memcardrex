@@ -72,6 +72,7 @@ namespace MemcardRex
             public int backupMemcards;             //Backup Memory Card settings
             public int warningMessage;             //Warning message settings
             public int restoreWindowPosition;      //Restore window position
+            public int fixCorruptedCards;          //Try to fix corrupted memory cards
             public int glassStatusBar;             //Vista glass status bar
             public int formatType;                 //Type of formatting for hardware interfaces
             public string listFont;                //List font
@@ -207,6 +208,9 @@ namespace MemcardRex
                 //Load format type
                 mainSettings.formatType = xmlAppSettings.readXmlEntryInt("HardwareFormatType", 0, 1);
 
+                //Load fix corrupted cards value
+                mainSettings.fixCorruptedCards = xmlAppSettings.readXmlEntryInt("FixCorruptedCards", 0, 1);
+
                 //Check if window position should be read
                 if (mainSettings.restoreWindowPosition == 1)
                 {
@@ -266,6 +270,9 @@ namespace MemcardRex
             //Set format type
             xmlAppSettings.writeXmlEntry("HardwareFormatType", mainSettings.formatType.ToString());
 
+            //Set fix corrupted cards value
+            xmlAppSettings.writeXmlEntry("FixCorruptedCards", mainSettings.fixCorruptedCards.ToString());
+
             //Set window X coordinate
             xmlAppSettings.writeXmlEntry("WindowX", this.Location.X.ToString());
 
@@ -274,6 +281,12 @@ namespace MemcardRex
 
             //Cleanly close opened XML file
             xmlAppSettings.closeXmlWriter();
+        }
+
+        //Quick and dirty settings bool converter
+        private bool getSettingsBool(int intValue)
+        {
+            return (intValue == 1) ? true : false;
         }
 
         //Backup a Memory Card
@@ -356,7 +369,7 @@ namespace MemcardRex
             PScard.Add(new ps1card());
 
             //Try to open card
-            errorMsg = PScard[PScard.Count - 1].openMemoryCard(fileName);
+            errorMsg = PScard[PScard.Count - 1].openMemoryCard(fileName, getSettingsBool(mainSettings.fixCorruptedCards));
 
             //If card is sucesfully opened proceed further, else destroy it
             if (errorMsg == null)
@@ -449,7 +462,7 @@ namespace MemcardRex
         //Save a Memory Card to a given filename
         private void saveMemoryCard(int listIndex, string fileName, byte memoryCardType)
         {
-            if (PScard[listIndex].saveMemoryCard(fileName, memoryCardType))
+            if (PScard[listIndex].saveMemoryCard(fileName, memoryCardType, getSettingsBool(mainSettings.fixCorruptedCards)))
             {
                 refreshListView(listIndex, cardList[listIndex].SelectedIndices[0]);
                 refreshStatusStrip();
@@ -1660,7 +1673,7 @@ namespace MemcardRex
                 PScard.Add(new ps1card());
 
                 //Fill the card with the new data
-                PScard[PScard.Count - 1].openMemoryCardStream(readData);
+                PScard[PScard.Count - 1].openMemoryCardStream(readData, getSettingsBool(mainSettings.fixCorruptedCards));
 
                 //Temporary set a bogus file location (to fool filterNullCard function)
                 PScard[PScard.Count - 1].cardLocation = "\0";
@@ -2054,7 +2067,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardDexDrive(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(), 1024);
+                new cardReaderWindow().writeMemoryCardDexDrive(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2087,7 +2100,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(), 1024);
+                new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2108,7 +2121,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(), 1024);
+                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2143,21 +2156,21 @@ namespace MemcardRex
             if (mainSettings.formatType == 0) frameNumber = 64;
 
             //Create a new card by giving a null path
-            blankCard.openMemoryCard(null);
+            blankCard.openMemoryCard(null, true);
 
             //Check what device to use
             switch (hardDevice)
             {
                 case 0:         //DexDrive
-                    new cardReaderWindow().writeMemoryCardDexDrive(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(), frameNumber);
+                    new cardReaderWindow().writeMemoryCardDexDrive(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
 
                 case 1:         //MemCARDuino
-                    new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(), frameNumber);
+                    new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
 
                 case 2:         //PS1CardLink
-                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(), frameNumber);
+                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
             }
         }

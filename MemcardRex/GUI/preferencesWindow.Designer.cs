@@ -51,6 +51,7 @@
             this.formatLabel = new System.Windows.Forms.Label();
             this.backgroundCombo = new System.Windows.Forms.ComboBox();
             this.backgroundLabel = new System.Windows.Forms.Label();
+            this.fixCorruptedCardsCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // okButton
@@ -288,11 +289,22 @@
             this.backgroundLabel.TabIndex = 102;
             this.backgroundLabel.Text = "Icon background color:";
             // 
+            // fixCorruptedCardsCheckbox
+            // 
+            this.fixCorruptedCardsCheckbox.AutoSize = true;
+            this.fixCorruptedCardsCheckbox.Location = new System.Drawing.Point(248, 132);
+            this.fixCorruptedCardsCheckbox.Name = "fixCorruptedCardsCheckbox";
+            this.fixCorruptedCardsCheckbox.Size = new System.Drawing.Size(184, 17);
+            this.fixCorruptedCardsCheckbox.TabIndex = 103;
+            this.fixCorruptedCardsCheckbox.Text = "Try to fix corrupted Memory Cards";
+            this.fixCorruptedCardsCheckbox.UseVisualStyleBackColor = true;
+            // 
             // preferencesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(463, 212);
+            this.Controls.Add(this.fixCorruptedCardsCheckbox);
             this.Controls.Add(this.backgroundCombo);
             this.Controls.Add(this.backgroundLabel);
             this.Controls.Add(this.formatLabel);
@@ -353,5 +365,6 @@
         private System.Windows.Forms.Label formatLabel;
         private System.Windows.Forms.ComboBox backgroundCombo;
         private System.Windows.Forms.Label backgroundLabel;
+        private System.Windows.Forms.CheckBox fixCorruptedCardsCheckbox;
     }
 }
