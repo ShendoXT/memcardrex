@@ -73,28 +73,43 @@ namespace PS3MCACommunication
         /// <returns>null if connected successfully, anything else is an error message.</returns>
         public string StartPS3MCA()
         {
-            using (var context = new UsbContext())
+            try
             {
-                context.SetDebugLevel(LogLevel.Info);
-                //Get a list of all connected devices
-                var usbDeviceCollection = context.List();
-                
-                //Narrow down the device by vendor and pid
-                var selectedDevice = usbDeviceCollection.FirstOrDefault(d => d.ProductId == 0x02ea && d.VendorId == 0x054c);
+                using (var context = new UsbContext())
+                {
+                    context.SetDebugLevel(LogLevel.Info);
+                    //Get a list of all connected devices
+                    var usbDeviceCollection = context.List();
+
+                    //Narrow down the device by vendor and pid
+                    var selectedDevice =
+                        usbDeviceCollection.FirstOrDefault(d => d.ProductId == 0x02ea && d.VendorId == 0x054c);
 
 
-                
 
-                if (selectedDevice == null) return ("PS3 Memory Card Adaptor not connected.");
-               
-                selectedDevice.Open();
-                selectedDevice.ClaimInterface(selectedDevice.Configs[0].Interfaces[0].Number);
 
-                MyUsbDevice = selectedDevice;
+                    if (selectedDevice == null) return ("PS3 Memory Card Adaptor not connected.");
+
+                    selectedDevice.Open();
+                    selectedDevice.ClaimInterface(selectedDevice.Configs[0].Interfaces[0].Number);
+
+                    MyUsbDevice = selectedDevice;
+                }
+
+                //If this all worked then PS3MCA is connected successfully
+                return null;
             }
-
-            //If this all worked then PS3MCA is connected successfully
-            return null;
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("libusb-1.0.dll"))
+                {
+                    return "You are missing libusb-1.0.dll, download it from the link on the GitHub Repository";
+                }
+                else
+                {
+                    return ex.Message;
+                }
+            }
         }
 
         public void StopPS3MCA()
