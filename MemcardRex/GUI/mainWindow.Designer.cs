@@ -67,18 +67,24 @@
             this.memCARDuinoMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dexDriveMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
             this.formatMemoryCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem23 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -136,7 +142,7 @@
             // dexDriveMenuFormat
             // 
             dexDriveMenuFormat.Name = "dexDriveMenuFormat";
-            dexDriveMenuFormat.Size = new System.Drawing.Size(157, 22);
+            dexDriveMenuFormat.Size = new System.Drawing.Size(215, 22);
             dexDriveMenuFormat.Text = "DexDrive";
             dexDriveMenuFormat.Click += new System.EventHandler(this.dexDriveMenuFormat_Click);
             // 
@@ -404,41 +410,55 @@
             this.toolStripMenuItem17,
             this.memCARDuinoMenuRead,
             this.toolStripMenuItem18,
-            this.pS1CardLinkMenuRead});
+            this.pS1CardLinkMenuRead,
+            this.toolStripMenuItem16,
+            this.pS3MemoryCardAdaptorToolStripMenuItem});
             this.readFromToolStripMenuItem.Name = "readFromToolStripMenuItem";
-            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.readFromToolStripMenuItem.Text = "Read save data";
             // 
             // dexDriveMenuRead
             // 
             this.dexDriveMenuRead.Name = "dexDriveMenuRead";
-            this.dexDriveMenuRead.Size = new System.Drawing.Size(157, 22);
+            this.dexDriveMenuRead.Size = new System.Drawing.Size(215, 22);
             this.dexDriveMenuRead.Text = "DexDrive";
             this.dexDriveMenuRead.Click += new System.EventHandler(this.dexDriveMenuRead_Click);
             // 
             // toolStripMenuItem17
             // 
             this.toolStripMenuItem17.Name = "toolStripMenuItem17";
-            this.toolStripMenuItem17.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem17.Size = new System.Drawing.Size(212, 6);
             // 
             // memCARDuinoMenuRead
             // 
             this.memCARDuinoMenuRead.Name = "memCARDuinoMenuRead";
-            this.memCARDuinoMenuRead.Size = new System.Drawing.Size(157, 22);
+            this.memCARDuinoMenuRead.Size = new System.Drawing.Size(215, 22);
             this.memCARDuinoMenuRead.Text = "MemCARDuino";
             this.memCARDuinoMenuRead.Click += new System.EventHandler(this.memCARDuinoMenuRead_Click);
             // 
             // toolStripMenuItem18
             // 
             this.toolStripMenuItem18.Name = "toolStripMenuItem18";
-            this.toolStripMenuItem18.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem18.Size = new System.Drawing.Size(212, 6);
             // 
             // pS1CardLinkMenuRead
             // 
             this.pS1CardLinkMenuRead.Name = "pS1CardLinkMenuRead";
-            this.pS1CardLinkMenuRead.Size = new System.Drawing.Size(157, 22);
+            this.pS1CardLinkMenuRead.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkMenuRead.Text = "PS1CardLink";
             this.pS1CardLinkMenuRead.Click += new System.EventHandler(this.pS1CardLinkMenuRead_Click);
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorToolStripMenuItem
+            // 
+            this.pS3MemoryCardAdaptorToolStripMenuItem.Name = "pS3MemoryCardAdaptorToolStripMenuItem";
+            this.pS3MemoryCardAdaptorToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorToolStripMenuItem.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorToolStripMenuItem.Click += new System.EventHandler(this.ps3MemoryCardAdaptorToolStripMenuItem_Click);
             // 
             // writeToToolStripMenuItem
             // 
@@ -447,46 +467,60 @@
             this.toolStripMenuItem12,
             this.memCARDuinoMenuWrite,
             this.toolStripMenuItem19,
-            this.pS1CardLinkMenuWrite});
+            this.pS1CardLinkMenuWrite,
+            this.toolStripMenuItem22,
+            this.pS3MemoryCardAdaptorToolStripMenuItem1});
             this.writeToToolStripMenuItem.Name = "writeToToolStripMenuItem";
-            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.writeToToolStripMenuItem.Text = "Write save data";
             // 
             // dexDriveMenuWrite
             // 
             this.dexDriveMenuWrite.Name = "dexDriveMenuWrite";
-            this.dexDriveMenuWrite.Size = new System.Drawing.Size(157, 22);
+            this.dexDriveMenuWrite.Size = new System.Drawing.Size(215, 22);
             this.dexDriveMenuWrite.Text = "DexDrive";
             this.dexDriveMenuWrite.Click += new System.EventHandler(this.dexDriveMenuWrite_Click);
             // 
             // toolStripMenuItem12
             // 
             this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(212, 6);
             // 
             // memCARDuinoMenuWrite
             // 
             this.memCARDuinoMenuWrite.Name = "memCARDuinoMenuWrite";
-            this.memCARDuinoMenuWrite.Size = new System.Drawing.Size(157, 22);
+            this.memCARDuinoMenuWrite.Size = new System.Drawing.Size(215, 22);
             this.memCARDuinoMenuWrite.Text = "MemCARDuino";
             this.memCARDuinoMenuWrite.Click += new System.EventHandler(this.memCARDuinoMenuWrite_Click);
             // 
             // toolStripMenuItem19
             // 
             this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-            this.toolStripMenuItem19.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem19.Size = new System.Drawing.Size(212, 6);
             // 
             // pS1CardLinkMenuWrite
             // 
             this.pS1CardLinkMenuWrite.Name = "pS1CardLinkMenuWrite";
-            this.pS1CardLinkMenuWrite.Size = new System.Drawing.Size(157, 22);
+            this.pS1CardLinkMenuWrite.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkMenuWrite.Text = "PS1CardLink";
             this.pS1CardLinkMenuWrite.Click += new System.EventHandler(this.pS1CardLinkMenuWrite_Click);
+            // 
+            // toolStripMenuItem22
+            // 
+            this.toolStripMenuItem22.Name = "toolStripMenuItem22";
+            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorToolStripMenuItem1
+            // 
+            this.pS3MemoryCardAdaptorToolStripMenuItem1.Name = "pS3MemoryCardAdaptorToolStripMenuItem1";
+            this.pS3MemoryCardAdaptorToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorToolStripMenuItem1.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorToolStripMenuItem1.Click += new System.EventHandler(this.pS3MemoryCardAdaptorToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
-            this.toolStripMenuItem21.Size = new System.Drawing.Size(151, 6);
+            this.toolStripMenuItem21.Size = new System.Drawing.Size(177, 6);
             // 
             // formatMemoryCardToolStripMenuItem
             // 
@@ -495,34 +529,48 @@
             this.toolStripMenuItem23,
             this.memCARDuinoMenuFormat,
             this.toolStripMenuItem20,
-            this.pS1CardLinkMenuFormat});
+            this.pS1CardLinkMenuFormat,
+            this.toolStripMenuItem24,
+            this.pS3MemoryCardAdaptorToolStripMenuItem2});
             this.formatMemoryCardToolStripMenuItem.Name = "formatMemoryCardToolStripMenuItem";
-            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.formatMemoryCardToolStripMenuItem.Text = "Format card";
             // 
             // toolStripMenuItem23
             // 
             this.toolStripMenuItem23.Name = "toolStripMenuItem23";
-            this.toolStripMenuItem23.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem23.Size = new System.Drawing.Size(212, 6);
             // 
             // memCARDuinoMenuFormat
             // 
             this.memCARDuinoMenuFormat.Name = "memCARDuinoMenuFormat";
-            this.memCARDuinoMenuFormat.Size = new System.Drawing.Size(157, 22);
+            this.memCARDuinoMenuFormat.Size = new System.Drawing.Size(215, 22);
             this.memCARDuinoMenuFormat.Text = "MemCARDuino";
             this.memCARDuinoMenuFormat.Click += new System.EventHandler(this.memCARDuinoMenuFormat_Click);
             // 
             // toolStripMenuItem20
             // 
             this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-            this.toolStripMenuItem20.Size = new System.Drawing.Size(154, 6);
+            this.toolStripMenuItem20.Size = new System.Drawing.Size(212, 6);
             // 
             // pS1CardLinkMenuFormat
             // 
             this.pS1CardLinkMenuFormat.Name = "pS1CardLinkMenuFormat";
-            this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(157, 22);
+            this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkMenuFormat.Text = "PS1CardLink";
             this.pS1CardLinkMenuFormat.Click += new System.EventHandler(this.pS1CardLinkMenuFormat_Click);
+            // 
+            // toolStripMenuItem24
+            // 
+            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorToolStripMenuItem2
+            // 
+            this.pS3MemoryCardAdaptorToolStripMenuItem2.Name = "pS3MemoryCardAdaptorToolStripMenuItem2";
+            this.pS3MemoryCardAdaptorToolStripMenuItem2.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorToolStripMenuItem2.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorToolStripMenuItem2.Click += new System.EventHandler(this.pS3MemoryCardAdaptorToolStripMenuItem2_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -1043,6 +1091,12 @@
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkMenuFormat;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem20;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem23;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem16;
+        private System.Windows.Forms.ToolStripMenuItem pS3MemoryCardAdaptorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem22;
+        private System.Windows.Forms.ToolStripMenuItem pS3MemoryCardAdaptorToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem24;
+        private System.Windows.Forms.ToolStripMenuItem pS3MemoryCardAdaptorToolStripMenuItem2;
     }
 }
 

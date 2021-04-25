@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
@@ -2172,7 +2171,35 @@ namespace MemcardRex
                 case 2:         //PS1CardLink
                     new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
+                case 3:         //PS3MCA
+                    new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, blankCard.saveMemoryCardStream(true), frameNumber);
+                    break;
             }
+        }
+
+        private void ps3MemoryCardAdaptorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS3MCA(this, appName);
+
+            cardReaderRead(tempByteArray);
+        }
+
+        private void pS3MemoryCardAdaptorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //Write a Memory Card to MemCARDuino
+            int listIndex = mainTabControl.SelectedIndex;
+
+            //Check if there are any cards to write
+            if (PScard.Count > 0)
+            {
+                //Open a DexDrive communication window
+                new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+            }
+        }
+
+        private void pS3MemoryCardAdaptorToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            formatHardwareCard(3);
         }
     }
 }

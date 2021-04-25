@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -12,11 +11,15 @@ using System.IO;
 using DexDriveCommunication;
 using MemCARDuinoCommunication;
 using PS1CardLinkCommunication;
+using PS3MCACommunication;
 
 namespace MemcardRex
 {
     public partial class cardReaderWindow : Form
     {
+        //PS3 Memory Card Adaptor reading device
+        PS3MCA ps3MCA = new PS3MCA();
+
         //DexDrive Memory Card reading device
         DexDrive dexDevice = new DexDrive();
 
@@ -35,7 +38,7 @@ namespace MemcardRex
         //Reading status flag
         bool sucessfullRead = false;
 
-        //Currently active device (0 - DexDrive, 1 - MemCARDuino, 2 - PS1CardLink)
+        //Currently active device (0 - DexDrive, 1 - MemCARDuino, 2 - PS1CardLink, 3 - PS3 Memory Card Adaptor)
         int currentDeviceIdentifier = 0;
 
         public cardReaderWindow()
@@ -75,6 +78,41 @@ namespace MemcardRex
 
             //Stop working with DexDrive
             dexDevice.StopDexDrive();
+
+            //Check the final status (return data if all is ok, otherwise return null)
+            if (sucessfullRead == true) return completeMemoryCard;
+            else return null;
+        }
+
+        public byte[] readMemoryCardPS3MCA(Form hostWindow, string applicationName)
+        {
+            string errorString = ps3MCA.StartPS3MCA();
+
+            if (errorString != null)
+            {
+                //Display an error message and cleanly close MemCARDuino communication
+                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                ps3MCA.StopPS3MCA();
+                return null;
+            }
+
+            //Set scale for progress bar
+            mainProgressBar.Maximum = 1024;
+
+            //Set current device to PS3MCA
+            currentDeviceIdentifier = 3;
+
+            //Set window title and information
+            this.Text = "PS3MCA communication";
+            infoLabel.Text = "Reading data from PS3 Memory Card Adaptor...";
+
+            //Start reading data
+            backgroundReader.RunWorkerAsync();
+
+            this.ShowDialog(hostWindow);
+
+            //Stop working with PS3MCA
+            ps3MCA.StopPS3MCA();
 
             //Check the final status (return data if all is ok, otherwise return null)
             if (sucessfullRead == true) return completeMemoryCard;
@@ -277,6 +315,46 @@ namespace MemcardRex
             PS1CLnk.StopPS1CardLink();
         }
 
+        //Write a Memory Card to PS1CardLink
+        public void writeMemoryCardPS3MCA(Form hostWindow, string applicationName, byte[] memoryCardData, int frameNumber)
+        {
+            //Initialize PS1CardLink
+            string errorString = ps3MCA.StartPS3MCA();
+
+            //Check if there were any errors
+            if (errorString != null)
+            {
+                //Display an error message and cleanly close PS1CardLink communication
+                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                ps3MCA.StopPS3MCA();
+                return;
+            }
+
+            //Set maximum number of frames to write
+            maxWritingFrames = frameNumber;
+
+            //Set scale for progress bar
+            mainProgressBar.Maximum = frameNumber;
+
+            //Set current device to PS1CardLink
+            currentDeviceIdentifier = 3;
+
+            //Set window title and information
+            this.Text = "PS3MCA communication";
+            infoLabel.Text = "Writing data to PS3 Memory Card Adaptor...";
+
+            //Set reference to the Memory Card data
+            completeMemoryCard = memoryCardData;
+
+            //Start writing data
+            backgroundWriter.RunWorkerAsync();
+
+            this.ShowDialog(hostWindow);
+
+            //Stop working with PS1CardLink
+            ps3MCA.StopPS3MCA();
+        }
+
         private void OKbutton_Click(object sender, EventArgs e)
         {
             //Cancel reading job
@@ -298,13 +376,16 @@ namespace MemcardRex
                 if (backgroundReader.CancellationPending == true) return;
 
                 //Get 128 byte frame data from DexDrive
-                if(currentDeviceIdentifier == 0) tempDataBuffer = dexDevice.ReadMemoryCardFrame(i);
+                if (currentDeviceIdentifier == 0) tempDataBuffer = dexDevice.ReadMemoryCardFrame(i);
 
                 //Get 128 byte frame data from MemCARDuino
                 if (currentDeviceIdentifier == 1) tempDataBuffer = CARDuino.ReadMemoryCardFrame(i);
 
                 //Get 128 byte frame data from PS1CardLink
                 if (currentDeviceIdentifier == 2) tempDataBuffer = PS1CLnk.ReadMemoryCardFrame(i);
+
+                //Get 128 byte frame data from PS3MCA
+                if (currentDeviceIdentifier == 3) tempDataBuffer = ps3MCA.ReadMemoryCardFrame(i);
 
                 //Check if there was a checksum mismatch
                 if (tempDataBuffer != null)
@@ -357,6 +438,9 @@ namespace MemcardRex
 
                 //Write data to PS1CardLink
                 if (currentDeviceIdentifier == 2) lastStatus = PS1CLnk.WriteMemoryCardFrame(i, tempDataBuffer);
+
+                //Write data to PS3MCA
+                if (currentDeviceIdentifier == 3) lastStatus = ps3MCA.WriteMemoryCardFrame(i, tempDataBuffer);
 
                 //Check if there was a frame or checksum mismatch
                 if (lastStatus == true)
