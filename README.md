@@ -51,6 +51,9 @@ To select a COM port DexDrive is connected to go to "Options"->"Preferences".
 
 With it your console becomes a Memory Card reader similar to the DexDrive and MemCARDuino.
 
+<b>4. PS3 Memory Card Adapter</b>
+PS3 Memory Card Support requires [libusb-1.0.dll](https://nzgamer41.win/assets/libusb-1.0.dll) in the same folder as MemcardRex.exe, as well as a libusb-win32 driver installed. The easiest way to install the driver is to download [Zadig](https://zadig.akeo.ie/), go to Options and tick "List All Devices" then find the device with a USB ID of 054C 02EA, then set the driver above the "Replace Driver" button to "libusb-win32 (v1.2.6.0)", then click Replace Driver.
+
 ### Credits
 <b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
