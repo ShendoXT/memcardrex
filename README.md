@@ -3,7 +3,7 @@
 ![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
 
 <b>Requirements:</b>
-* .NET Framework 3.5.
+* .NET Framework 4.5.
 * Windows® Vista™ or 7 for the glass status bar.
 
 <b>Supported Memory Card formats:</b>
