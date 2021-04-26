@@ -17,6 +17,7 @@
 * WinPSM Memory Card(*.ps)
 * Smart Link Memory Card(*.psm)
 * MCExplorer(*.mci)
+* PCSX ReARMed/RetroArch(*.srm)
 * PSP virtual Memory Card(*.VMP) (opening only)
 * PS3 virtual Memory Card(*.VM1)
 
@@ -25,7 +26,7 @@
 * XP, AR, GS, Caetla single save(*.psx)
 * Memory Juggler(*.ps1)
 * Smart Link(*.mcb)
-* Datel(*.mcx;*.pda)
+* Datel(*.mcx,*.pda)
 * RAW single saves
 * PS3 virtual saves (*.psv) (importing only)
 
