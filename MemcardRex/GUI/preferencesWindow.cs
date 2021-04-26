@@ -36,6 +36,7 @@ namespace MemcardRex
             if (progSettings.glassStatusBar == 1) glassCheckbox.Checked = true; else glassCheckbox.Checked = false;
             if (progSettings.warningMessage == 1) backupWarningCheckBox.Checked = true; else backupWarningCheckBox.Checked = false;
             if (progSettings.restoreWindowPosition == 1) restorePositionCheckbox.Checked = true; else restorePositionCheckbox.Checked = false;
+            if (progSettings.fixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
 
             //Load all COM ports found on the system
             foreach (string port in SerialPort.GetPortNames())
@@ -77,6 +78,7 @@ namespace MemcardRex
             if (glassCheckbox.Checked == true) progSettings.glassStatusBar = 1; else progSettings.glassStatusBar = 0;
             if (backupWarningCheckBox.Checked == true) progSettings.warningMessage = 1; else progSettings.warningMessage = 0;
             if (restorePositionCheckbox.Checked == true) progSettings.restoreWindowPosition = 1; else progSettings.restoreWindowPosition = 0;
+            if (fixCorruptedCardsCheckbox.Checked == true) progSettings.fixCorruptedCards = 1; else progSettings.fixCorruptedCards = 0;
             if (fontCombo.SelectedIndex != -1) progSettings.listFont = fontCombo.SelectedItem.ToString();
 
             hostWindow.applyProgramSettings(progSettings);
