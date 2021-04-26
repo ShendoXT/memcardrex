@@ -2125,6 +2125,27 @@ namespace MemcardRex
             }
         }
 
+        private void pS3MemoryCardAdaptorMenuRead_Click(object sender, EventArgs e)
+        {
+            //Read a Memory Card from PS3 Memory Card Adaptor
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS3MCA(this, appName, mainSettings.communicationPort);
+
+            cardReaderRead(tempByteArray);
+        }
+
+        private void pS3MemoryCardAdaptorMenuWrite_Click(object sender, EventArgs e)
+        {
+            //Write a Memory Card to PS3 Memory Card Adaptor
+            int listIndex = mainTabControl.SelectedIndex;
+
+            //Check if there are any cards to write
+            if (PScard.Count > 0)
+            {
+                //Open a PS3 Memory Card Adaptor communication window
+                new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+            }
+        }
+
         private void dexDriveMenuFormat_Click(object sender, EventArgs e)
         {
             //Format a Memory Card on DexDrive
@@ -2141,6 +2162,12 @@ namespace MemcardRex
         {
             //Format a Memory Card on PS1CardLink
             formatHardwareCard(2);
+        }
+
+        private void pS3MemoryCardAdaptorMenuFormat_Click(object sender, EventArgs e)
+        {
+            //Format a Memory Card on PS3 Memory Card Adaptor
+            formatHardwareCard(3);
         }
 
         //Format a Memory Card on the hardware interface (0 - DexDrive, 1 - MemCARDuino, 2 - PS1CardLink)
@@ -2171,6 +2198,10 @@ namespace MemcardRex
 
                 case 2:         //PS1CardLink
                     new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
+                    break;
+
+                case 3:         //PS3 Memory Card Adaptor
+                    new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
             }
         }
