@@ -360,7 +360,7 @@ namespace MemcardRex
                 if (checkCard.cardLocation == fileName && fileName != null)
                 {
                     //Card is already opened, display message and exit
-                    new messageWindow().ShowMessage(this, appName, "'" + Path.GetFileName(fileName) + "' is already opened.", "OK", null, true);
+                    MessageBox.Show("'" + Path.GetFileName(fileName) + "' is already opened.", appName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
@@ -386,7 +386,7 @@ namespace MemcardRex
                 PScard.RemoveAt(PScard.Count-1);
 
                 //Display error message
-                new messageWindow().ShowMessage(this, appName, errorMsg, "OK", null, true);
+                MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -468,7 +468,7 @@ namespace MemcardRex
                 refreshStatusStrip();
             }
             else
-                new messageWindow().ShowMessage(this, appName, "Memory Card could not be saved.", "OK", null, true);
+                MessageBox.Show("Memory Card could not be saved.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         //Save a selected Memory Card
@@ -486,13 +486,21 @@ namespace MemcardRex
         }
 
         //Cleanly close the selected card
-        private void closeCard(int listIndex, bool switchToFirst)
+        private int closeCard(int listIndex, bool switchToFirst)
         {
             //Check if there are any cards to delete
             if (PScard.Count > 0)
             {
-                //Ask for saving before closing
-                savePrompt(listIndex);
+                //Check if the file has been changed
+                if (PScard[listIndex].changedFlag)
+                {
+                    //Ask for saving before closing
+                    DialogResult result = MessageBox.Show("Do you want to save changes to '" + PScard[listIndex].cardName + "'?", appName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                        saveCardFunction(listIndex);
+                    else if (result == DialogResult.Cancel)
+                        return 1;
+                }
 
                 PScard.RemoveAt(listIndex);
                 cardList.RemoveAt(listIndex);
@@ -519,23 +527,26 @@ namespace MemcardRex
                 saveButton.Enabled = false;
                 saveAsToolStripMenuItem.Enabled = false;
             }
+            return 0;
         }
 
         //Overload for closeCard function
-        private void closeCard(int listIndex)
+        private int closeCard(int listIndex)
         {
-            closeCard(listIndex, true);
+            return closeCard(listIndex, true);
         }
 
         //Close all opened cards
-        private void closeAllCards()
+        private int closeAllCards()
         {
-            //Run trough the loop as long as there are cards opened
+            //Run through the loop as long as there are cards opened
             while (PScard.Count > 0)
             {
                 mainTabControl.SelectedIndex = 0;
-                closeCard(0);
+                if (closeCard(0) == 1)
+                    return 1;
             }
+            return 0;
         }
 
         //Edit save comments
@@ -650,14 +661,14 @@ namespace MemcardRex
                         break;
 
                     case 1:         //Initial save
-                        new messageWindow().ShowMessage(this, appName, "The selected save is not deleted.", "OK", null, true);
+                        MessageBox.Show("The selected save is not deleted.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning );
                         break;
 
                     case 2:
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -688,14 +699,14 @@ namespace MemcardRex
                         break;
 
                     case 4:         //Deleted initial
-                        new messageWindow().ShowMessage(this, appName, "The selected save is already deleted.", "OK", null, true);
+                        MessageBox.Show("The selected save is already deleted.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
 
                     case 2:
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -718,7 +729,9 @@ namespace MemcardRex
                 switch (PScard[listIndex].saveType[slotNumber])
                 {
                     default:    //Slot is either initial, deleted initial or corrupted so it can be safetly formatted
-                        if (new messageWindow().ShowMessage(this, appName, "Formatted slots cannot be restored.\nDo you want to proceed with this operation?", "No", "Yes", true) == "Yes")
+                        DialogResult result = MessageBox.Show("Formatted slots cannot be restored.\nDo you want to proceed with this operation?", 
+                                                "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (result == DialogResult.Yes)
                         {
                             PScard[listIndex].formatSave(slotNumber);
                             refreshListView(listIndex, slotNumber);
@@ -729,7 +742,7 @@ namespace MemcardRex
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -774,7 +787,7 @@ namespace MemcardRex
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -806,17 +819,17 @@ namespace MemcardRex
                         }
                         else
                         {
-                            new messageWindow().ShowMessage(this, appName, "To complete this operation " + requiredSlots.ToString() + " free slots are required.", "OK", null, true);
+                            MessageBox.Show("To complete this operation " + requiredSlots.ToString() + " free slots are required.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
                     else
                     {
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is not empty.", "OK", null, true);
+                        MessageBox.Show("The selected slot is not empty.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 else
                 {
-                    new messageWindow().ShowMessage(this, appName, "Temp buffer is empty.", "OK", null, true);
+                    MessageBox.Show("Temp buffer is empty.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -883,14 +896,14 @@ namespace MemcardRex
                         }
                         break;
                     case 4:         //Deleted initial
-                        new messageWindow().ShowMessage(this, appName, "Deleted saves cannot be exported. Restore a save to proceed.", "OK", null, true);
+                        MessageBox.Show("Deleted saves cannot be exported. Restore a save to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
 
                     case 2:
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -926,17 +939,17 @@ namespace MemcardRex
                         }
                         else if (requiredSlots > 0)
                         {
-                            new messageWindow().ShowMessage(this, appName, "To complete this operation " + requiredSlots.ToString() + " free slots are required.", "OK", null, true);
+                            MessageBox.Show("To complete this operation " + requiredSlots.ToString() + " free slots are required.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                         else
                         {
-                            new messageWindow().ShowMessage(this, appName, "File could not be opened.", "OK", null, true);
+                            MessageBox.Show("The file could not be opened.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
                 else
                 {
-                    new messageWindow().ShowMessage(this, appName, "The selected slot is not empty.", "OK", null, true);
+                    MessageBox.Show("The selected slot is not empty.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -954,16 +967,7 @@ namespace MemcardRex
             return Encoding.Default.GetString(tempRegion);
         }
 
-        //Prompt for save
-        private void savePrompt(int listIndex)
-        {
-            //Check if the file has been changed
-            if (PScard[listIndex].changedFlag)
-            {
-                if (new messageWindow().ShowMessage(this, appName, "Do you want to save changes to '" + PScard[listIndex].cardName + "'?", "No", "Yes", true, true) == "Yes")
-                    saveCardFunction(listIndex);
-            }
-        }
+
 
         //Open preferences window
         private void editPreferences()
@@ -1020,7 +1024,7 @@ namespace MemcardRex
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -1240,10 +1244,11 @@ namespace MemcardRex
         }
 
         //Save work and close the application
-        private void exitApplication()
+        private void exitApplication(FormClosingEventArgs e)
         {
             //Close every opened card
-            closeAllCards();
+            if (closeAllCards() == 1)
+                e.Cancel = true;
 
             //Save settings
             saveProgramSettings();
@@ -1403,7 +1408,9 @@ namespace MemcardRex
                 //Show backup warning message
                 if (mainSettings.warningMessage == 1)
                 {
-                    if (new messageWindow().ShowMessage(this, appName, "Save editing may potentialy corrupt the save.\nDo you want to proceed with this operation?", "No", "Yes", true) == "No") return;
+                    DialogResult result = MessageBox.Show("Save editing may potentially corrupt the save.\nDo you want to proceed with this operation?", 
+                                            appName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result != DialogResult.Yes) return;
                 }
 
                 int listIndex = mainTabControl.SelectedIndex;
@@ -1431,7 +1438,7 @@ namespace MemcardRex
         {
             //Check if Readme.txt exists
             if (File.Exists(appPath + "/Readme.txt")) System.Diagnostics.Process.Start(appPath + "/Readme.txt");
-            else new messageWindow().ShowMessage(this, appName, "'ReadMe.txt' was not found.", "OK", null, true);
+            else MessageBox.Show("'ReadMe.txt' was not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
 
@@ -1614,7 +1621,7 @@ namespace MemcardRex
             //Check if temp buffer contains anything
             if (tempBuffer == null)
             {
-                new messageWindow().ShowMessage(this, appName, "Temp buffer is empty. Save can't be compared.", "OK", null, true);
+               MessageBox.Show("Temp buffer is empty. Save can't be compared.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1644,7 +1651,7 @@ namespace MemcardRex
                         //Check if selected saves have the same size
                         if (fetchedData.Length != tempBuffer.Length)
                         {
-                            new messageWindow().ShowMessage(this, appName, "Save file size mismatch. Saves can't be compared.", "OK", null, true);
+                            MessageBox.Show("Save file size mismatch. Saves can't be compared.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
 
@@ -1657,7 +1664,7 @@ namespace MemcardRex
                     case 3:
                     case 5:
                     case 6:
-                        new messageWindow().ShowMessage(this, appName, "The selected slot is linked. Select the initial save slot to proceed.", "OK", null, true);
+                        MessageBox.Show("The selected slot is linked. Select the initial save slot to proceed.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
                 }
             }
@@ -1820,7 +1827,7 @@ namespace MemcardRex
         private void mainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Cleanly close the application
-            exitApplication();
+            exitApplication(e);
         }
 
         private void deleteSaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2174,7 +2181,9 @@ namespace MemcardRex
         private void formatHardwareCard(int hardDevice)
         {
             //Show warning message
-            if (new messageWindow().ShowMessage(this, appName, "Formatting will delete all saves on the Memory Card.\nDo you want to proceed with this operation?", "No", "Yes", true) == "No") return;
+            DialogResult result = MessageBox.Show("Formatting will delete all saves on the Memory Card.\nDo you want to proceed with this operation?", 
+                                    appName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes) return;
 
             int frameNumber = 1024;
             ps1card blankCard = new ps1card();

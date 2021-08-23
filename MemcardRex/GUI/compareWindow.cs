@@ -41,7 +41,7 @@ namespace MemcardRex
             //Check if the list contains any items
             if (compareListView.Items.Count < 1)
             {
-                new messageWindow().ShowMessage(hostWindow, appName, "Compared saves are identical.", "OK", null, true);
+                MessageBox.Show("Compared saves are identical.", appName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 

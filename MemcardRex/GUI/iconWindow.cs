@@ -267,8 +267,8 @@ namespace MemcardRex
                 OpenedBitmap = new Bitmap(openDlg.FileName);
             }
             catch (Exception e)
-            {
-                new messageWindow().ShowMessage(this, "Error", e.Message, "OK", null, true);
+            {;
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 OpenedBitmap.Dispose();
                 return;
             }
@@ -276,7 +276,7 @@ namespace MemcardRex
             //Check if the image is 16x16 pixels
             if (OpenedBitmap.Width != 16 || OpenedBitmap.Height != 16)
             {
-                new messageWindow().ShowMessage(this, "Warning", "Selected image is not a 16x16 pixel image.", "OK", null, true);
+                MessageBox.Show("Selected image is not a 16x16 pixel image.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 OpenedBitmap.Dispose();
                 return;
             }
@@ -294,7 +294,7 @@ namespace MemcardRex
             //Check if the palette has more than 16 colors
             if (foundColors.Count > 16)
             {
-                new messageWindow().ShowMessage(this, "Warning", "Selected image contains more then 16 colors.", "OK", null, true);
+                MessageBox.Show("Selected image contains more than 16 colors.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 OpenedBitmap.Dispose();
                 return;
             }

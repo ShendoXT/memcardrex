@@ -123,12 +123,6 @@
       <DependentUpon>mainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Hardware\MemCARDduino.cs" />
-    <Compile Include="GUI\messageWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\messageWindow.designer.cs">
-      <DependentUpon>messageWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUI\pluginsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -178,9 +172,6 @@
     <EmbeddedResource Include="GUI\mainWindow.resx">
       <DependentUpon>mainWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\messageWindow.resx">
-      <DependentUpon>messageWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\pluginsWindow.resx">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
