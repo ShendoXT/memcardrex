@@ -48,7 +48,6 @@ namespace MemcardRex
             infoLabel.Text = additionalInfo;
 
             //Resize dialog according to the quantity of text
-            this.Size = new Size(this.Size.Width, 132 + infoLabel.Height);
 
             //Display a dialog
             this.ShowDialog(owner);
@@ -63,7 +62,7 @@ namespace MemcardRex
         private void AboutWindow_Paint(object sender, PaintEventArgs e)
         {
             //Draw gray rectangle
-            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(80,80,80)), 0, 0, this.Width, 52);
+            //e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(80,80,80)), 0, 0, this.Width, 52);
         }
     }
 }

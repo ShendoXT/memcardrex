@@ -61,6 +61,9 @@ namespace MemcardRex
         //Currently clicked plugin (0 - clicked flag, 1 - plugin index)
         int[] clickedPlugin = new int[]{0,0};
 
+        public double xScale = 1.0;
+        public double yScale = 1.0;
+
         //Struct holding all program related settings (public because settings dialog has to access it)
         public struct programSettings
         {
@@ -98,6 +101,10 @@ namespace MemcardRex
         public mainWindow()
         {
             InitializeComponent();
+            Graphics g = CreateGraphics();
+            xScale = g.DpiX / 96.0;
+            yScale = g.DpiY / 96.0;
+            g.Dispose();
         }
 
         //Apply glass effect on the client area
@@ -1052,13 +1059,13 @@ namespace MemcardRex
         {
             //Add a new ImageList to hold the card icons
             iconList.Add(new ImageList());
-            iconList[iconList.Count - 1].ImageSize = new Size(48, 16);
+            iconList[iconList.Count - 1].ImageSize = new Size((int)(xScale * 48), (int)(yScale * 16));
             iconList[iconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
             iconList[iconList.Count - 1].TransparentColor = Color.Magenta;
 
             cardList.Add(new ListView());
             cardList[cardList.Count - 1].Location = new Point(0, 3);
-            cardList[cardList.Count - 1].Size = new Size(492, 286);
+            cardList[cardList.Count - 1].Dock = DockStyle.Fill;
             cardList[cardList.Count - 1].SmallImageList = iconList[iconList.Count - 1];
             cardList[cardList.Count - 1].ContextMenuStrip = mainContextMenu;
             cardList[cardList.Count - 1].FullRowSelect = true;
@@ -1068,9 +1075,9 @@ namespace MemcardRex
             cardList[cardList.Count - 1].Columns.Add("Icon, region and title");
             cardList[cardList.Count - 1].Columns.Add("Product code");
             cardList[cardList.Count - 1].Columns.Add("Identifier");
-            cardList[cardList.Count - 1].Columns[0].Width = 315;
-            cardList[cardList.Count - 1].Columns[1].Width = 87;
-            cardList[cardList.Count - 1].Columns[2].Width = 84;
+            cardList[cardList.Count - 1].Columns[0].Width = (int)(xScale * 322);
+            cardList[cardList.Count - 1].Columns[1].Width = (int)(xScale * 87);
+            cardList[cardList.Count - 1].Columns[2].Width = (int)(xScale * 87);
             cardList[cardList.Count - 1].View = View.Details;
             cardList[cardList.Count - 1].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
             cardList[cardList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);

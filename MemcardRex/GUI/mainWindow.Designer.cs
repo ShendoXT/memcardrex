@@ -181,7 +181,6 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.newcard;
-            this.newToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
@@ -768,10 +767,11 @@
             // mainTabControl
             // 
             this.mainTabControl.AllowDrop = true;
-            this.mainTabControl.Location = new System.Drawing.Point(4, 52);
+            this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainTabControl.Location = new System.Drawing.Point(0, 49);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(502, 316);
+            this.mainTabControl.Size = new System.Drawing.Size(509, 329);
             this.mainTabControl.TabIndex = 2;
             this.mainTabControl.SelectedIndexChanged += new System.EventHandler(this.mainTabControl_SelectedIndexChanged);
             this.mainTabControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.mainTabControl_DragDrop);
@@ -782,7 +782,8 @@
             // 
             this.mainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolString});
-            this.mainStatusStrip.Location = new System.Drawing.Point(0, 371);
+            this.mainStatusStrip.Location = new System.Drawing.Point(0, 356);
+            this.mainStatusStrip.Margin = new System.Windows.Forms.Padding(0, 30, 0, 30);
             this.mainStatusStrip.Name = "mainStatusStrip";
             this.mainStatusStrip.Size = new System.Drawing.Size(509, 22);
             this.mainStatusStrip.SizingGrip = false;
@@ -966,8 +967,9 @@
             // 
             // mainWindow
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(509, 393);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(509, 378);
             this.Controls.Add(this.mainStatusStrip);
             this.Controls.Add(this.mainTabControl);
             this.Controls.Add(this.mainToolbar);
