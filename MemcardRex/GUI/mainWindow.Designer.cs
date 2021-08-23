@@ -67,18 +67,24 @@
             this.memCARDuinoMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dexDriveMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
             this.formatMemoryCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem23 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -126,12 +132,6 @@
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             dexDriveMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolbar.SuspendLayout();
@@ -448,6 +448,18 @@
             this.pS1CardLinkMenuRead.Text = "PS1CardLink";
             this.pS1CardLinkMenuRead.Click += new System.EventHandler(this.pS1CardLinkMenuRead_Click);
             // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuRead
+            // 
+            this.pS3MemoryCardAdaptorMenuRead.Name = "pS3MemoryCardAdaptorMenuRead";
+            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuRead.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuRead.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuRead_Click);
+            // 
             // writeToToolStripMenuItem
             // 
             this.writeToToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -493,6 +505,18 @@
             this.pS1CardLinkMenuWrite.Text = "PS1CardLink";
             this.pS1CardLinkMenuWrite.Click += new System.EventHandler(this.pS1CardLinkMenuWrite_Click);
             // 
+            // toolStripMenuItem22
+            // 
+            this.toolStripMenuItem22.Name = "toolStripMenuItem22";
+            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuWrite
+            // 
+            this.pS3MemoryCardAdaptorMenuWrite.Name = "pS3MemoryCardAdaptorMenuWrite";
+            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuWrite.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuWrite.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuWrite_Click);
+            // 
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
@@ -535,6 +559,18 @@
             this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkMenuFormat.Text = "PS1CardLink";
             this.pS1CardLinkMenuFormat.Click += new System.EventHandler(this.pS1CardLinkMenuFormat_Click);
+            // 
+            // toolStripMenuItem24
+            // 
+            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuFormat
+            // 
+            this.pS3MemoryCardAdaptorMenuFormat.Name = "pS3MemoryCardAdaptorMenuFormat";
+            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuFormat.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuFormat.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuFormat_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -927,42 +963,6 @@
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
-            // 
-            // toolStripMenuItem16
-            // 
-            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuRead
-            // 
-            this.pS3MemoryCardAdaptorMenuRead.Name = "pS3MemoryCardAdaptorMenuRead";
-            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuRead.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuRead.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuRead_Click);
-            // 
-            // toolStripMenuItem22
-            // 
-            this.toolStripMenuItem22.Name = "toolStripMenuItem22";
-            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuWrite
-            // 
-            this.pS3MemoryCardAdaptorMenuWrite.Name = "pS3MemoryCardAdaptorMenuWrite";
-            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuWrite.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuWrite.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuWrite_Click);
-            // 
-            // toolStripMenuItem24
-            // 
-            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
-            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuFormat
-            // 
-            this.pS3MemoryCardAdaptorMenuFormat.Name = "pS3MemoryCardAdaptorMenuFormat";
-            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuFormat.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuFormat.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuFormat_Click);
             // 
             // mainWindow
             // 

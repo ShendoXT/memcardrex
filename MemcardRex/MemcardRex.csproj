@@ -14,8 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <StartupObject>MemcardRex.Program</StartupObject>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Resources\memcardrex.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -316,6 +315,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Additional\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\memcardrex.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
