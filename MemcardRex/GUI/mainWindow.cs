@@ -441,7 +441,7 @@ namespace MemcardRex
                 byte memoryCardType = 0;
                 SaveFileDialog saveFileDlg = new SaveFileDialog();
                 saveFileDlg.Title = "Save Memory Card";
-                saveFileDlg.Filter = "ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm";
+                saveFileDlg.Filter = "ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|PSP/Vita Memory Card (*.VMP)|*.VMP|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm";
 
                 //If user selected a card save to it
                 if (saveFileDlg.ShowDialog() == DialogResult.OK)
@@ -453,11 +453,15 @@ namespace MemcardRex
                             memoryCardType = 1;
                             break;
 
-                        case 2:         //GME Memory Card
+                        case 2:         //VMP Memory Card
+                            memoryCardType = 4;
+                            break;
+
+                        case 3:         //GME Memory Card
                             memoryCardType = 2;
                             break;
 
-                        case 5:         //VGS Memory Card
+                        case 6:         //VGS Memory Card
                             memoryCardType = 3;
                             break;
                     }
@@ -864,7 +868,9 @@ namespace MemcardRex
                         byte singleSaveType = 0;
 
                         //Set output filename
-                        string outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] + PScard[listIndex].saveIdentifier[slotNumber];
+                        byte[] identifierASCII = Encoding.ASCII.GetBytes(PScard[listIndex].saveIdentifier[slotNumber]);
+                        string outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] +
+                            BitConverter.ToString(identifierASCII).Replace("-","");
                         
                         //Filter illegal characters from the name
                         foreach (char illegalChar in Path.GetInvalidPathChars())
@@ -875,7 +881,7 @@ namespace MemcardRex
                         SaveFileDialog saveFileDlg = new SaveFileDialog();
                         saveFileDlg.Title = "Export save";
                         saveFileDlg.FileName = outputFilename;
-                        saveFileDlg.Filter = "PSXGameEdit single save (*.mcs)|*.mcs|XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*";
+                        saveFileDlg.Filter = "PSXGameEdit single save (*.mcs)|*.mcs|PS3 signed save (*.PSV)|*.PSV|XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*";
 
                         //If user selected a card save to it
                         if (saveFileDlg.ShowDialog() == DialogResult.OK)
@@ -888,15 +894,18 @@ namespace MemcardRex
                                     break;
 
                                 case 1:         //MCS single save
-                                case 3:         //PS1 (Memory Juggler)
+                                case 4:         //PS1 (Memory Juggler)
                                     singleSaveType = 2;
                                     break;
 
-                                case 6:         //RAW single save
+                                case 7:         //RAW single save
                                     singleSaveType = 3;
 
                                     //Omit the extension if the user left it
                                     saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
+                                    break;
+                                case 2:         //PS3 signed save
+                                    singleSaveType = 4;
                                     break;
                             }
                             PScard[listIndex].saveSingleSave(saveFileDlg.FileName, slotNumber, singleSaveType);

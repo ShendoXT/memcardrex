@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace MemcardRex
 {
@@ -65,8 +66,96 @@ namespace MemcardRex
         //Type of the save (0 - formatted, 1 - initial, 2 - middle link, 3 - end link, 4 - deleted initial, 5 - deleted middle link, 6 - deleted end link, 7 - corrupted)
         public byte[] saveType = new byte[15];
 
+        readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
+        readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
+
         //Shift-JIS converter
         charConverter SJISC = new charConverter();
+
+        //Copy the contents of one buffer to another, overwriting it
+        private void WriteBuffer(byte[] source, byte[] destination, int sourceStart, int destStart, int length)
+        {
+            for (int i = 0; i < length; i++)
+            {
+                destination[i + destStart] = source[i + sourceStart];
+            }
+        }
+
+        //Overwrite the contents of one buffer with byte
+        private void FillBuffer(byte[] destination, int start, int fill)
+        {
+            for (int i = 0; i < destination.Length - start; i++)
+            {
+                destination[i + start] = (byte)fill;
+            }
+        }
+
+        //XORs a buffer with a constant
+        private void XorWithByte(byte[] buffer, byte xorByte)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = (byte)(buffer[i] ^ xorByte);
+            }
+        }
+
+        //XORs one buffer with another
+        private void XorWithIv(byte[] destBuffer, byte[] iv)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                destBuffer[i] = (byte)(destBuffer[i] ^ iv[i]);
+            }
+        }
+
+        //Encrypts a buffer using AES ECB 128
+        private byte[] AesEcbEncrypt(byte[] toEncrypt, byte[] key, byte[] iv)
+        {
+            Aes aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Padding = PaddingMode.Zeros;
+            aes.Mode = CipherMode.ECB;
+
+            using (ICryptoTransform encryptor = aes.CreateEncryptor(saveKey, saveIv))
+            {
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (BinaryWriter bnEncrypt = new BinaryWriter(csEncrypt))
+                        {
+                            bnEncrypt.Write(toEncrypt);
+                        }
+                        return msEncrypt.ToArray();
+                    }
+                }
+            }
+        }
+
+        //Decrypts a buffer using AES ECB 128
+        private byte[] AesEcbDecrypt(byte[] toDecrypt, byte[] key, byte[] iv)
+        {
+            Aes aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Padding = PaddingMode.Zeros;
+            aes.Mode = CipherMode.ECB;
+
+            using (ICryptoTransform decryptor = aes.CreateDecryptor(saveKey, saveIv))
+            {
+                using (MemoryStream msDecrypt = new MemoryStream(toDecrypt))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (BinaryReader bnDecrypt = new BinaryReader(csDecrypt))
+                        {
+                            return bnDecrypt.ReadBytes(toDecrypt.Length);
+                        }
+                    }
+                }
+            }
+        }
 
         //Load Data from raw Memory Card
         private void loadDataFromRawCard()
@@ -179,6 +268,122 @@ namespace MemcardRex
                     gmeHeader[byteCount + 64 + (256*slotNumber)] = tempByteArray[byteCount];
             }
 
+        }
+
+        //Create signed VMP header
+        private byte[] MakeVmpHeader(byte[] rawMemoryCard)
+        {
+            byte[] vmpHeader = new byte[0x80];
+
+            vmpHeader[1] = 0x50;
+            vmpHeader[2] = 0x4D;
+            vmpHeader[3] = 0x56;
+            vmpHeader[4] = 0x80; //the length of this header
+
+            byte[] buffer = new byte[0x14];
+            byte[] aesBuffer = new byte[0x10];
+            byte[] salt = new byte[0x40];
+            byte[] temp = new byte[0x14];
+            byte[] saltSeed = new byte[0x14];
+            byte[] hash1 = new byte[0x200C0];
+            byte[] hash2 = new byte[0x54];
+
+
+            WriteBuffer(saltSeed, buffer, 0, 0, 0x14);
+            WriteBuffer(saltSeed, vmpHeader, 0, 0xC, 0x14);
+            WriteBuffer(buffer, aesBuffer, 0, 0, 0x10);
+            WriteBuffer(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0, 0, 0x10);
+            WriteBuffer(buffer, salt, 0, 0, 0x10);
+            WriteBuffer(saltSeed, buffer, 0, 0, 0x10);
+            WriteBuffer(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0, 0, 0x14);
+
+            WriteBuffer(buffer, salt, 0, 0x10, 0x10);
+            XorWithIv(salt, saveIv);
+            FillBuffer(buffer, 0x14, 0xFF);
+            WriteBuffer(saltSeed, buffer, 0x10, 0, 0x4);
+            WriteBuffer(salt, temp, 0x10, 0, 0x14);
+            XorWithIv(temp, buffer);
+            WriteBuffer(temp, salt, 0, 0x10, 0x10);
+            WriteBuffer(salt, temp, 0, 0, 0x14);
+            FillBuffer(salt, 0x14, 0);
+            WriteBuffer(temp, salt, 0, 0, 0x14);
+            XorWithByte(salt, 0x36);
+
+            SHA1 sha1 = SHA1.Create();
+            WriteBuffer(salt, hash1, 0, 0, 0x40);
+            WriteBuffer(vmpHeader, hash1, 0, 0x40, 0x80);
+            WriteBuffer(rawMemoryCard, hash1, 0, 0xC0, 0x20000);
+            WriteBuffer(sha1.ComputeHash(hash1), buffer, 0, 0, 0x14);
+            XorWithByte(salt, 0x6A);
+            WriteBuffer(salt, hash2, 0, 0, 0x40);
+            WriteBuffer(buffer, hash2, 0, 0x40, 0x14);
+            byte[] hashResult = sha1.ComputeHash(hash2);
+
+            WriteBuffer(saltSeed, vmpHeader, 0, 0xC, 0x14);
+            WriteBuffer(hashResult, vmpHeader, 0, 0x20, 0x14);
+            return vmpHeader;
+        }
+
+        //Generate signed PSV save
+        private byte[] MakePsvSave(byte[] save)
+        {
+            byte[] psvSave = new byte[save.Length + 4];
+
+            psvSave[1] = 0x56;
+            psvSave[2] = 0x53;
+            psvSave[3] = 0x50;
+            psvSave[0x38] = 0x14;
+            psvSave[0x3C] = 1;
+            psvSave[0x44] = 0x84;
+            psvSave[0x49] = 2;
+            psvSave[0x5D] = 0x20;
+            psvSave[0x60] = 3;
+            psvSave[0x61] = 0x90;
+
+            WriteBuffer(save, psvSave, 0x0A, 0x64, 0x20);
+            WriteBuffer(BitConverter.GetBytes(save.Length - 0x80), psvSave, 0, 0x40, 4);
+            WriteBuffer(save, psvSave, 0x80, 0x84, save.Length - 0x80);
+
+            byte[] buffer = new byte[0x14];
+            byte[] aesBuffer = new byte[0x10];
+            byte[] salt = new byte[0x40];
+            byte[] temp = new byte[0x14];
+            byte[] saltSeed = new byte[0x14];
+            byte[] hash1 = new byte[psvSave.Length + 0x40];
+            byte[] hash2 = new byte[0x54];
+
+            WriteBuffer(saltSeed, buffer, 0, 0, 0x14);
+            WriteBuffer(saltSeed, psvSave, 0, 0xC, 0x14);
+            WriteBuffer(buffer, aesBuffer, 0, 0, 0x10);
+            WriteBuffer(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0, 0, 0x10);
+            WriteBuffer(buffer, salt, 0, 0, 0x10);
+            WriteBuffer(saltSeed, buffer, 0, 0, 0x10);
+            WriteBuffer(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0, 0, 0x14);
+
+            WriteBuffer(buffer, salt, 0, 0x10, 0x10);
+            XorWithIv(salt, saveIv);
+            FillBuffer(buffer, 0x14, 0xFF);
+            WriteBuffer(saltSeed, buffer, 0x10, 0, 0x4);
+            WriteBuffer(salt, temp, 0x10, 0, 0x14);
+            XorWithIv(temp, buffer);
+            WriteBuffer(temp, salt, 0, 0x10, 0x10);
+            WriteBuffer(salt, temp, 0, 0, 0x14);
+            FillBuffer(salt, 0x14, 0);
+            WriteBuffer(temp, salt, 0, 0, 0x14);
+            XorWithByte(salt, 0x36);
+
+            SHA1 sha1 = SHA1.Create();
+            WriteBuffer(salt, hash1, 0, 0, 0x40);
+            WriteBuffer(psvSave, hash1, 0, 0x40, psvSave.Length);
+            WriteBuffer(sha1.ComputeHash(hash1), buffer, 0, 0, 0x14);
+            XorWithByte(salt, 0x6A);
+            WriteBuffer(salt, hash2, 0, 0, 0x40);
+            WriteBuffer(buffer, hash2, 0, 0x40, 0x14);
+            byte[] hashResult = sha1.ComputeHash(hash2);
+
+            WriteBuffer(saltSeed, psvSave, 0, 0x8, 0x14);
+            WriteBuffer(hashResult, psvSave, 0, 0x1C, 0x14);
+            return psvSave;
         }
 
         //Recreate VGS header
@@ -811,6 +1016,9 @@ namespace MemcardRex
                 case 3:         //RAW single save
                     binWriter.Write(outputData, 128, outputData.Length - 128);
                     break;
+                case 4:         //PS3 signed save
+                    binWriter.Write(MakePsvSave(outputData));
+                    break;
             }
 
             //File is sucesfully saved, close the stream
@@ -942,6 +1150,11 @@ namespace MemcardRex
 
                 case 3:         //VGS Memory Card
                     binWriter.Write(getVGSheader());
+                    binWriter.Write(rawMemoryCard);
+                    break;
+
+                case 4:         //VMP Memory Card
+                    binWriter.Write(MakeVmpHeader(rawMemoryCard));
                     binWriter.Write(rawMemoryCard);
                     break;
             }
