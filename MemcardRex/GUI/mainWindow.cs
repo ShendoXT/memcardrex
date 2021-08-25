@@ -342,7 +342,7 @@ namespace MemcardRex
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
             openFileDlg.Title = "Open Memory Card";
-            openFileDlg.Filter = "All supported|*.mcr;*.gme;*.bin;*.mcd;*.mem;*.vgs;*.mc;*.ddf;*.ps;*.psm;*.mci;*.VMP;*.VM1;*.srm|ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PSP virtual Memory Card (*.VMP)|*.VMP|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm|All files (*.*)|*.*";
+            openFileDlg.Filter = "All supported|*.mcr;*.vmp;*.gme;*.bin;*.mcd;*.mem;*.vgs;*.mc;*.ddf;*.ps;*.psm;*.mci;*.vm1;*.srm|ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|PSP/Vita Memory Card (*.VMP)|*.VMP|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm|All files (*.*)|*.*";
             openFileDlg.Multiselect = true;
 
             //If user selected a card open it
@@ -944,9 +944,9 @@ namespace MemcardRex
                 {
                     OpenFileDialog openFileDlg = new OpenFileDialog();
                     openFileDlg.Title = "Import save";
-                    openFileDlg.Filter = "All supported|*.mcs;*.psx;*.ps1;*.mcb;*.mcx;*.pda;B???????????*;*.psv|PSXGameEdit single save (*.mcs)|*.mcs|XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*|PS3 virtual save (*.psv)|*.psv";
+                    openFileDlg.Filter = "All supported|*.mcs;*.psv;*.psx;*.ps1;*.mcb;*.mcx;*.pda;B???????????*|PSXGameEdit single save (*.mcs)|*.mcs|PS3 signed save (*.PSV)|*.PSV| XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*";
 
-                    //If user selected a card save to it
+                    //If user selected a save load it
                     if (openFileDlg.ShowDialog() == DialogResult.OK)
                     {
                         if (PScard[listIndex].openSingleSave(openFileDlg.FileName, slotNumber, out requiredSlots))

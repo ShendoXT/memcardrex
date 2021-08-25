@@ -69,9 +69,6 @@ namespace MemcardRex
         readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
         readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
 
-        //Shift-JIS converter
-        charConverter SJISC = new charConverter();
-
         //Copy the contents of one buffer to another, overwriting it
         private void WriteBuffer(byte[] source, byte[] destination, int sourceStart, int destStart, int length)
         {
@@ -289,38 +286,38 @@ namespace MemcardRex
             byte[] hash2 = new byte[0x54];
 
 
-            WriteBuffer(saltSeed, buffer, 0, 0, 0x14);
-            WriteBuffer(saltSeed, vmpHeader, 0, 0xC, 0x14);
-            WriteBuffer(buffer, aesBuffer, 0, 0, 0x10);
-            WriteBuffer(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0, 0, 0x10);
-            WriteBuffer(buffer, salt, 0, 0, 0x10);
-            WriteBuffer(saltSeed, buffer, 0, 0, 0x10);
-            WriteBuffer(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0, 0, 0x14);
+            Array.Copy(saltSeed, buffer, 0x14);
+            Array.Copy(saltSeed, 0, vmpHeader, 0xC, 0x14);
+            Array.Copy(buffer, aesBuffer, 0x10);
+            Array.Copy(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0x10);
+            Array.Copy(buffer, salt, 0x10);
+            Array.Copy(saltSeed, buffer, 0x10);
+            Array.Copy(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0x14);
 
-            WriteBuffer(buffer, salt, 0, 0x10, 0x10);
+            Array.Copy(buffer, 0, salt, 0x10, 0x10);
             XorWithIv(salt, saveIv);
             FillBuffer(buffer, 0x14, 0xFF);
-            WriteBuffer(saltSeed, buffer, 0x10, 0, 0x4);
-            WriteBuffer(salt, temp, 0x10, 0, 0x14);
+            Array.Copy(saltSeed, 0x10, buffer, 0, 0x4);
+            Array.Copy(salt, 0x10, temp, 0, 0x14);
             XorWithIv(temp, buffer);
-            WriteBuffer(temp, salt, 0, 0x10, 0x10);
-            WriteBuffer(salt, temp, 0, 0, 0x14);
+            Array.Copy(temp, 0, salt, 0x10, 0x10);
+            Array.Copy(salt, temp, 0x14);
             FillBuffer(salt, 0x14, 0);
-            WriteBuffer(temp, salt, 0, 0, 0x14);
+            Array.Copy(temp, salt, 0x14);
             XorWithByte(salt, 0x36);
 
             SHA1 sha1 = SHA1.Create();
-            WriteBuffer(salt, hash1, 0, 0, 0x40);
-            WriteBuffer(vmpHeader, hash1, 0, 0x40, 0x80);
-            WriteBuffer(rawMemoryCard, hash1, 0, 0xC0, 0x20000);
-            WriteBuffer(sha1.ComputeHash(hash1), buffer, 0, 0, 0x14);
+            Array.Copy(salt, hash1, 0x40);
+            Array.Copy(vmpHeader, 0, hash1, 0x40, 0x80);
+            Array.Copy(rawMemoryCard, 0, hash1, 0xC0, 0x20000);
+            Array.Copy(sha1.ComputeHash(hash1), buffer, 0x14);
             XorWithByte(salt, 0x6A);
-            WriteBuffer(salt, hash2, 0, 0, 0x40);
-            WriteBuffer(buffer, hash2, 0, 0x40, 0x14);
+            Array.Copy(salt, hash2, 0x40);
+            Array.Copy(buffer, 0, hash2, 0x40, 0x14);
             byte[] hashResult = sha1.ComputeHash(hash2);
 
-            WriteBuffer(saltSeed, vmpHeader, 0, 0xC, 0x14);
-            WriteBuffer(hashResult, vmpHeader, 0, 0x20, 0x14);
+            Array.Copy(saltSeed, 0, vmpHeader, 0xC, 0x14);
+            Array.Copy(hashResult, 0, vmpHeader, 0x20, 0x14);
             return vmpHeader;
         }
 
@@ -340,9 +337,9 @@ namespace MemcardRex
             psvSave[0x60] = 3;
             psvSave[0x61] = 0x90;
 
-            WriteBuffer(save, psvSave, 0x0A, 0x64, 0x20);
-            WriteBuffer(BitConverter.GetBytes(save.Length - 0x80), psvSave, 0, 0x40, 4);
-            WriteBuffer(save, psvSave, 0x80, 0x84, save.Length - 0x80);
+            Array.Copy(save, 0x0A, psvSave, 0x64, 0x20);
+            Array.Copy(BitConverter.GetBytes(save.Length - 0x80), 0, psvSave, 0x40, 4);
+            Array.Copy(save, 0x80, psvSave, 0x84, save.Length - 0x80);
 
             byte[] buffer = new byte[0x14];
             byte[] aesBuffer = new byte[0x10];
@@ -352,37 +349,37 @@ namespace MemcardRex
             byte[] hash1 = new byte[psvSave.Length + 0x40];
             byte[] hash2 = new byte[0x54];
 
-            WriteBuffer(saltSeed, buffer, 0, 0, 0x14);
-            WriteBuffer(saltSeed, psvSave, 0, 0xC, 0x14);
-            WriteBuffer(buffer, aesBuffer, 0, 0, 0x10);
-            WriteBuffer(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0, 0, 0x10);
-            WriteBuffer(buffer, salt, 0, 0, 0x10);
-            WriteBuffer(saltSeed, buffer, 0, 0, 0x10);
-            WriteBuffer(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0, 0, 0x14);
+            Array.Copy(saltSeed, buffer, 0x14);
+            Array.Copy(saltSeed, 0, psvSave, 0xC, 0x14);
+            Array.Copy(buffer, aesBuffer, 0x10);
+            Array.Copy(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0x10);
+            Array.Copy(buffer, salt, 0x10);
+            Array.Copy(saltSeed, buffer, 0x10);
+            Array.Copy(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0x14);
 
-            WriteBuffer(buffer, salt, 0, 0x10, 0x10);
+            Array.Copy(buffer, 0, salt, 0x10, 0x10);
             XorWithIv(salt, saveIv);
             FillBuffer(buffer, 0x14, 0xFF);
-            WriteBuffer(saltSeed, buffer, 0x10, 0, 0x4);
-            WriteBuffer(salt, temp, 0x10, 0, 0x14);
+            Array.Copy(saltSeed, 0x10, buffer, 0, 0x4);
+            Array.Copy(salt, 0x10, temp, 0, 0x14);
             XorWithIv(temp, buffer);
-            WriteBuffer(temp, salt, 0, 0x10, 0x10);
-            WriteBuffer(salt, temp, 0, 0, 0x14);
+            Array.Copy(temp, 0, salt, 0x10, 0x10);
+            Array.Copy(salt, temp, 0x14);
             FillBuffer(salt, 0x14, 0);
-            WriteBuffer(temp, salt, 0, 0, 0x14);
+            Array.Copy(temp, salt, 0x14);
             XorWithByte(salt, 0x36);
 
             SHA1 sha1 = SHA1.Create();
-            WriteBuffer(salt, hash1, 0, 0, 0x40);
-            WriteBuffer(psvSave, hash1, 0, 0x40, psvSave.Length);
-            WriteBuffer(sha1.ComputeHash(hash1), buffer, 0, 0, 0x14);
+            Array.Copy(salt, hash1, 0x40);
+            Array.Copy(psvSave, 0, hash1, 0x40, psvSave.Length);
+            Array.Copy(sha1.ComputeHash(hash1), buffer, 0x14);
             XorWithByte(salt, 0x6A);
-            WriteBuffer(salt, hash2, 0, 0, 0x40);
-            WriteBuffer(buffer, hash2, 0, 0x40, 0x14);
+            Array.Copy(salt, hash2, 0x40);
+            Array.Copy(buffer, 0, hash2, 0x40, 0x14);
             byte[] hashResult = sha1.ComputeHash(hash2);
 
-            WriteBuffer(saltSeed, psvSave, 0, 0x8, 0x14);
-            WriteBuffer(hashResult, psvSave, 0, 0x1C, 0x14);
+            Array.Copy(saltSeed, 0, psvSave, 0x8, 0x14);
+            Array.Copy(hashResult, 0, psvSave, 0x1C, 0x14);
             return psvSave;
         }
 
@@ -487,17 +484,21 @@ namespace MemcardRex
                 tempByteArray = new byte[64];
                 for (int currentByte = 0; currentByte < 64; currentByte++)
                 {
-                    tempByteArray[currentByte] = saveData[slotNumber, currentByte + 4];
+                    byte b = saveData[slotNumber, currentByte + 4];
+                    if (currentByte % 2 == 0 && b == 0)
+                    {
+                        Array.Resize(ref tempByteArray, currentByte);
+                        break;
+                    }
+                    tempByteArray[currentByte] = b;
                 }
 
-                //Convert save name from Shift-JIS to UTF-16 as ASCII equivalent
-                saveName[slotNumber,0] = SJISC.convertSJIStoASCII(tempByteArray);
-
-                //Convert save name from Shift-JIS to UTF-16
-                saveName[slotNumber,1] = Encoding.GetEncoding(932).GetString(tempByteArray);
+                //Convert save name from Shift-JIS to UTF-16 and normalize full-width characters
+                saveName[slotNumber, 0] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
+                saveName[slotNumber, 1] = saveName[slotNumber, 0];
 
                 //Check if the title converted properly, get ASCII if it didn't
-                if (saveName[slotNumber, 0] == null) saveName[slotNumber, 0] = Encoding.Default.GetString(tempByteArray,0,32);
+                if (saveName[slotNumber, 0] == null) saveName[slotNumber, 0] = Encoding.Default.GetString(tempByteArray, 0, 32);
             }
         }
 
