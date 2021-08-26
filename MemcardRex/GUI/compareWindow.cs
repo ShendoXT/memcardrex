@@ -22,6 +22,10 @@ namespace MemcardRex
             //Set window title
             this.Text = "Compare saves";
 
+            compareListView.Columns[0].Width = (int)(compareListView.Columns[0].Width * hostWindow.xScale);
+            compareListView.Columns[1].Width = (int)(compareListView.Columns[1].Width * hostWindow.xScale);
+            compareListView.Columns[2].Width = (int)(compareListView.Columns[2].Width * hostWindow.xScale);
+
             //Set save titles
             save1Label.Text = "Save 1: " + save1Title;
             save2Label.Text = "Save 2: " + save2Title;

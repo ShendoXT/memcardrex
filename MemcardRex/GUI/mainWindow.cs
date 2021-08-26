@@ -101,10 +101,11 @@ namespace MemcardRex
         public mainWindow()
         {
             InitializeComponent();
-            Graphics g = CreateGraphics();
-            xScale = g.DpiX / 96.0;
-            yScale = g.DpiY / 96.0;
-            g.Dispose();
+            using (Graphics graphics = CreateGraphics())
+            {
+                xScale = graphics.DpiX / 96.0;
+                yScale = graphics.DpiY / 96.0;
+            }
         }
 
         //Apply glass effect on the client area
@@ -122,7 +123,7 @@ namespace MemcardRex
                 //Hide status strip
                 this.mainStatusStrip.Visible = false;
 
-                windowMargins.bottom = 22;
+                windowMargins.bottom = (int)(xScale * 22);
                 windowRectangle = new Rectangle(0, this.ClientSize.Height - windowMargins.bottom, this.ClientSize.Width, windowMargins.bottom + 5);
                 glassSupport.DwmExtendFrameIntoClientArea(this.Handle, ref windowMargins);
 
@@ -1251,9 +1252,9 @@ namespace MemcardRex
         {
             //Show the location of the active card in the tool strip (if there are any cards)
             if (PScard.Count > 0)
-                toolString.Text = PScard[mainTabControl.SelectedIndex].cardLocation;
+                toolString.Text = PScard[mainTabControl.SelectedIndex].cardLocation + " ";
             else
-                toolString.Text = null;
+                toolString.Text = " ";
 
             //If glass is enabled repaint the form
             if(windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)this.Refresh();

@@ -146,10 +146,9 @@
             // 
             // iconRender
             // 
-            this.iconRender.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.iconRender.Location = new System.Drawing.Point(4, 28);
+            this.iconRender.Location = new System.Drawing.Point(4, 29);
             this.iconRender.Name = "iconRender";
-            this.iconRender.Size = new System.Drawing.Size(181, 181);
+            this.iconRender.Size = new System.Drawing.Size(179, 179);
             this.iconRender.TabIndex = 9;
             this.iconRender.TabStop = false;
             this.iconRender.MouseDown += new System.Windows.Forms.MouseEventHandler(this.iconRender_MouseDownMove);
@@ -158,10 +157,9 @@
             // 
             // paletteRender
             // 
-            this.paletteRender.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.paletteRender.Location = new System.Drawing.Point(60, 213);
             this.paletteRender.Name = "paletteRender";
-            this.paletteRender.Size = new System.Drawing.Size(125, 35);
+            this.paletteRender.Size = new System.Drawing.Size(123, 33);
             this.paletteRender.TabIndex = 10;
             this.paletteRender.TabStop = false;
             this.paletteRender.DoubleClick += new System.EventHandler(this.paletteRender_DoubleClick);
@@ -169,10 +167,10 @@
             // 
             // colorRender
             // 
-            this.colorRender.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.colorRender.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.colorRender.Location = new System.Drawing.Point(4, 213);
             this.colorRender.Name = "colorRender";
-            this.colorRender.Size = new System.Drawing.Size(26, 35);
+            this.colorRender.Size = new System.Drawing.Size(26, 33);
             this.colorRender.TabIndex = 11;
             this.colorRender.TabStop = false;
             // 
@@ -196,10 +194,10 @@
             // 
             // colorRender2
             // 
-            this.colorRender2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.colorRender2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.colorRender2.Location = new System.Drawing.Point(32, 213);
             this.colorRender2.Name = "colorRender2";
-            this.colorRender2.Size = new System.Drawing.Size(26, 35);
+            this.colorRender2.Size = new System.Drawing.Size(26, 33);
             this.colorRender2.TabIndex = 14;
             this.colorRender2.TabStop = false;
             // 
@@ -225,7 +223,8 @@
             // 
             // iconWindow
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(267, 288);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.spacerLabel);
