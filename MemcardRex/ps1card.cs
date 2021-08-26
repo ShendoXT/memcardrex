@@ -1286,6 +1286,7 @@ namespace MemcardRex
             else
             {
                 cardName = "Untitled";
+                loadDataToRawCard(true);
                 formatMemoryCard();
 
                 //Set changedFlag to false since this is created card
