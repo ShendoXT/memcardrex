@@ -25,7 +25,6 @@ namespace MemcardRex
         //Load default values
         public void initializeDialog(mainWindow.programSettings progSettings)
         {
-            encodingCombo.SelectedIndex = progSettings.titleEncoding;
             interpolationCombo.SelectedIndex = progSettings.iconInterpolationMode;
             iconSizeCombo.SelectedIndex = progSettings.iconPropertiesSize;
             backgroundCombo.SelectedIndex = progSettings.iconBackgroundColor;
@@ -49,7 +48,7 @@ namespace MemcardRex
             }
 
             //If there are no ports disable combobox
-            if(dexDriveCombo.Items.Count < 1)dexDriveCombo.Enabled = false;
+            if(dexDriveCombo.Items.Count < 1) dexDriveCombo.Enabled = false;
 
             //Select a com port (if it exists)
             dexDriveCombo.SelectedItem = progSettings.communicationPort;
@@ -70,7 +69,6 @@ namespace MemcardRex
         {
             mainWindow.programSettings progSettings = new mainWindow.programSettings();
 
-            progSettings.titleEncoding = encodingCombo.SelectedIndex;
             progSettings.iconInterpolationMode = interpolationCombo.SelectedIndex;
             progSettings.iconPropertiesSize = iconSizeCombo.SelectedIndex;
             progSettings.iconBackgroundColor = backgroundCombo.SelectedIndex;

@@ -57,8 +57,8 @@ namespace MemcardRex
         //Size of the save in KBs
         public int[] saveSize = new int[15];
 
-        //Name of the save in ASCII(0) and UTF-16(1) encoding
-        public string[,] saveName = new string[15,2];
+        //Name of the save in UTF-16 encoding
+        public string[] saveName = new string[15];
 
         //Save comments (supported by .gme files only), 255 characters allowed
         public string[] saveComments = new string[15];
@@ -69,17 +69,8 @@ namespace MemcardRex
         readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
         readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
 
-        //Copy the contents of one buffer to another, overwriting it
-        private void WriteBuffer(byte[] source, byte[] destination, int sourceStart, int destStart, int length)
-        {
-            for (int i = 0; i < length; i++)
-            {
-                destination[i + destStart] = source[i + sourceStart];
-            }
-        }
-
-        //Overwrite the contents of one buffer with byte
-        private void FillBuffer(byte[] destination, int start, int fill)
+        //Overwrite the contents of one byte array
+        private void FillByteArray(byte[] destination, int start, int fill)
         {
             for (int i = 0; i < destination.Length - start; i++)
             {
@@ -147,7 +138,7 @@ namespace MemcardRex
                     {
                         using (BinaryReader bnDecrypt = new BinaryReader(csDecrypt))
                         {
-                            return bnDecrypt.ReadBytes(toDecrypt.Length);
+                            return bnDecrypt.ReadBytes(toDecrypt.Length - (toDecrypt.Length % 16));
                         }
                     }
                 }
@@ -267,64 +258,70 @@ namespace MemcardRex
 
         }
 
-        //Create signed VMP header
-        private byte[] MakeVmpHeader(byte[] rawMemoryCard)
+        //Gets the HMAC checksum for .psv or .vmp saving
+        private byte[] GetHmac(byte[] data, byte[] saltSeed)
         {
-            byte[] vmpHeader = new byte[0x80];
-
-            vmpHeader[1] = 0x50;
-            vmpHeader[2] = 0x4D;
-            vmpHeader[3] = 0x56;
-            vmpHeader[4] = 0x80; //the length of this header
-
             byte[] buffer = new byte[0x14];
-            byte[] aesBuffer = new byte[0x10];
             byte[] salt = new byte[0x40];
             byte[] temp = new byte[0x14];
-            byte[] saltSeed = new byte[0x14];
-            byte[] hash1 = new byte[0x200C0];
+            byte[] hash1 = new byte[data.Length + 0x40];
             byte[] hash2 = new byte[0x54];
-
+            SHA1 sha1 = SHA1.Create();
 
             Array.Copy(saltSeed, buffer, 0x14);
-            Array.Copy(saltSeed, 0, vmpHeader, 0xC, 0x14);
-            Array.Copy(buffer, aesBuffer, 0x10);
-            Array.Copy(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0x10);
+            Array.Copy(AesEcbDecrypt(buffer, saveKey, saveIv), buffer, 0x10);
             Array.Copy(buffer, salt, 0x10);
             Array.Copy(saltSeed, buffer, 0x10);
             Array.Copy(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0x14);
 
             Array.Copy(buffer, 0, salt, 0x10, 0x10);
             XorWithIv(salt, saveIv);
-            FillBuffer(buffer, 0x14, 0xFF);
+            FillByteArray(buffer, 0x14, 0xFF);
             Array.Copy(saltSeed, 0x10, buffer, 0, 0x4);
             Array.Copy(salt, 0x10, temp, 0, 0x14);
             XorWithIv(temp, buffer);
             Array.Copy(temp, 0, salt, 0x10, 0x10);
             Array.Copy(salt, temp, 0x14);
-            FillBuffer(salt, 0x14, 0);
+            FillByteArray(salt, 0x14, 0);
             Array.Copy(temp, salt, 0x14);
             XorWithByte(salt, 0x36);
 
-            SHA1 sha1 = SHA1.Create();
             Array.Copy(salt, hash1, 0x40);
-            Array.Copy(vmpHeader, 0, hash1, 0x40, 0x80);
-            Array.Copy(rawMemoryCard, 0, hash1, 0xC0, 0x20000);
+            Array.Copy(data, 0, hash1, 0x40, data.Length);
             Array.Copy(sha1.ComputeHash(hash1), buffer, 0x14);
             XorWithByte(salt, 0x6A);
             Array.Copy(salt, hash2, 0x40);
             Array.Copy(buffer, 0, hash2, 0x40, 0x14);
-            byte[] hashResult = sha1.ComputeHash(hash2);
+            return sha1.ComputeHash(hash2);
 
-            Array.Copy(saltSeed, 0, vmpHeader, 0xC, 0x14);
-            Array.Copy(hashResult, 0, vmpHeader, 0x20, 0x14);
-            return vmpHeader;
+        }
+
+        //Generate signed VMP Memory Card
+        private byte[] MakeVmpCard(byte[] rawCard)
+        {
+            byte[] vmpCard = new byte[0x20080];
+            byte[] saltSeed;
+
+            vmpCard[1] = 0x50;
+            vmpCard[2] = 0x4D;
+            vmpCard[3] = 0x56;
+            vmpCard[4] = 0x80; //header length 
+
+            Array.Copy(rawCard, 0, vmpCard, 0x80, 0x20000);
+
+            using (SHA1 sha = SHA1.Create())
+                saltSeed = sha.ComputeHash(vmpCard);
+
+            Array.Copy(saltSeed, 0, vmpCard, 0x0C, 0x14);
+            Array.Copy(GetHmac(vmpCard, saltSeed), 0, vmpCard, 0x20, 0x14);
+            return vmpCard;
         }
 
         //Generate signed PSV save
         private byte[] MakePsvSave(byte[] save)
         {
             byte[] psvSave = new byte[save.Length + 4];
+            byte[] saltSeed;
 
             psvSave[1] = 0x56;
             psvSave[2] = 0x53;
@@ -341,45 +338,10 @@ namespace MemcardRex
             Array.Copy(BitConverter.GetBytes(save.Length - 0x80), 0, psvSave, 0x40, 4);
             Array.Copy(save, 0x80, psvSave, 0x84, save.Length - 0x80);
 
-            byte[] buffer = new byte[0x14];
-            byte[] aesBuffer = new byte[0x10];
-            byte[] salt = new byte[0x40];
-            byte[] temp = new byte[0x14];
-            byte[] saltSeed = new byte[0x14];
-            byte[] hash1 = new byte[psvSave.Length + 0x40];
-            byte[] hash2 = new byte[0x54];
-
-            Array.Copy(saltSeed, buffer, 0x14);
-            Array.Copy(saltSeed, 0, psvSave, 0xC, 0x14);
-            Array.Copy(buffer, aesBuffer, 0x10);
-            Array.Copy(AesEcbDecrypt(aesBuffer, saveKey, saveIv), buffer, 0x10);
-            Array.Copy(buffer, salt, 0x10);
-            Array.Copy(saltSeed, buffer, 0x10);
-            Array.Copy(AesEcbEncrypt(buffer, saveKey, saveIv), buffer, 0x14);
-
-            Array.Copy(buffer, 0, salt, 0x10, 0x10);
-            XorWithIv(salt, saveIv);
-            FillBuffer(buffer, 0x14, 0xFF);
-            Array.Copy(saltSeed, 0x10, buffer, 0, 0x4);
-            Array.Copy(salt, 0x10, temp, 0, 0x14);
-            XorWithIv(temp, buffer);
-            Array.Copy(temp, 0, salt, 0x10, 0x10);
-            Array.Copy(salt, temp, 0x14);
-            FillBuffer(salt, 0x14, 0);
-            Array.Copy(temp, salt, 0x14);
-            XorWithByte(salt, 0x36);
-
-            SHA1 sha1 = SHA1.Create();
-            Array.Copy(salt, hash1, 0x40);
-            Array.Copy(psvSave, 0, hash1, 0x40, psvSave.Length);
-            Array.Copy(sha1.ComputeHash(hash1), buffer, 0x14);
-            XorWithByte(salt, 0x6A);
-            Array.Copy(salt, hash2, 0x40);
-            Array.Copy(buffer, 0, hash2, 0x40, 0x14);
-            byte[] hashResult = sha1.ComputeHash(hash2);
-
-            Array.Copy(saltSeed, 0, psvSave, 0x8, 0x14);
-            Array.Copy(hashResult, 0, psvSave, 0x1C, 0x14);
+            using (SHA1 sha = SHA1.Create())
+                saltSeed = sha.ComputeHash(psvSave);
+            Array.Copy(saltSeed, 0, psvSave, 0x08, 0x14);
+            Array.Copy(GetHmac(psvSave, saltSeed), 0, psvSave, 0x1C, 0x14);
             return psvSave;
         }
 
@@ -458,7 +420,7 @@ namespace MemcardRex
             //Clear existing data
             saveProdCode = new string[15];
             saveIdentifier = new string[15];
-            saveName = new string[15,2];
+            saveName = new string[15];
 
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
             {
@@ -494,11 +456,10 @@ namespace MemcardRex
                 }
 
                 //Convert save name from Shift-JIS to UTF-16 and normalize full-width characters
-                saveName[slotNumber, 0] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
-                saveName[slotNumber, 1] = saveName[slotNumber, 0];
+                saveName[slotNumber] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
 
                 //Check if the title converted properly, get ASCII if it didn't
-                if (saveName[slotNumber, 0] == null) saveName[slotNumber, 0] = Encoding.Default.GetString(tempByteArray, 0, 32);
+                if (saveName[slotNumber] == null) saveName[slotNumber] = Encoding.Default.GetString(tempByteArray, 0, 32);
             }
         }
 
@@ -1000,7 +961,7 @@ namespace MemcardRex
                         arHeader[byteCount] = headerData[slotNumber, byteCount + 10];
 
                     //Convert save name to bytes
-                    arName = Encoding.Default.GetBytes(saveName[slotNumber, 0]);
+                    arName = Encoding.Default.GetBytes(saveName[slotNumber]);
 
                     //Copy save name to arHeader
                     for (int byteCount = 0; byteCount < arName.Length; byteCount++)
@@ -1033,9 +994,9 @@ namespace MemcardRex
         {
             requiredSlots = 0;
             string tempString = null;
-            byte[] inputData = null;
-            byte[] finalData = null;
-            BinaryReader binReader = null;
+            byte[] inputData;
+            byte[] finalData;
+            BinaryReader binReader;
 
             //Check if the file is allowed to be opened
             try
@@ -1155,8 +1116,7 @@ namespace MemcardRex
                     break;
 
                 case 4:         //VMP Memory Card
-                    binWriter.Write(MakeVmpHeader(rawMemoryCard));
-                    binWriter.Write(rawMemoryCard);
+                    binWriter.Write(MakeVmpCard(rawMemoryCard));
                     break;
             }
 
@@ -1218,9 +1178,9 @@ namespace MemcardRex
             if (fileName != null)
             {
                 byte[] tempData = new byte[134976];
-                string tempString = null;
-                int startOffset = 0;
-                BinaryReader binReader = null;
+                string tempString;
+                int startOffset;
+                BinaryReader binReader;
 
                 //Check if the file is allowed to be opened
                 try

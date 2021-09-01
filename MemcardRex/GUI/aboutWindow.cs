@@ -27,11 +27,8 @@ namespace MemcardRex
         /// <param name="compileDate">Date of the compilation</param>
         /// <param name="copyrightInfo">The copyright info shown in the bottom area of the dialog</param>
         /// <param name="additionalInfo">Used for additional information such as credits</param>
-        public void initDialog(IWin32Window owner, string applicationName, string applicationVersion, string compileDate, string copyrightInfo, string additionalInfo)
+        public void initDialog(mainWindow owner, string applicationName, string applicationVersion, string compileDate, string copyrightInfo, string additionalInfo)
         {
-            //Set Window title
-            this.Text = "About";
-
             //Display program name
             appNameLabel.Text = applicationName;
 
@@ -48,6 +45,8 @@ namespace MemcardRex
             infoLabel.Text = additionalInfo;
 
             //Resize dialog according to the quantity of text
+            this.Height = (int)(owner.xScale * 132 + infoLabel.Height);
+            compileDateLabel.Width = (int)(150 * owner.xScale);
 
             //Display a dialog
             this.ShowDialog(owner);
@@ -57,12 +56,6 @@ namespace MemcardRex
         {
             //Close the form
             this.Close();
-        }
-
-        private void AboutWindow_Paint(object sender, PaintEventArgs e)
-        {
-            //Draw gray rectangle
-            //e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(80,80,80)), 0, 0, this.Width, 52);
         }
     }
 }

@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\MemcardRex"
+    "\\MemcardRex",
+    "\\MemcardRex\\GUI"
   ],
-  "SelectedNode": "\\MemcardRex.sln",
+  "SelectedNode": "\\MemcardRex\\GUI\\headerWindow.cs",
   "PreviewInSolutionExplorer": false
 }

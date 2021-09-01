@@ -80,6 +80,8 @@ namespace MemcardRex
             public int formatType;                 //Type of formatting for hardware interfaces
             public string listFont;                //List font
             public string communicationPort;       //Communication port for Hardware interfaces
+            public int lastSaveFormat;             //Last used format to save memory card
+            public int lastExportFormat;           //Last used format to export save
         }
 
         //All program settings
@@ -219,6 +221,12 @@ namespace MemcardRex
                 //Load fix corrupted cards value
                 mainSettings.fixCorruptedCards = xmlAppSettings.readXmlEntryInt("FixCorruptedCards", 0, 1);
 
+                //Load last card save format
+                mainSettings.lastSaveFormat = xmlAppSettings.readXmlEntryInt("LastSaveFormat", 0, 13);
+
+                //Load last save export format
+                mainSettings.lastExportFormat = xmlAppSettings.readXmlEntryInt("LastExportFormat", 0, 7);
+
                 //Check if window position should be read
                 if (mainSettings.restoreWindowPosition == 1)
                 {
@@ -287,6 +295,12 @@ namespace MemcardRex
             //Set window Y coordinate
             xmlAppSettings.writeXmlEntry("WindowY", this.Location.Y.ToString());
 
+            //Set last used save format
+            xmlAppSettings.writeXmlEntry("LastSaveFormat", mainSettings.lastSaveFormat.ToString());
+
+            //Set last used export format
+            xmlAppSettings.writeXmlEntry("LastExportFormat", mainSettings.lastExportFormat.ToString());
+
             //Cleanly close opened XML file
             xmlAppSettings.closeXmlWriter();
         }
@@ -341,10 +355,12 @@ namespace MemcardRex
         //Open a Memory Card with OpenFileDialog
         private void openCardDialog()
         {
-            OpenFileDialog openFileDlg = new OpenFileDialog();
-            openFileDlg.Title = "Open Memory Card";
-            openFileDlg.Filter = "All supported|*.mcr;*.vmp;*.gme;*.bin;*.mcd;*.mem;*.vgs;*.mc;*.ddf;*.ps;*.psm;*.mci;*.vm1;*.srm|ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|PSP/Vita Memory Card (*.VMP)|*.VMP|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm|All files (*.*)|*.*";
-            openFileDlg.Multiselect = true;
+            OpenFileDialog openFileDlg = new OpenFileDialog
+            {
+                Title = "Open Memory Card",
+                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
+                Multiselect = true
+            };
 
             //If user selected a card open it
             if (openFileDlg.ShowDialog() == DialogResult.OK)
@@ -439,16 +455,24 @@ namespace MemcardRex
             //Check if there are any cards to save
             if (PScard.Count > 0)
             {
-                byte memoryCardType = 0;
-                SaveFileDialog saveFileDlg = new SaveFileDialog();
-                saveFileDlg.Title = "Save Memory Card";
-                saveFileDlg.Filter = "ePSXe/PSEmu Pro Memory Card (*.mcr)|*.mcr|PSP/Vita Memory Card (*.VMP)|*.VMP|DexDrive Memory Card (*.gme)|*.gme|pSX/AdriPSX Memory Card (*.bin)|*.bin|Bleem! Memory Card (*.mcd)|*.mcd|VGS Memory Card (*.mem, *.vgs)|*.mem; *.vgs|PSXGame Edit Memory Card (*.mc)|*.mc|DataDeck Memory Card (*.ddf)|*.ddf|WinPSM Memory Card (*.ps)|*.ps|Smart Link Memory Card (*.psm)|*.psm|MCExplorer (*.mci)|*.mci|PS3 virtual Memory Card (*.VM1)|*.VM1|PCSX ReARMed/RetroArch|*.srm";
+                byte memoryCardType;
+                SaveFileDialog saveFileDlg = new SaveFileDialog
+                {
+                    Title = "Save Memory Card",
+                    Filter = "Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
+                    FilterIndex = mainSettings.lastSaveFormat
+                };
 
                 //If user selected a card save to it
                 if (saveFileDlg.ShowDialog() == DialogResult.OK)
                 {
+                    if (saveFileDlg.FilterIndex != mainSettings.lastExportFormat)
+                    {
+                        mainSettings.lastSaveFormat = saveFileDlg.FilterIndex;
+                        saveProgramSettings();
+                    }
                     //Get save type
-                    switch(saveFileDlg.FilterIndex)
+                    switch (saveFileDlg.FilterIndex)
                     {
                         default:        //Raw Memory Card
                             memoryCardType = 1;
@@ -462,7 +486,7 @@ namespace MemcardRex
                             memoryCardType = 2;
                             break;
 
-                        case 6:         //VGS Memory Card
+                        case 4:         //VGS Memory Card
                             memoryCardType = 3;
                             break;
                     }
@@ -573,7 +597,7 @@ namespace MemcardRex
                 if (cardList[listIndex].SelectedIndices.Count == 0) return;
 
                 int slotNumber = cardList[listIndex].SelectedIndices[0];
-                string saveTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
+                string saveTitle = PScard[listIndex].saveName[slotNumber];
                 string saveComment = PScard[listIndex].saveComments[slotNumber];
 
                 //Check if comments are allowed to be edited
@@ -619,7 +643,7 @@ namespace MemcardRex
                 int iconFrames = PScard[listIndex].iconFrames[slotNumber];
                 string saveProdCode = PScard[listIndex].saveProdCode[slotNumber];
                 string saveIdentifier = PScard[listIndex].saveIdentifier[slotNumber];
-                string saveTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
+                string saveTitle = PScard[listIndex].saveName[slotNumber];
                 Bitmap[] saveIcons = new Bitmap[3];
 
                 //Get all 3 bitmaps for selected save
@@ -772,7 +796,7 @@ namespace MemcardRex
                 if (cardList[listIndex].SelectedIndices.Count == 0) return;
 
                 int slotNumber = cardList[listIndex].SelectedIndices[0];
-                string saveName = PScard[listIndex].saveName[slotNumber, 0];
+                string saveName = PScard[listIndex].saveName[slotNumber];
 
                 //Check the save type
                 switch (PScard[listIndex].saveType[slotNumber])
@@ -783,7 +807,7 @@ namespace MemcardRex
                     case 1:         //Initial save
                     case 4:         //Deleted initial
                         tempBuffer = PScard[listIndex].getSaveBytes(slotNumber);
-                        tempBufferName = PScard[listIndex].saveName[slotNumber, 0];
+                        tempBufferName = PScard[listIndex].saveName[slotNumber];
 
                         //Show temp buffer toolbar info
                         tBufToolButton.Enabled = true;
@@ -866,9 +890,9 @@ namespace MemcardRex
                         break;
 
                     case 1:         //Initial save
-                        byte singleSaveType = 0;
+                        byte singleSaveType;
 
-                        //Set output filename
+                        //Set output filename to be compatible with PS3
                         byte[] identifierASCII = Encoding.ASCII.GetBytes(PScard[listIndex].saveIdentifier[slotNumber]);
                         string outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] +
                             BitConverter.ToString(identifierASCII).Replace("-","");
@@ -879,34 +903,43 @@ namespace MemcardRex
                             outputFilename = outputFilename.Replace(illegalChar.ToString(), "");
                         }
 
-                        SaveFileDialog saveFileDlg = new SaveFileDialog();
-                        saveFileDlg.Title = "Export save";
-                        saveFileDlg.FileName = outputFilename;
-                        saveFileDlg.Filter = "PSXGameEdit single save (*.mcs)|*.mcs|PS3 signed save (*.PSV)|*.PSV|XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*";
+                        SaveFileDialog saveFileDlg = new SaveFileDialog
+                        {
+                            Title = "Export save",
+                            FileName = outputFilename,
+                            Filter = "PSXGameEdit/Memory Juggler|*.mcs;*.ps1|PS3 single save|*.PSV|Smart Link/XP, AR, GS, Caetla/Datel|*.mcb;*.mcx;*.pda;*.psx|RAW single save|B???????????*",
+                            FilterIndex = mainSettings.lastExportFormat
+                        };
 
                         //If user selected a card save to it
                         if (saveFileDlg.ShowDialog() == DialogResult.OK)
                         {
+                            if (saveFileDlg.FilterIndex != mainSettings.lastExportFormat)
+                            {
+                                mainSettings.lastExportFormat = saveFileDlg.FilterIndex;
+                                saveProgramSettings();
+                            }
+
                             //Get save type
                             switch (saveFileDlg.FilterIndex)
                             {
-                                default:        //Action Replay
-                                    singleSaveType = 1;
-                                    break;
-
-                                case 1:         //MCS single save
-                                case 4:         //PS1 (Memory Juggler)
+                                default:         //MCS single save
                                     singleSaveType = 2;
                                     break;
 
-                                case 7:         //RAW single save
+                                case 2:         //PS3 signed save
+                                    singleSaveType = 4;
+                                    break;
+
+                                case 3:        //Action Replay
+                                    singleSaveType = 1;
+                                    break;
+
+                                case 4:         //RAW single save
                                     singleSaveType = 3;
 
                                     //Omit the extension if the user left it
                                     saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
-                                    break;
-                                case 2:         //PS3 signed save
-                                    singleSaveType = 4;
                                     break;
                             }
                             PScard[listIndex].saveSingleSave(saveFileDlg.FileName, slotNumber, singleSaveType);
@@ -938,19 +971,20 @@ namespace MemcardRex
                 if (cardList[listIndex].SelectedIndices.Count == 0) return;
 
                 int slotNumber = cardList[listIndex].SelectedIndices[0];
-                int requiredSlots = 0;
 
                 //Check if the slot to import the save on is free
                 if (PScard[listIndex].saveType[slotNumber] == 0)
                 {
-                    OpenFileDialog openFileDlg = new OpenFileDialog();
-                    openFileDlg.Title = "Import save";
-                    openFileDlg.Filter = "All supported|*.mcs;*.psv;*.psx;*.ps1;*.mcb;*.mcx;*.pda;B???????????*|PSXGameEdit single save (*.mcs)|*.mcs|PS3 signed save (*.PSV)|*.PSV| XP, AR, GS, Caetla single save (*.psx)|*.psx|Memory Juggler (*.ps1)|*.ps1|Smart Link (*.mcb)|*.mcb|Datel (*.mcx;*.pda)|*.mcx;*.pda|RAW single save|B???????????*";
+                    OpenFileDialog openFileDlg = new OpenFileDialog
+                    {
+                        Title = "Import save",
+                        Filter = "All supported|*.mcs;*.psv;*.psx;*.ps1;*.mcb;*.mcx;*.pda;B???????????*|PSXGameEdit single save|*.mcs|PS3 signed save|*.PSV|XP, AR, GS, Caetla single save|*.psx|Memory Juggler|*.ps1|Smart Link|*.mcb|Datel|*.mcx;*.pda|RAW single save|B???????????*"
+                    };
 
                     //If user selected a save load it
                     if (openFileDlg.ShowDialog() == DialogResult.OK)
                     {
-                        if (PScard[listIndex].openSingleSave(openFileDlg.FileName, slotNumber, out requiredSlots))
+                        if (PScard[listIndex].openSingleSave(openFileDlg.FileName, slotNumber, out int requiredSlots))
                         {
                             refreshListView(listIndex, slotNumber);
                         }
@@ -1012,7 +1046,7 @@ namespace MemcardRex
 
                 int slotNumber = cardList[listIndex].SelectedIndices[0];
                 int iconFrames = PScard[listIndex].iconFrames[slotNumber];
-                string saveTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
+                string saveTitle = PScard[listIndex].saveName[slotNumber];
                 byte[] iconBytes = PScard[listIndex].getIconBytes(slotNumber);
 
                 //Check the save type
@@ -1132,7 +1166,7 @@ namespace MemcardRex
 
                     case 1:         //Initial save
                     case 4:         //Deleted initial save
-                        cardList[listIndex].Items.Add(PScard[listIndex].saveName[i, mainSettings.titleEncoding]);
+                        cardList[listIndex].Items.Add(PScard[listIndex].saveName[i]);
                         cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveProdCode[i]);
                         cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveIdentifier[i]);
                         cardList[listIndex].Items[i].ImageIndex = i + 2;      //Skip two linked slot icons
@@ -1286,7 +1320,7 @@ namespace MemcardRex
                 ushort saveRegion = PScard[listIndex].saveRegion[slotNumber];
                 string saveProdCode = PScard[listIndex].saveProdCode[slotNumber];
                 string saveIdentifier = PScard[listIndex].saveIdentifier[slotNumber];
-                string saveTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
+                string saveTitle = PScard[listIndex].saveName[slotNumber];
 
                 //Check if slot is allowed to be edited
                 switch(PScard[listIndex].saveType[slotNumber])
@@ -1663,7 +1697,7 @@ namespace MemcardRex
 
                         //Get data to work with
                         fetchedData = PScard[listIndex].getSaveBytes(slotNumber);
-                        fetchedDataTitle = PScard[listIndex].saveName[slotNumber, mainSettings.titleEncoding];
+                        fetchedDataTitle = PScard[listIndex].saveName[slotNumber];
 
                         //Check if selected saves have the same size
                         if (fetchedData.Length != tempBuffer.Length)
