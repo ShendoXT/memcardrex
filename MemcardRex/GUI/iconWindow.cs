@@ -23,6 +23,13 @@ namespace MemcardRex
         int[] selectedColor = new int[2];
         int selectedIcon = 0;
 
+        double xScale = 1.0;
+        double yScale = 1.0;
+        int pixelWidth = 11;
+        int pixelHeight = 11;
+        int paletteWidth = 15;
+        int paletteHeight = 15;
+
         //If dialog was closed with OK this will be true
         public bool okPressed = false;
 
@@ -36,6 +43,11 @@ namespace MemcardRex
         {
             this.Text = dialogTitle;
             iconData = iconBytes;
+            using (Graphics graphics = CreateGraphics())
+            { 
+                xScale = graphics.DpiX / 96.0;
+                yScale = graphics.DpiY / 96.0;
+            }
 
             switch (iconFrames)
             {
@@ -133,7 +145,9 @@ namespace MemcardRex
         //Draw selected icon to render
         private void drawIcon()
         {
-            Bitmap drawBitmap = new Bitmap(177, 177);
+            pixelWidth = (int)(xScale * 11);
+            pixelHeight = (int)(yScale * 11);
+            Bitmap drawBitmap = new Bitmap(pixelWidth * 16 + 1, pixelHeight * 16 + 1);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
             Pen blackPen = new Pen(Color.Black);
 
@@ -144,17 +158,17 @@ namespace MemcardRex
             drawGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             //Draw selected icon to drawBitmap
-            drawGraphics.DrawImage(iconBitmap[selectedIcon], 0, 0, 177, 177);
+            drawGraphics.DrawImage(iconBitmap[selectedIcon], 0, 0, pixelWidth * 16, pixelHeight * 16);
 
             //Set offset mode to default so grid can be drawn
             drawGraphics.PixelOffsetMode = PixelOffsetMode.Default;
 
             //Draw grid
             for (int y = 0; y < 17; y++)
-                drawGraphics.DrawLine(blackPen, 0, (y * 11), 177, (y * 11));
+                drawGraphics.DrawLine(blackPen, 0, (y * pixelHeight), pixelWidth * 16, (y * pixelHeight));
 
             for (int x = 0; x < 17; x++)
-                drawGraphics.DrawLine(blackPen, (x * 11), 0, (x * 11), 177);
+                drawGraphics.DrawLine(blackPen, (x * pixelWidth), 0, (x * pixelWidth), pixelHeight * 16);
 
             drawGraphics.Dispose();
             iconRender.Image = drawBitmap;
@@ -163,13 +177,18 @@ namespace MemcardRex
         //Draw palette image to render
         private void drawPalette()
         {
+            
+            paletteWidth = (int)(xScale * 15);
+            paletteHeight = (int)(yScale * 15);
             Bitmap paletteBitmap = new Bitmap(8, 2);
-            Bitmap drawBitmap = new Bitmap(121, 31);
+            Bitmap drawBitmap = new Bitmap(8 * paletteWidth + 1, 2 * paletteHeight + 1);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
             Pen blackPen = new Pen(Color.Black);
             int colorCounter = 0;
+            colorRender.Height = paletteHeight * 2 + 1;
+            colorRender2.Height = paletteHeight * 2 + 1;
 
-            //Load pallete data
+            //Load palette data
             loadPalette();
 
             drawGraphics.PixelOffsetMode = PixelOffsetMode.Half;
@@ -186,17 +205,17 @@ namespace MemcardRex
             }
 
             //Draw palette to drawBitmap
-            drawGraphics.DrawImage(paletteBitmap, 0, 0, 120, 30);
+            drawGraphics.DrawImage(paletteBitmap, 0, 0, 8 * paletteWidth, 2 * paletteHeight);
 
             //Set offset mode to default so grid can be drawn
             drawGraphics.PixelOffsetMode = PixelOffsetMode.Default;
 
             //Draw grid
             for (int y = 0; y < 3; y++)
-                drawGraphics.DrawLine(blackPen, 0, (y * 15), 121, (y * 15));
+                drawGraphics.DrawLine(blackPen, 0, (y * paletteHeight), 8 * paletteWidth, (y * paletteHeight));
 
             for (int x = 0; x < 9; x++)
-                drawGraphics.DrawLine(blackPen, (x * 15), 0, (x * 15), 31);
+                drawGraphics.DrawLine(blackPen, (x * paletteWidth), 0, (x * paletteWidth), 2 * paletteHeight);
 
             drawGraphics.Dispose();
             paletteRender.Image = drawBitmap;
@@ -221,7 +240,7 @@ namespace MemcardRex
         private void putPixel(int X, int Y, int selectedColorIndex)
         {
             //Calculate destination byte to draw pixel to
-            int destinationByte = (X + (Y * 16)) / 2;
+            int destinationByte = (int)(X + (Y * 16)) / 2;
 
             //Check what nibble to draw pixel to
             if ((X + (Y * 16)) % 2 == 0)
@@ -267,8 +286,8 @@ namespace MemcardRex
                 OpenedBitmap = new Bitmap(openDlg.FileName);
             }
             catch (Exception e)
-            {
-                new messageWindow().ShowMessage(this, "Error", e.Message, "OK", null, true);
+            {;
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 OpenedBitmap.Dispose();
                 return;
             }
@@ -276,7 +295,7 @@ namespace MemcardRex
             //Check if the image is 16x16 pixels
             if (OpenedBitmap.Width != 16 || OpenedBitmap.Height != 16)
             {
-                new messageWindow().ShowMessage(this, "Warning", "Selected image is not a 16x16 pixel image.", "OK", null, true);
+                MessageBox.Show("Selected image is not a 16x16 pixel image.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 OpenedBitmap.Dispose();
                 return;
             }
@@ -294,7 +313,7 @@ namespace MemcardRex
             //Check if the palette has more than 16 colors
             if (foundColors.Count > 16)
             {
-                new messageWindow().ShowMessage(this, "Warning", "Selected image contains more then 16 colors.", "OK", null, true);
+                MessageBox.Show("Selected image contains more than 16 colors.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 OpenedBitmap.Dispose();
                 return;
             }
@@ -511,8 +530,8 @@ namespace MemcardRex
         //User has selected palette color
         private void paletteRender_MouseDown(object sender, MouseEventArgs e)
         {
-            int Xpos = e.X / 15;
-            int Ypos = e.Y / 15;
+            int Xpos = e.X / paletteWidth;
+            int Ypos = e.Y / paletteHeight;
 
             if (Xpos > 7) Xpos = 7;
             if (Ypos > 1) Ypos = 1;
@@ -569,10 +588,10 @@ namespace MemcardRex
         //User has selected a pixel to draw to
         private void iconRender_MouseDownMove(object sender, MouseEventArgs e)
         {
-            int XposOriginal = e.X / 11;
-            int YposOriginal = e.Y / 11;
-            int Xpos = e.X / 11;
-            int Ypos = e.Y / 11;
+            int XposOriginal = e.X / pixelWidth;
+            int YposOriginal = e.Y / pixelHeight;
+            int Xpos = e.X / pixelWidth;
+            int Ypos = e.Y / pixelHeight;
 
             if (Xpos > 15) Xpos = 15;
             if (Ypos > 15) Ypos = 15;
@@ -588,9 +607,9 @@ namespace MemcardRex
             {
                 //Color with first selected color
                 if(e.Button == MouseButtons.Left)
-                    putPixel(Xpos, Ypos,0);
+                    putPixel(Xpos, Ypos, 0);
 
-                //Color with second selected colro
+                //Color with second selected color
                 if(e.Button == MouseButtons.Right)
                     putPixel(Xpos, Ypos, 1);
             }

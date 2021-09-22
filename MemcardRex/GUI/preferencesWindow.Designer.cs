@@ -31,8 +31,6 @@
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
-            this.encodingCombo = new System.Windows.Forms.ComboBox();
-            this.titleEncoding = new System.Windows.Forms.Label();
             this.fontCombo = new System.Windows.Forms.ComboBox();
             this.fontLabel = new System.Windows.Forms.Label();
             this.gridCheckbox = new System.Windows.Forms.CheckBox();
@@ -87,40 +85,19 @@
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
-            // encodingCombo
-            // 
-            this.encodingCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.encodingCombo.FormattingEnabled = true;
-            this.encodingCombo.Items.AddRange(new object[] {
-            "ASCII",
-            "UTF-16"});
-            this.encodingCombo.Location = new System.Drawing.Point(4, 20);
-            this.encodingCombo.Name = "encodingCombo";
-            this.encodingCombo.Size = new System.Drawing.Size(116, 21);
-            this.encodingCombo.TabIndex = 2;
-            // 
-            // titleEncoding
-            // 
-            this.titleEncoding.AutoSize = true;
-            this.titleEncoding.Location = new System.Drawing.Point(4, 4);
-            this.titleEncoding.Name = "titleEncoding";
-            this.titleEncoding.Size = new System.Drawing.Size(101, 13);
-            this.titleEncoding.TabIndex = 5;
-            this.titleEncoding.Text = "Save title encoding:";
-            // 
             // fontCombo
             // 
             this.fontCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fontCombo.FormattingEnabled = true;
-            this.fontCombo.Location = new System.Drawing.Point(124, 20);
+            this.fontCombo.Location = new System.Drawing.Point(4, 20);
             this.fontCombo.Name = "fontCombo";
-            this.fontCombo.Size = new System.Drawing.Size(116, 21);
+            this.fontCombo.Size = new System.Drawing.Size(236, 21);
             this.fontCombo.TabIndex = 3;
             // 
             // fontLabel
             // 
             this.fontLabel.AutoSize = true;
-            this.fontLabel.Location = new System.Drawing.Point(124, 4);
+            this.fontLabel.Location = new System.Drawing.Point(4, 4);
             this.fontLabel.Name = "fontLabel";
             this.fontLabel.Size = new System.Drawing.Size(75, 13);
             this.fontLabel.TabIndex = 3;
@@ -150,8 +127,8 @@
             this.iconSizeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.iconSizeCombo.FormattingEnabled = true;
             this.iconSizeCombo.Items.AddRange(new object[] {
-            "32x32",
-            "48x48"});
+            "Medium",
+            "Large"});
             this.iconSizeCombo.Location = new System.Drawing.Point(124, 64);
             this.iconSizeCombo.Name = "iconSizeCombo";
             this.iconSizeCombo.Size = new System.Drawing.Size(116, 21);
@@ -298,7 +275,6 @@
             this.fixCorruptedCardsCheckbox.TabIndex = 103;
             this.fixCorruptedCardsCheckbox.Text = "Try to fix corrupted Memory Cards";
             this.fixCorruptedCardsCheckbox.UseVisualStyleBackColor = true;
-            // 
             // preferencesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -323,8 +299,6 @@
             this.Controls.Add(this.interpolationLabel);
             this.Controls.Add(this.fontCombo);
             this.Controls.Add(this.hardwarePortLabel);
-            this.Controls.Add(this.encodingCombo);
-            this.Controls.Add(this.titleEncoding);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
@@ -348,8 +322,6 @@
         private System.Windows.Forms.CheckBox gridCheckbox;
         private System.Windows.Forms.ComboBox fontCombo;
         private System.Windows.Forms.Label fontLabel;
-        private System.Windows.Forms.Label titleEncoding;
-        private System.Windows.Forms.ComboBox encodingCombo;
         private System.Windows.Forms.ComboBox interpolationCombo;
         private System.Windows.Forms.Label interpolationLabel;
         private System.Windows.Forms.CheckBox backupCheckbox;

@@ -132,8 +132,8 @@ namespace MemcardRex
         {
             bool glassSupported = false;
 
-            //Check if the OS supports DWM
-            if (Environment.OSVersion.Version.Major >= 6)
+            //Check if the OS supports DWM (only Windows Vista and 7)
+            if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor <= 1)
             {
                 //Check if the DWM is enabled
                 DwmIsCompositionEnabled(ref glassSupported);

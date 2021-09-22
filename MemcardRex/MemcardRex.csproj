@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,8 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <StartupObject>MemcardRex.Program</StartupObject>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Resources\memcardrex.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -54,6 +53,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LibUsbDotNet.LibUsbDotNet, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9, processorArchitecture=MSIL">
@@ -121,12 +123,6 @@
       <DependentUpon>mainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Hardware\MemCARDduino.cs" />
-    <Compile Include="GUI\messageWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\messageWindow.designer.cs">
-      <DependentUpon>messageWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUI\pluginsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -177,9 +173,6 @@
       <DependentUpon>mainWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\messageWindow.resx">
-      <DependentUpon>messageWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUI\pluginsWindow.resx">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -194,6 +187,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -211,7 +205,6 @@
     </Compile>
     <Compile Include="ps1card.cs" />
     <Compile Include="rexPluginSystem.cs" />
-    <Compile Include="sjisConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -312,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Additional\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\memcardrex.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

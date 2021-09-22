@@ -25,7 +25,6 @@ namespace MemcardRex
         //Load default values
         public void initializeDialog(mainWindow.programSettings progSettings)
         {
-            encodingCombo.SelectedIndex = progSettings.titleEncoding;
             interpolationCombo.SelectedIndex = progSettings.iconInterpolationMode;
             iconSizeCombo.SelectedIndex = progSettings.iconPropertiesSize;
             backgroundCombo.SelectedIndex = progSettings.iconBackgroundColor;
@@ -34,9 +33,13 @@ namespace MemcardRex
             if (progSettings.showListGrid == 1) gridCheckbox.Checked = true; else gridCheckbox.Checked = false;
             if (progSettings.backupMemcards == 1) backupCheckbox.Checked = true; else backupCheckbox.Checked = false;
             if (progSettings.glassStatusBar == 1) glassCheckbox.Checked = true; else glassCheckbox.Checked = false;
+            glassSupport glass = new glassSupport();
+            if (!glass.isGlassSupported())
+                glassCheckbox.Enabled = false;
             if (progSettings.warningMessage == 1) backupWarningCheckBox.Checked = true; else backupWarningCheckBox.Checked = false;
             if (progSettings.restoreWindowPosition == 1) restorePositionCheckbox.Checked = true; else restorePositionCheckbox.Checked = false;
             if (progSettings.fixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
+            
 
             //Load all COM ports found on the system
             foreach (string port in SerialPort.GetPortNames())
@@ -45,7 +48,7 @@ namespace MemcardRex
             }
 
             //If there are no ports disable combobox
-            if(dexDriveCombo.Items.Count < 1)dexDriveCombo.Enabled = false;
+            if(dexDriveCombo.Items.Count < 1) dexDriveCombo.Enabled = false;
 
             //Select a com port (if it exists)
             dexDriveCombo.SelectedItem = progSettings.communicationPort;
@@ -66,7 +69,6 @@ namespace MemcardRex
         {
             mainWindow.programSettings progSettings = new mainWindow.programSettings();
 
-            progSettings.titleEncoding = encodingCombo.SelectedIndex;
             progSettings.iconInterpolationMode = interpolationCombo.SelectedIndex;
             progSettings.iconPropertiesSize = iconSizeCombo.SelectedIndex;
             progSettings.iconBackgroundColor = backgroundCombo.SelectedIndex;

@@ -57,7 +57,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close DexDrive communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 dexDevice.StopDexDrive();
                 return null;
             }
@@ -95,7 +95,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close MemCARDuino communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CARDuino.StopMemCARDuino();
                 return null;
             }
@@ -133,7 +133,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close PS1CardLink communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PS1CLnk.StopPS1CardLink();
                 return null;
             }
@@ -171,7 +171,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close PS3 Memory Card Adaptor communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PS3MCA.StopPS3MemCardAdaptor();
                 return null;
             }
@@ -209,7 +209,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close DexDrive communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 dexDevice.StopDexDrive();
                 return;
             }
@@ -249,7 +249,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close MemCARDuino communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CARDuino.StopMemCARDuino();
                 return;
             }
@@ -289,7 +289,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close PS1CardLink communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PS1CLnk.StopPS1CardLink();
                 return;
             }
@@ -329,7 +329,7 @@ namespace MemcardRex
             if (errorString != null)
             {
                 //Display an error message and cleanly close PS3 Memory Card Adaptor communication
-                new messageWindow().ShowMessage(hostWindow, applicationName, errorString, "OK", null, true);
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PS3MCA.StopPS3MemCardAdaptor();
                 return;
             }

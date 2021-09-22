@@ -80,7 +80,7 @@ namespace MemcardRex
             if (prodCodeTextbox.Text.Length < 10 && identifierTextbox.Text.Length != 0)
             {
                 //String is not valid
-                new messageWindow().ShowMessage(this, appName, "Product code must be exactly 10 characters long.", "OK", null, true);
+                MessageBox.Show("Product code must be exactly 10 characters long.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {

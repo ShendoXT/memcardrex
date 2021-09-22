@@ -32,6 +32,9 @@ namespace MemcardRex
         {
             hostFrm = hostForm;
             loadedMetadata = plgMetadata;
+            pluginListView.Columns[0].Width = (int)(pluginListView.Columns[0].Width * hostFrm.xScale);
+            pluginListView.Columns[1].Width = (int)(pluginListView.Columns[1].Width * hostFrm.xScale);
+            pluginListView.Columns[2].Width = (int)(pluginListView.Columns[2].Width * hostFrm.xScale);
 
             //Apply the native theme to the listview
             //glassSupport.SetWindowTheme(pluginListView.Handle, "Explorer", null);

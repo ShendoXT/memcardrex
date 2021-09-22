@@ -67,18 +67,24 @@
             this.memCARDuinoMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dexDriveMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
             this.formatMemoryCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem23 = new System.Windows.Forms.ToolStripSeparator();
             this.memCARDuinoMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
+            this.pS3MemoryCardAdaptorMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -126,12 +132,6 @@
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
-            this.pS3MemoryCardAdaptorMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             dexDriveMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolbar.SuspendLayout();
@@ -158,7 +158,7 @@
             this.mainMenu.Margin = new System.Windows.Forms.Padding(2);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Padding = new System.Windows.Forms.Padding(2);
-            this.mainMenu.Size = new System.Drawing.Size(509, 24);
+            this.mainMenu.Size = new System.Drawing.Size(514, 24);
             this.mainMenu.TabIndex = 0;
             this.mainMenu.Text = "mainMenu";
             // 
@@ -181,7 +181,6 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.newcard;
-            this.newToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
@@ -448,6 +447,18 @@
             this.pS1CardLinkMenuRead.Text = "PS1CardLink";
             this.pS1CardLinkMenuRead.Click += new System.EventHandler(this.pS1CardLinkMenuRead_Click);
             // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuRead
+            // 
+            this.pS3MemoryCardAdaptorMenuRead.Name = "pS3MemoryCardAdaptorMenuRead";
+            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuRead.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuRead.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuRead_Click);
+            // 
             // writeToToolStripMenuItem
             // 
             this.writeToToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -493,6 +504,18 @@
             this.pS1CardLinkMenuWrite.Text = "PS1CardLink";
             this.pS1CardLinkMenuWrite.Click += new System.EventHandler(this.pS1CardLinkMenuWrite_Click);
             // 
+            // toolStripMenuItem22
+            // 
+            this.toolStripMenuItem22.Name = "toolStripMenuItem22";
+            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuWrite
+            // 
+            this.pS3MemoryCardAdaptorMenuWrite.Name = "pS3MemoryCardAdaptorMenuWrite";
+            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuWrite.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuWrite.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuWrite_Click);
+            // 
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
@@ -535,6 +558,18 @@
             this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkMenuFormat.Text = "PS1CardLink";
             this.pS1CardLinkMenuFormat.Click += new System.EventHandler(this.pS1CardLinkMenuFormat_Click);
+            // 
+            // toolStripMenuItem24
+            // 
+            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
+            // 
+            // pS3MemoryCardAdaptorMenuFormat
+            // 
+            this.pS3MemoryCardAdaptorMenuFormat.Name = "pS3MemoryCardAdaptorMenuFormat";
+            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuFormat.Text = "PS3 Memory Card Adaptor";
+            this.pS3MemoryCardAdaptorMenuFormat.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuFormat_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -617,7 +652,7 @@
             this.mainToolbar.Location = new System.Drawing.Point(0, 24);
             this.mainToolbar.Name = "mainToolbar";
             this.mainToolbar.Padding = new System.Windows.Forms.Padding(2, 0, 1, 0);
-            this.mainToolbar.Size = new System.Drawing.Size(509, 25);
+            this.mainToolbar.Size = new System.Drawing.Size(514, 25);
             this.mainToolbar.TabIndex = 1;
             // 
             // newButton
@@ -722,20 +757,19 @@
             // tBufToolButton
             // 
             this.tBufToolButton.Enabled = false;
-            this.tBufToolButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.tBufToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tBufToolButton.Name = "tBufToolButton";
-            this.tBufToolButton.Size = new System.Drawing.Size(125, 22);
+            this.tBufToolButton.Size = new System.Drawing.Size(123, 22);
             this.tBufToolButton.Text = "Temp buffer is empty";
             this.tBufToolButton.Click += new System.EventHandler(this.tBufToolButton_Click);
             // 
             // mainTabControl
             // 
             this.mainTabControl.AllowDrop = true;
-            this.mainTabControl.Location = new System.Drawing.Point(4, 52);
+            this.mainTabControl.Location = new System.Drawing.Point(3, 49);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(502, 316);
+            this.mainTabControl.Size = new System.Drawing.Size(509, 327);
             this.mainTabControl.TabIndex = 2;
             this.mainTabControl.SelectedIndexChanged += new System.EventHandler(this.mainTabControl_SelectedIndexChanged);
             this.mainTabControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.mainTabControl_DragDrop);
@@ -744,22 +778,24 @@
             // 
             // mainStatusStrip
             // 
+            this.mainStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolString});
-            this.mainStatusStrip.Location = new System.Drawing.Point(0, 371);
+            this.mainStatusStrip.Location = new System.Drawing.Point(0, 379);
             this.mainStatusStrip.Name = "mainStatusStrip";
-            this.mainStatusStrip.Size = new System.Drawing.Size(509, 22);
+            this.mainStatusStrip.Size = new System.Drawing.Size(514, 22);
             this.mainStatusStrip.SizingGrip = false;
             this.mainStatusStrip.TabIndex = 3;
-            this.mainStatusStrip.Text = "statusStrip1";
             // 
             // toolString
             // 
             this.toolString.Name = "toolString";
-            this.toolString.Size = new System.Drawing.Size(0, 17);
+            this.toolString.Size = new System.Drawing.Size(10, 17);
+            this.toolString.Text = " ";
             // 
             // mainContextMenu
             // 
+            this.mainContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editSaveHeaderToolStripMenuItem1,
             this.editSaveCommentsToolStripMenuItem,
@@ -781,13 +817,13 @@
             this.toolStripMenuItem14,
             this.saveInformationToolStripMenuItem});
             this.mainContextMenu.Name = "mainContextMenu";
-            this.mainContextMenu.Size = new System.Drawing.Size(226, 326);
+            this.mainContextMenu.Size = new System.Drawing.Size(230, 378);
             // 
             // editSaveHeaderToolStripMenuItem1
             // 
             this.editSaveHeaderToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.headeredit;
             this.editSaveHeaderToolStripMenuItem1.Name = "editSaveHeaderToolStripMenuItem1";
-            this.editSaveHeaderToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.editSaveHeaderToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.editSaveHeaderToolStripMenuItem1.Text = "Edit save header...";
             this.editSaveHeaderToolStripMenuItem1.Click += new System.EventHandler(this.editSaveHeaderToolStripMenuItem1_Click);
             // 
@@ -795,7 +831,7 @@
             // 
             this.editSaveCommentsToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.comments;
             this.editSaveCommentsToolStripMenuItem.Name = "editSaveCommentsToolStripMenuItem";
-            this.editSaveCommentsToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.editSaveCommentsToolStripMenuItem.Size = new System.Drawing.Size(229, 26);
             this.editSaveCommentsToolStripMenuItem.Text = "Edit save comment...";
             this.editSaveCommentsToolStripMenuItem.Click += new System.EventHandler(this.editSaveCommentsToolStripMenuItem_Click);
             // 
@@ -804,7 +840,7 @@
             this.editWithPluginToolStripMenuItem.Enabled = false;
             this.editWithPluginToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.plugin;
             this.editWithPluginToolStripMenuItem.Name = "editWithPluginToolStripMenuItem";
-            this.editWithPluginToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.editWithPluginToolStripMenuItem.Size = new System.Drawing.Size(229, 26);
             this.editWithPluginToolStripMenuItem.Text = "Edit with plugin";
             this.editWithPluginToolStripMenuItem.DropDownClosed += new System.EventHandler(this.editWithPluginToolStripMenuItem_DropDownClosed);
             this.editWithPluginToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.editWithPluginToolStripMenuItem_DropDownItemClicked);
@@ -812,84 +848,84 @@
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(222, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(226, 6);
             // 
             // compareWithTempBufferToolStripMenuItem1
             // 
             this.compareWithTempBufferToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.comparetemp;
             this.compareWithTempBufferToolStripMenuItem1.Name = "compareWithTempBufferToolStripMenuItem1";
-            this.compareWithTempBufferToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.compareWithTempBufferToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.compareWithTempBufferToolStripMenuItem1.Text = "Compare with temp buffer";
             this.compareWithTempBufferToolStripMenuItem1.Click += new System.EventHandler(this.compareWithTempBufferToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem15
             // 
             this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-            this.toolStripMenuItem15.Size = new System.Drawing.Size(222, 6);
+            this.toolStripMenuItem15.Size = new System.Drawing.Size(226, 6);
             // 
             // editIconToolStripMenuItem1
             // 
             this.editIconToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.iconedit;
             this.editIconToolStripMenuItem1.Name = "editIconToolStripMenuItem1";
-            this.editIconToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.editIconToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.editIconToolStripMenuItem1.Text = "Edit icon...";
             this.editIconToolStripMenuItem1.Click += new System.EventHandler(this.editIconToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem8
             // 
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(222, 6);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(226, 6);
             // 
             // deleteSaveToolStripMenuItem1
             // 
             this.deleteSaveToolStripMenuItem1.Name = "deleteSaveToolStripMenuItem1";
-            this.deleteSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.deleteSaveToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.deleteSaveToolStripMenuItem1.Text = "Delete save";
             this.deleteSaveToolStripMenuItem1.Click += new System.EventHandler(this.deleteSaveToolStripMenuItem1_Click);
             // 
             // restoreSaveToolStripMenuItem1
             // 
             this.restoreSaveToolStripMenuItem1.Name = "restoreSaveToolStripMenuItem1";
-            this.restoreSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.restoreSaveToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.restoreSaveToolStripMenuItem1.Text = "Restore save";
             this.restoreSaveToolStripMenuItem1.Click += new System.EventHandler(this.restoreSaveToolStripMenuItem1_Click);
             // 
             // removeSaveformatSlotsToolStripMenuItem1
             // 
             this.removeSaveformatSlotsToolStripMenuItem1.Name = "removeSaveformatSlotsToolStripMenuItem1";
-            this.removeSaveformatSlotsToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.removeSaveformatSlotsToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.removeSaveformatSlotsToolStripMenuItem1.Text = "Remove save (format slot(s))";
             this.removeSaveformatSlotsToolStripMenuItem1.Click += new System.EventHandler(this.removeSaveformatSlotsToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem9
             // 
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(222, 6);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(226, 6);
             // 
             // copySaveToTempBufferToolStripMenuItem
             // 
             this.copySaveToTempBufferToolStripMenuItem.Name = "copySaveToTempBufferToolStripMenuItem";
-            this.copySaveToTempBufferToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.copySaveToTempBufferToolStripMenuItem.Size = new System.Drawing.Size(229, 26);
             this.copySaveToTempBufferToolStripMenuItem.Text = "Copy save to temp buffer";
             this.copySaveToTempBufferToolStripMenuItem.Click += new System.EventHandler(this.copySaveToTempBufferToolStripMenuItem_Click);
             // 
             // paseToolStripMenuItem
             // 
             this.paseToolStripMenuItem.Name = "paseToolStripMenuItem";
-            this.paseToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.paseToolStripMenuItem.Size = new System.Drawing.Size(229, 26);
             this.paseToolStripMenuItem.Text = "Paste save from temp buffer";
             this.paseToolStripMenuItem.Click += new System.EventHandler(this.paseToolStripMenuItem_Click);
             // 
             // teToolStripMenuItem
             // 
             this.teToolStripMenuItem.Name = "teToolStripMenuItem";
-            this.teToolStripMenuItem.Size = new System.Drawing.Size(222, 6);
+            this.teToolStripMenuItem.Size = new System.Drawing.Size(226, 6);
             // 
             // importSaveToolStripMenuItem1
             // 
             this.importSaveToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.importsave;
             this.importSaveToolStripMenuItem1.Name = "importSaveToolStripMenuItem1";
-            this.importSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.importSaveToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.importSaveToolStripMenuItem1.Text = "Import save...";
             this.importSaveToolStripMenuItem1.Click += new System.EventHandler(this.importSaveToolStripMenuItem1_Click);
             // 
@@ -897,20 +933,20 @@
             // 
             this.exportSaveToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.exportsave;
             this.exportSaveToolStripMenuItem1.Name = "exportSaveToolStripMenuItem1";
-            this.exportSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.exportSaveToolStripMenuItem1.Size = new System.Drawing.Size(229, 26);
             this.exportSaveToolStripMenuItem1.Text = "Export save...";
             this.exportSaveToolStripMenuItem1.Click += new System.EventHandler(this.exportSaveToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem14
             // 
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(222, 6);
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(226, 6);
             // 
             // saveInformationToolStripMenuItem
             // 
             this.saveInformationToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.infoicon;
             this.saveInformationToolStripMenuItem.Name = "saveInformationToolStripMenuItem";
-            this.saveInformationToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.saveInformationToolStripMenuItem.Size = new System.Drawing.Size(229, 26);
             this.saveInformationToolStripMenuItem.Text = "Information";
             this.saveInformationToolStripMenuItem.Click += new System.EventHandler(this.saveInformationToolStripMenuItem_Click);
             // 
@@ -928,51 +964,16 @@
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
             // 
-            // toolStripMenuItem16
-            // 
-            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuRead
-            // 
-            this.pS3MemoryCardAdaptorMenuRead.Name = "pS3MemoryCardAdaptorMenuRead";
-            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuRead.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuRead.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuRead_Click);
-            // 
-            // toolStripMenuItem22
-            // 
-            this.toolStripMenuItem22.Name = "toolStripMenuItem22";
-            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuWrite
-            // 
-            this.pS3MemoryCardAdaptorMenuWrite.Name = "pS3MemoryCardAdaptorMenuWrite";
-            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuWrite.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuWrite.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuWrite_Click);
-            // 
-            // toolStripMenuItem24
-            // 
-            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
-            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
-            // 
-            // pS3MemoryCardAdaptorMenuFormat
-            // 
-            this.pS3MemoryCardAdaptorMenuFormat.Name = "pS3MemoryCardAdaptorMenuFormat";
-            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(215, 22);
-            this.pS3MemoryCardAdaptorMenuFormat.Text = "PS3 Memory Card Adaptor";
-            this.pS3MemoryCardAdaptorMenuFormat.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuFormat_Click);
-            // 
             // mainWindow
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(509, 393);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(514, 401);
             this.Controls.Add(this.mainStatusStrip);
             this.Controls.Add(this.mainTabControl);
             this.Controls.Add(this.mainToolbar);
             this.Controls.Add(this.mainMenu);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mainMenu;
             this.MaximizeBox = false;

@@ -45,6 +45,7 @@
             this.save1Column,
             this.save2Column});
             this.compareListView.FullRowSelect = true;
+            this.compareListView.HideSelection = false;
             this.compareListView.Location = new System.Drawing.Point(4, 44);
             this.compareListView.MultiSelect = false;
             this.compareListView.Name = "compareListView";
@@ -108,7 +109,8 @@
             // 
             // compareWindow
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(376, 297);
             this.Controls.Add(this.spacerLabel);
             this.Controls.Add(this.okButton);

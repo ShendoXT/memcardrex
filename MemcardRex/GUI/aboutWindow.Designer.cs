@@ -34,6 +34,10 @@
             this.appVersionLabel = new System.Windows.Forms.Label();
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.compileDateLabel = new System.Windows.Forms.Label();
+            this.topPanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.topPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // infoLabel
@@ -50,7 +54,7 @@
             // 
             this.OKbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKbutton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.OKbutton.Location = new System.Drawing.Point(229, 120);
+            this.OKbutton.Location = new System.Drawing.Point(224, 115);
             this.OKbutton.Name = "OKbutton";
             this.OKbutton.Size = new System.Drawing.Size(76, 24);
             this.OKbutton.TabIndex = 0;
@@ -61,27 +65,28 @@
             // appNameLabel
             // 
             this.appNameLabel.BackColor = System.Drawing.Color.Transparent;
-            this.appNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.appNameLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.appNameLabel.ForeColor = System.Drawing.Color.White;
-            this.appNameLabel.Location = new System.Drawing.Point(6, 8);
+            this.appNameLabel.Location = new System.Drawing.Point(4, 4);
             this.appNameLabel.Margin = new System.Windows.Forms.Padding(0);
             this.appNameLabel.Name = "appNameLabel";
-            this.appNameLabel.Size = new System.Drawing.Size(298, 20);
+            this.appNameLabel.Size = new System.Drawing.Size(298, 22);
             this.appNameLabel.TabIndex = 3;
             // 
             // appVersionLabel
             // 
             this.appVersionLabel.BackColor = System.Drawing.Color.Transparent;
+            this.appVersionLabel.Dock = System.Windows.Forms.DockStyle.Left;
             this.appVersionLabel.ForeColor = System.Drawing.Color.White;
-            this.appVersionLabel.Location = new System.Drawing.Point(8, 32);
+            this.appVersionLabel.Location = new System.Drawing.Point(0, 0);
             this.appVersionLabel.Name = "appVersionLabel";
-            this.appVersionLabel.Size = new System.Drawing.Size(115, 16);
+            this.appVersionLabel.Size = new System.Drawing.Size(115, 18);
             this.appVersionLabel.TabIndex = 4;
             // 
             // copyrightLabel
             // 
             this.copyrightLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.copyrightLabel.Location = new System.Drawing.Point(8, 124);
+            this.copyrightLabel.Location = new System.Drawing.Point(7, 125);
             this.copyrightLabel.Name = "copyrightLabel";
             this.copyrightLabel.Size = new System.Drawing.Size(212, 16);
             this.copyrightLabel.TabIndex = 1;
@@ -89,25 +94,43 @@
             // compileDateLabel
             // 
             this.compileDateLabel.BackColor = System.Drawing.Color.Transparent;
+            this.compileDateLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.compileDateLabel.ForeColor = System.Drawing.Color.White;
-            this.compileDateLabel.Location = new System.Drawing.Point(129, 32);
+            this.compileDateLabel.Location = new System.Drawing.Point(142, 0);
             this.compileDateLabel.Name = "compileDateLabel";
-            this.compileDateLabel.Size = new System.Drawing.Size(175, 16);
+            this.compileDateLabel.Size = new System.Drawing.Size(150, 18);
             this.compileDateLabel.TabIndex = 6;
             this.compileDateLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // topPanel
+            // 
+            this.topPanel.BackColor = System.Drawing.Color.DimGray;
+            this.topPanel.Controls.Add(this.appNameLabel);
+            this.topPanel.Controls.Add(this.panel1);
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(308, 52);
+            this.topPanel.TabIndex = 7;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.compileDateLabel);
+            this.panel1.Controls.Add(this.appVersionLabel);
+            this.panel1.Location = new System.Drawing.Point(8, 32);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(292, 18);
+            this.panel1.TabIndex = 7;
+            // 
             // AboutWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(308, 147);
             this.Controls.Add(this.OKbutton);
             this.Controls.Add(this.copyrightLabel);
-            this.Controls.Add(this.compileDateLabel);
-            this.Controls.Add(this.appVersionLabel);
-            this.Controls.Add(this.appNameLabel);
             this.Controls.Add(this.infoLabel);
+            this.Controls.Add(this.topPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -115,8 +138,9 @@
             this.Name = "AboutWindow";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "aboutWindow";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.AboutWindow_Paint);
+            this.Text = "About";
+            this.topPanel.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -130,5 +154,7 @@
         private System.Windows.Forms.Label appVersionLabel;
         private System.Windows.Forms.Label copyrightLabel;
         private System.Windows.Forms.Label compileDateLabel;
+        private System.Windows.Forms.Panel topPanel;
+        private System.Windows.Forms.Panel panel1;
     }
 }
