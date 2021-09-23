@@ -358,7 +358,7 @@ namespace MemcardRex
             OpenFileDialog openFileDlg = new OpenFileDialog
             {
                 Title = "Open Memory Card",
-                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
+                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
                 Multiselect = true
             };
 
@@ -459,7 +459,7 @@ namespace MemcardRex
                 SaveFileDialog saveFileDlg = new SaveFileDialog
                 {
                     Title = "Save Memory Card",
-                    Filter = "Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
+                    Filter = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
                     FilterIndex = mainSettings.lastSaveFormat
                 };
 
@@ -513,8 +513,8 @@ namespace MemcardRex
             //Check if there are any cards to save
             if (PScard.Count > 0)
             {
-                //Check if file can be saved or save dialog must be shown (VMP is read only)
-                if (PScard[listIndex].cardLocation == null || PScard[listIndex].cardType == 4)
+                //Check if file can be saved or save dialog must be shown
+                if (PScard[listIndex].cardLocation == null)
                     saveCardDialog(listIndex);
                 else
                     saveMemoryCard(listIndex, PScard[listIndex].cardLocation, PScard[listIndex].cardType);
@@ -662,7 +662,7 @@ namespace MemcardRex
 
                         //Load values to dialog
                         informationDlg.initializeDialog(saveTitle, saveProdCode, saveIdentifier,
-                            saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, PScard[listIndex].findSaveLinks(slotNumber), mainSettings.iconBackgroundColor);
+                            saveRegion, saveSize, iconFrames, mainSettings.iconInterpolationMode, mainSettings.iconPropertiesSize, saveIcons, PScard[listIndex].findSaveLinks(slotNumber), mainSettings.iconBackgroundColor, xScale, yScale);
 
                         informationDlg.ShowDialog(this);
 

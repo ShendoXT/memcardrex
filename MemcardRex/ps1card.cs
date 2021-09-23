@@ -18,7 +18,7 @@ namespace MemcardRex
         //Memory Card's location (path + filename)
         public string cardLocation = null;
 
-        //Memory Card's type (0 - unset, 1 - raw, 2 - gme, 3 - vgs, 4 - vmp (read only));
+        //Memory Card's type (0 - unset, 1 - raw, 2 - gme, 3 - vgs, 4 - vmp);
         public byte cardType = 0;
 
         //Flag used to determine if the card has been edited since the last saving
@@ -1042,6 +1042,7 @@ namespace MemcardRex
                     break;
 
                 case "SC":          //RAW single save
+                case "sc":          //Also valid as seen with MMX4 save
                     finalData = new byte[inputData.Length + 128];
                     byte[] singleSaveHeader = Encoding.Default.GetBytes(Path.GetFileName(fileName));
 
