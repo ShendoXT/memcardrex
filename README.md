@@ -67,7 +67,7 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 
 ### Credits
 <b>Authors:</b>
-<br>Alvaro Tanarro, Alvaro Tanarro, Robxnano and Shendo.
+<br>Alvaro Tanarro, Nico de Poel, Robxnano and Shendo.
 
 <b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
