@@ -18,7 +18,7 @@
 * Smart Link Memory Card(*.psm)
 * MCExplorer(*.mci)
 * PCSX ReARMed/RetroArch(*.srm)
-* PSP virtual Memory Card(*.VMP) (opening only)
+* PSP virtual Memory Card(*.VMP)
 * PS3 virtual Memory Card(*.VM1)
 
 <b>Supported single save formats:</b>
@@ -28,7 +28,7 @@
 * Smart Link(*.mcb)
 * Datel(*.mcx,*.pda)
 * RAW single saves
-* PS3 virtual saves (*.psv) (importing only)
+* PS3 virtual saves (*.psv)
 
 ### Hardware interfaces
 MemcardRex supports communication with the real Memory Cards via external devices:
@@ -66,6 +66,9 @@ This USB driver can be easily created and installed using [Zadig](https://zadig.
 With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you should now be able to read, write and format PS1 Memory Cards.
 
 ### Credits
+<b>Authors:</b>
+<br>Alvaro Tanarro, Alvaro Tanarro, Robxnano and Shendo.
+
 <b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
 
