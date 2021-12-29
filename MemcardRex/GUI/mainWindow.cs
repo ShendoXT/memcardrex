@@ -82,6 +82,8 @@ namespace MemcardRex
             public string communicationPort;       //Communication port for Hardware interfaces
             public int lastSaveFormat;             //Last used format to save memory card
             public int lastExportFormat;           //Last used format to export save
+            public string remoteCommunicationAddress; // Address / hostname of the remote serial bridge host
+            public int remoteCommunicationPort;    // Port to open a socket for the remote serial bridge
         }
 
         //All program settings
@@ -188,6 +190,10 @@ namespace MemcardRex
                 //Load DexDrive COM port
                 mainSettings.communicationPort = xmlAppSettings.readXmlEntry("ComPort");
 
+                // Load TCP/IP settings
+                mainSettings.remoteCommunicationAddress = xmlAppSettings.readXmlEntry("RemoteComAddress");
+                mainSettings.remoteCommunicationPort = xmlAppSettings.readXmlEntryInt("RemoteComPort", 0, 65535);
+
                 //Load Title Encoding
                 mainSettings.titleEncoding = xmlAppSettings.readXmlEntryInt("TitleEncoding", 0, 1);
 
@@ -255,6 +261,10 @@ namespace MemcardRex
 
             //Set DexDrive port
             xmlAppSettings.writeXmlEntry("ComPort", mainSettings.communicationPort);
+
+            //Set TCP/IP settings
+            xmlAppSettings.writeXmlEntry("RemoteComAddress", mainSettings.remoteCommunicationAddress);
+            xmlAppSettings.writeXmlEntry("RemoteComPort", mainSettings.remoteCommunicationPort.ToString());
 
             //Set title encoding
             xmlAppSettings.writeXmlEntry("TitleEncoding", mainSettings.titleEncoding.ToString());
