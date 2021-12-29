@@ -124,10 +124,19 @@ namespace MemcardRex
         }
 
         //Read a Memory Card from PS1CardLink
-        public byte[] readMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort)
+        public byte[] readMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort)
         {
+            string errorString;
+
             //Initialize PS1CardLink
-            string errorString = PS1CLnk.StartPS1CardLink(comPort);
+            if (remoteAddress.Length > 0)
+            {
+                errorString = PS1CLnk.StartPS1CardLink(remoteAddress, remotePort);
+            }
+            else
+            {
+                errorString = PS1CLnk.StartPS1CardLink(comPort);
+            }
 
             //Check if there were any errors
             if (errorString != null)
@@ -280,10 +289,20 @@ namespace MemcardRex
         }
 
         //Write a Memory Card to PS1CardLink
-        public void writeMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
+        public void writeMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort, byte[] memoryCardData, int frameNumber)
         {
             //Initialize PS1CardLink
-            string errorString = PS1CLnk.StartPS1CardLink(comPort);
+            string errorString;
+
+            if (remoteAddress.Length > 0)
+            {
+                errorString = PS1CLnk.StartPS1CardLink(remoteAddress, remotePort);
+            }
+            else
+            {
+                errorString = PS1CLnk.StartPS1CardLink(comPort);
+            }
+
 
             //Check if there were any errors
             if (errorString != null)

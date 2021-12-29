@@ -84,6 +84,28 @@ namespace MemcardRex
             public int lastExportFormat;           //Last used format to export save
             public string remoteCommunicationAddress; // Address / hostname of the remote serial bridge host
             public int remoteCommunicationPort;    // Port to open a socket for the remote serial bridge
+
+            public programSettings(int i = 0)
+            {
+                titleEncoding = 0;              
+                showListGrid = 0;               
+                iconInterpolationMode = 0;      
+                iconPropertiesSize = 0;         
+                iconBackgroundColor = 0;        
+                backupMemcards = 0;             
+                warningMessage = 0;             
+                restoreWindowPosition = 0;      
+                fixCorruptedCards = 0;          
+                glassStatusBar = 0;             
+                formatType = 0;                 
+                listFont = "";                
+                communicationPort = "";       
+                lastSaveFormat = 0;             
+                lastExportFormat = 0;       
+                // Default values for esp-link
+                remoteCommunicationAddress = "192.168.4.1";
+                remoteCommunicationPort = 23;    
+        }
         }
 
         //All program settings
@@ -245,6 +267,13 @@ namespace MemcardRex
 
                 //Apply loaded settings
                 applySettings();
+            }
+
+            if (mainSettings.remoteCommunicationAddress == null)
+            {
+                // Provide defaults for esp-link serial bridge
+                mainSettings.remoteCommunicationAddress = "192.168.4.1";
+                mainSettings.remoteCommunicationPort = 23;
             }
         }
 
@@ -2175,7 +2204,7 @@ namespace MemcardRex
         private void pS1CardLinkMenuRead_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from PS1CardLink
-            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort);
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0);
 
             cardReaderRead(tempByteArray);
         }
@@ -2189,7 +2218,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2267,12 +2296,41 @@ namespace MemcardRex
                     break;
 
                 case 2:         //PS1CardLink
-                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
+                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
 
                 case 3:         //PS3 Memory Card Adaptor
                     new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
+                case 4:         //PS1CardLink (Remote TCP)
+                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
+                    break;
+            }
+        }
+
+        private void pS1CardLinkRemoteMenuRead_Click(object sender, EventArgs e)
+        {
+            //Read a Memory Card from PS1CardLink
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort);
+
+            cardReaderRead(tempByteArray);
+        }
+
+        private void pS1CardLinkRemoteMenuFormat_Click(object sender, EventArgs e)
+        {
+            //Format a Memory Card on PS1Link Remote
+            formatHardwareCard(4);
+        }
+
+        private void pS1CardLinkRemoteMenuWrite_Click(object sender, EventArgs e)
+        {
+            int listIndex = mainTabControl.SelectedIndex;
+
+            //Check if there are any cards to write
+            if (PScard.Count > 0)
+            {
+                //Open a DexDrive communication window
+                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
     }
