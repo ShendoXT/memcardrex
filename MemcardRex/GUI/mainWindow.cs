@@ -35,9 +35,9 @@ namespace MemcardRex
         const string appDate = "Unknown";
 
 #if DEBUG
-        const string appVersion = "1.9 (Debug)";
+        const string appVersion = "1.10 (Debug)";
 #else
-        const string appVersion = "1.9";
+        const string appVersion = "1.10";
 #endif
 
         //Location of the application
