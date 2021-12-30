@@ -24,9 +24,15 @@ namespace PS1CardLinkCommunication
         //Contains a software version of a detected device
         string SoftwareVersion = "0.0";
 
+        //Protocol setup
+        int MaxTimeout5msTickCount = 18;
+
         // This constructor is used to setup a Serial Port communication with PS1Link
         public string StartPS1CardLink(string ComPortName)
         {
+            //Setup the protocol parameters
+            MaxTimeout5msTickCount = 18;  /* 5ms * 18 = 90ms */
+
             //Define a port to open
             OpenedPort = new SerialPort(ComPortName, 38400, Parity.None, 8, StopBits.One);
             OpenedPort.ReadBufferSize = 256;
@@ -42,6 +48,9 @@ namespace PS1CardLinkCommunication
         // This constructor is used to setup a Serial Port over TCP/IP with PS1Link
         public string StartPS1CardLink(string Address, int Port)
         {
+            //Setup the protocol parameters
+            MaxTimeout5msTickCount = 400;  /* 5ms * 400 = 2000ms */
+
             // Try to setup the communication link
             try
             {
@@ -61,19 +70,28 @@ namespace PS1CardLinkCommunication
         {
             //Buffer for storing read data from the PS1CLnk
             byte[] ReadData = null;
+            int ReceivedBytes = 0;
+            //Error string
+            string ErrorString = "PS1CardLink was not detected on '" + ComName + "' port.";
 
             //Check if this is PS1CLnk
             SendDataToPort((byte)PS1CLnkCommands.GETID, 100);
-            ReadData = ReadDataFromPort();
 
-            if (ReadData[0] != 'P' || ReadData[1] != 'S' || ReadData[2] != '1' || ReadData[3] != 'C' || ReadData[4] != 'L' || ReadData[5] != 'N' || ReadData[6] != 'K')
+            ReadData = ReadDataFromPort(ref ReceivedBytes);
+
+            if (ReceivedBytes != 7 || ReadData[0] != 'P' || ReadData[1] != 'S' || ReadData[2] != '1' || ReadData[3] != 'C' || ReadData[4] != 'L' || ReadData[5] != 'N' || ReadData[6] != 'K')
             {
-                return "PS1CardLink was not detected on '" + ComName + "' port.";
+                return ErrorString;
             }
 
             //Get the software version
             SendDataToPort((byte)PS1CLnkCommands.GETVER, 30);
-            ReadData = ReadDataFromPort();
+            ReadData = ReadDataFromPort(ref ReceivedBytes);
+
+            if (ReceivedBytes != 1)
+            {
+                return ErrorString;
+            }
 
             SoftwareVersion = (ReadData[0] >> 4).ToString() + "." + (ReadData[0] & 0xF).ToString();
 
@@ -132,21 +150,23 @@ namespace PS1CardLinkCommunication
         }
 
         //Catch the response from a PS1CLnk
-        private byte[] ReadDataFromPort()
+        private byte[] ReadDataFromPort(ref int BytesRead)
         {
             //Buffer for reading data
             byte[] InputStream = new byte[256];
 
+            BytesRead = 0;
+
             //Read data from PS1CLnk
             if (OpenedPort != null)
             {
-                if (OpenedPort.BytesToRead != 0) OpenedPort.Read(InputStream, 0, 256);                
+                if (OpenedPort.BytesToRead != 0) BytesRead = OpenedPort.Read(InputStream, 0, 256);                
             }
             else if (OpenTcpClient != null)
             {
                 if (OpenTcpClient.Available != 0)
                 {
-                    TcpStream.Read(InputStream, 0, 256);
+                    BytesRead = TcpStream.Read(InputStream, 0, 256);
                 }
             }
             else
@@ -173,6 +193,28 @@ namespace PS1CardLinkCommunication
             }
         }
 
+        //Await a given number of bytes to be ready within a certain time
+        private void AwaitAvailable(int BytesCount)
+        {
+            int DelayCounter = 0;
+            int PreviousAvailableBytes = 0;
+
+            while (GetAvailableBytesFromPort() < BytesCount && DelayCounter < MaxTimeout5msTickCount)
+            {
+                Thread.Sleep(5);
+                if (PreviousAvailableBytes == GetAvailableBytesFromPort())
+                {  //No data came within the timeframe, start counting the timeout
+                    DelayCounter++;
+                }
+                else
+                {  //Data came, we can reset the timeout counter
+                    DelayCounter = 0;
+                }
+                PreviousAvailableBytes = GetAvailableBytesFromPort();
+            }
+        }
+
+        //Discard all the bytes currently stored in the receive buffer of the trasport
         private void FlushPort()
         {
             if (OpenedPort != null)
@@ -181,7 +223,8 @@ namespace PS1CardLinkCommunication
             }
             else if (OpenTcpClient != null)
             {
-                ReadDataFromPort();
+                int ReceivedBytes = 0;
+                ReadDataFromPort(ref ReceivedBytes);
             }
             else
             {
@@ -192,10 +235,9 @@ namespace PS1CardLinkCommunication
         //Read a specified frame of a Memory Card
         public byte[] ReadMemoryCardFrame(ushort FrameNumber)
         {
-            int DelayCounter = 0;
-
             //Buffer for storing read data from PS1CLnk
             byte[] ReadData = null;
+            int ReceivedBytes = 0;
 
             //128 byte frame data from a Memory Card
             byte[] ReturnDataBuffer = new byte[128];
@@ -209,14 +251,14 @@ namespace PS1CardLinkCommunication
             SendDataToPort(FrameMsb, 0);
             SendDataToPort(FrameLsb, 0);
 
-            //Wait for the buffer to fill
-            while (GetAvailableBytesFromPort() < 130 && DelayCounter < 18)
-            {
-                Thread.Sleep(5);
-                DelayCounter++;
-            }
+            //Wait for the buffer to fill (or to timeout)
+            AwaitAvailable(130);
 
-            ReadData = ReadDataFromPort();
+            ReadData = ReadDataFromPort(ref ReceivedBytes);
+            if (ReceivedBytes != 130)
+            {  //Unexpected amount of data has been received, refuse to continue
+                return null;
+            }
 
             //Copy recieved data
             Array.Copy(ReadData, 0, ReturnDataBuffer, 0, 128);
@@ -228,7 +270,10 @@ namespace PS1CardLinkCommunication
             }
 
             //Return null if there is a checksum missmatch
-            if (XorData != ReadData[128] || ReadData[129] != (byte)PS1CLnkResponses.GOOD) return null;
+            if (XorData != ReadData[128] || ReadData[129] != (byte)PS1CLnkResponses.GOOD)
+            {
+                return null;
+            }
 
             //Return read data
             return ReturnDataBuffer;
@@ -237,8 +282,6 @@ namespace PS1CardLinkCommunication
         //Write a specified frame to a Memory Card
         public bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
         {
-            int DelayCounter = 0;
-
             //Buffer for storing read data from PS1CLnk
             byte[] ReadData = null;
 
@@ -261,17 +304,14 @@ namespace PS1CardLinkCommunication
             SendDataToPort(FrameData, 0, 128);
             SendDataToPort(XorData, 0);                      //XOR Checksum
 
-            //Wait for the buffer to fill
-            while (GetAvailableBytesFromPort() < 1 && DelayCounter < 18)
-            {
-                Thread.Sleep(5);
-                DelayCounter++;
-            }
+            //Wait for the buffer to fill (or to timeout)
+            AwaitAvailable(1);
 
             //Fetch PS1CLnk's response to the last command
-            ReadData = ReadDataFromPort();
+            int ReceivedBytes = 0;
+            ReadData = ReadDataFromPort(ref ReceivedBytes);
 
-            if (ReadData[0x0] == (byte)PS1CLnkResponses.GOOD) return true;
+            if (ReceivedBytes == 1 && ReadData[0x0] == (byte)PS1CLnkResponses.GOOD) return true;
 
             //Data was not written sucessfully
             return false;
