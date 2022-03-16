@@ -2,7 +2,7 @@
 
 The project is working well with Mono.
 
-If you just want to run MemcardRex, follow Step 1 below, and then download MemcardRex from releases.
+If you just want to run MemcardRex, follow Step 1 of [Install Build tools and Dependencies](memcardrex/MONO.md/install-build-tools-and-dependencies) below, and then download MemcardRex from [releases](https://github.com/ShendoXT/memcardrex/releases).
 
 ### Clone the project
 In a directory of your choice, download MemcardRex:
