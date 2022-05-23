@@ -358,7 +358,7 @@ namespace MemcardRex
             OpenFileDialog openFileDlg = new OpenFileDialog
             {
                 Title = "Open Memory Card",
-                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
+                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp;*.vmc|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|Popstarter Virtual Memory Card|*.vmc|All files|*.*",
                 Multiselect = true
             };
 
