@@ -69,6 +69,9 @@ namespace MemcardRex
         readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
         readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
 
+        readonly byte[] mcxKey = { 0x81, 0xD9, 0xCC, 0xE9, 0x71, 0xA9, 0x49, 0x9B, 0x04, 0xAD, 0xDC, 0x48, 0x30, 0x7F, 0x07, 0x92 };
+        readonly byte[] mcxIv = { 0x13, 0xC2, 0xE7, 0x69, 0x4B, 0xEC, 0x69, 0x6D, 0x52, 0xCF, 0x00, 0x09, 0x2A, 0xC1, 0xF2, 0x72 };
+
         //Overwrite the contents of one byte array
         private void FillByteArray(byte[] destination, int start, int fill)
         {
@@ -96,6 +99,55 @@ namespace MemcardRex
             }
         }
 
+        //Encrypts a buffer using AES CBC 128
+        private byte[] AesCbcEncrypt(byte[] toEncrypt, byte[] key, byte[] iv)
+        {
+            Aes aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Padding = PaddingMode.Zeros;
+            aes.Mode = CipherMode.CBC;
+
+            using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
+            {
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (BinaryWriter bnEncrypt = new BinaryWriter(csEncrypt))
+                        {
+                            bnEncrypt.Write(toEncrypt);
+                        }
+                        return msEncrypt.ToArray();
+                    }
+                }
+            }
+        }
+
+        //Decrypts a buffer using AES CBC 128
+        private byte[] AesCbcDecrypt(byte[] toDecrypt, byte[] key, byte[] iv)
+        {
+            Aes aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Padding = PaddingMode.Zeros;
+            aes.Mode = CipherMode.CBC;
+
+            using (ICryptoTransform decryptor = aes.CreateDecryptor(key, iv))
+            {
+                using (MemoryStream msDecrypt = new MemoryStream(toDecrypt))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (BinaryReader bnDecrypt = new BinaryReader(csDecrypt))
+                        {
+                            return bnDecrypt.ReadBytes(toDecrypt.Length - (toDecrypt.Length % 16));
+                        }
+                    }
+                }
+            }
+        }
+
         //Encrypts a buffer using AES ECB 128
         private byte[] AesEcbEncrypt(byte[] toEncrypt, byte[] key, byte[] iv)
         {
@@ -105,7 +157,7 @@ namespace MemcardRex
             aes.Padding = PaddingMode.Zeros;
             aes.Mode = CipherMode.ECB;
 
-            using (ICryptoTransform encryptor = aes.CreateEncryptor(saveKey, saveIv))
+            using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
             {
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
@@ -130,7 +182,7 @@ namespace MemcardRex
             aes.Padding = PaddingMode.Zeros;
             aes.Mode = CipherMode.ECB;
 
-            using (ICryptoTransform decryptor = aes.CreateDecryptor(saveKey, saveIv))
+            using (ICryptoTransform decryptor = aes.CreateDecryptor(key, iv))
             {
                 using (MemoryStream msDecrypt = new MemoryStream(toDecrypt))
                 {
@@ -294,6 +346,39 @@ namespace MemcardRex
             Array.Copy(buffer, 0, hash2, 0x40, 0x14);
             return sha1.ComputeHash(hash2);
 
+        }
+
+        private byte[] DecryptMcxCard(byte[] rawCard)
+        {
+            byte[] mcxCard = new byte[0x200A0];
+            Array.Copy(rawCard, mcxCard, mcxCard.Length);
+            return AesCbcDecrypt(mcxCard, mcxKey, mcxIv);
+        }
+        // Check if a given card is a MCX image
+        private bool IsMcxCard(byte[] rawCard)
+        {
+            byte[] mcxCard = DecryptMcxCard(rawCard);
+            // Check for "MC" header 0x80 bytes in
+            if (mcxCard[0x80] == 'M' && mcxCard[0x81] == 'C') 
+                return true;
+            else
+                return false;
+        }
+
+        //Generate encrypted MCX Memory Card
+        private byte[] MakeMcxCard(byte[] rawCard)
+        {
+            byte[] mcxCard = new byte[0x200A0];
+            byte[] hash;
+
+            Array.Copy(rawCard, 0, mcxCard, 0x80, 0x20000);
+            
+            using (SHA256 sha = SHA256.Create())
+                hash = sha.ComputeHash(mcxCard, 0, 0x20080);
+
+            Array.Copy(hash, 0, mcxCard, 0x20080, 0x20);
+            Array.Copy(AesCbcEncrypt(mcxCard, mcxKey, mcxIv), 0, mcxCard, 0x0, 0x200A0);
+            return mcxCard;
         }
 
         //Generate signed VMP Memory Card
@@ -1119,6 +1204,9 @@ namespace MemcardRex
                 case 4:         //VMP Memory Card
                     binWriter.Write(MakeVmpCard(rawMemoryCard));
                     break;
+                case 5:         //MCX Memory Card
+                    binWriter.Write(MakeMcxCard(rawMemoryCard));
+                    break;
             }
 
             //Store the location of the Memory Card
@@ -1196,7 +1284,7 @@ namespace MemcardRex
 
                 //Put data into temp array
                 binReader.BaseStream.Read(tempData, 0, 134976);
-
+                
                 //File is sucesfully read, close the stream
                 binReader.Close();
 
@@ -1210,9 +1298,14 @@ namespace MemcardRex
                 tempString = Encoding.ASCII.GetString(tempData, 0, 11).Trim((char)0x0, (char)0x1, (char)0x3F);
                 switch (tempString)
                 {
-                    default:                //File type is not supported
+                    default:                //File type is not supported or is MCX
+                        if (IsMcxCard(tempData)) {
+                            tempData = DecryptMcxCard(tempData);
+                            startOffset = 128;
+                            cardType = 5;
+                            break;
+                        }
                         return "'" + cardName + "' is not a supported Memory Card format.";
-
                     case "MC":              //Standard raw Memory Card
                         startOffset = 0;
                         cardType = 1;
@@ -1239,7 +1332,6 @@ namespace MemcardRex
 
                 //Copy data to rawMemoryCard array with offset from input data
                 Array.Copy(tempData, startOffset, rawMemoryCard, 0, 131072);
-
                 //Load Memory Card data from raw card
                 loadDataFromRawCard();
             }
