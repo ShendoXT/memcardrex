@@ -358,7 +358,7 @@ namespace MemcardRex
             OpenFileDialog openFileDlg = new OpenFileDialog
             {
                 Title = "Open Memory Card",
-                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
+                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|Vita \"MCX\" PocketStation Memory Card|*.BIN|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
                 Multiselect = true
             };
 
@@ -459,7 +459,7 @@ namespace MemcardRex
                 SaveFileDialog saveFileDlg = new SaveFileDialog
                 {
                     Title = "Save Memory Card",
-                    Filter = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
+                    Filter = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|Vita \"MCX\" PocketStation Memory Card|*.BIN|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
                     FilterIndex = mainSettings.lastSaveFormat
                 };
 
@@ -482,13 +482,18 @@ namespace MemcardRex
                             memoryCardType = 4;
                             break;
 
-                        case 3:         //GME Memory Card
+                        case 3:         //MCX Memory Card
+                            memoryCardType = 5;
+                            break;
+
+                        case 4:         //GME Memory Card
                             memoryCardType = 2;
                             break;
 
-                        case 4:         //VGS Memory Card
+                        case 5:         //VGS Memory Card
                             memoryCardType = 3;
                             break;
+
                     }
                     saveMemoryCard(listIndex, saveFileDlg.FileName, memoryCardType);
                 }
