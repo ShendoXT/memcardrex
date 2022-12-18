@@ -39,6 +39,8 @@ namespace MemcardRex
             if (progSettings.warningMessage == 1) backupWarningCheckBox.Checked = true; else backupWarningCheckBox.Checked = false;
             if (progSettings.restoreWindowPosition == 1) restorePositionCheckbox.Checked = true; else restorePositionCheckbox.Checked = false;
             if (progSettings.fixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
+            remoteAddressBox.Text = progSettings.remoteCommunicationAddress;
+            remotePortUpDown.Value = progSettings.remoteCommunicationPort;
             
 
             //Load all COM ports found on the system
@@ -74,6 +76,8 @@ namespace MemcardRex
             progSettings.iconBackgroundColor = backgroundCombo.SelectedIndex;
             progSettings.formatType = formatCombo.SelectedIndex;
             progSettings.communicationPort = SavedComPort;
+            progSettings.remoteCommunicationAddress = remoteAddressBox.Text;
+            progSettings.remoteCommunicationPort = Convert.ToUInt16(remotePortUpDown.Value);
 
             if (gridCheckbox.Checked == true) progSettings.showListGrid = 1; else progSettings.showListGrid = 0;
             if (backupCheckbox.Checked == true) progSettings.backupMemcards = 1; else progSettings.backupMemcards = 0;
@@ -106,6 +110,16 @@ namespace MemcardRex
         {
             //Save the COM port if the user selected a new one
             SavedComPort = dexDriveCombo.Text;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

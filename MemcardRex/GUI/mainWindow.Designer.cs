@@ -67,6 +67,7 @@
             this.memCARDuinoMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.pS1CardLinkRemoteMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
             this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -132,6 +133,8 @@
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.pS1CardLinkRemoteMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
+            this.pS1CardLinkRemoteMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             dexDriveMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolbar.SuspendLayout();
@@ -142,7 +145,7 @@
             // dexDriveMenuFormat
             // 
             dexDriveMenuFormat.Name = "dexDriveMenuFormat";
-            dexDriveMenuFormat.Size = new System.Drawing.Size(215, 22);
+            dexDriveMenuFormat.Size = new System.Drawing.Size(266, 22);
             dexDriveMenuFormat.Text = "DexDrive";
             dexDriveMenuFormat.Click += new System.EventHandler(this.dexDriveMenuFormat_Click);
             // 
@@ -274,7 +277,7 @@
             // 
             this.editSaveHeaderToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.headeredit;
             this.editSaveHeaderToolStripMenuItem.Name = "editSaveHeaderToolStripMenuItem";
-            this.editSaveHeaderToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.editSaveHeaderToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.editSaveHeaderToolStripMenuItem.Text = "Edit save header...";
             this.editSaveHeaderToolStripMenuItem.Click += new System.EventHandler(this.editSaveHeaderToolStripMenuItem_Click);
             // 
@@ -282,7 +285,7 @@
             // 
             this.editSaveCommentToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.comments;
             this.editSaveCommentToolStripMenuItem.Name = "editSaveCommentToolStripMenuItem";
-            this.editSaveCommentToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.editSaveCommentToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.editSaveCommentToolStripMenuItem.Text = "Edit save comment...";
             this.editSaveCommentToolStripMenuItem.Click += new System.EventHandler(this.editSaveCommentToolStripMenuItem_Click);
             // 
@@ -291,7 +294,7 @@
             this.editWithPluginToolStripMenuItem1.Enabled = false;
             this.editWithPluginToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.plugin;
             this.editWithPluginToolStripMenuItem1.Name = "editWithPluginToolStripMenuItem1";
-            this.editWithPluginToolStripMenuItem1.Size = new System.Drawing.Size(264, 22);
+            this.editWithPluginToolStripMenuItem1.Size = new System.Drawing.Size(272, 22);
             this.editWithPluginToolStripMenuItem1.Text = "Edit with plugin";
             this.editWithPluginToolStripMenuItem1.DropDownClosed += new System.EventHandler(this.editWithPluginToolStripMenuItem_DropDownClosed);
             this.editWithPluginToolStripMenuItem1.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.editWithPluginToolStripMenuItem_DropDownItemClicked);
@@ -299,45 +302,45 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(261, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(269, 6);
             // 
             // compareWithTempBufferToolStripMenuItem
             // 
             this.compareWithTempBufferToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.comparetemp;
             this.compareWithTempBufferToolStripMenuItem.Name = "compareWithTempBufferToolStripMenuItem";
-            this.compareWithTempBufferToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.compareWithTempBufferToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.compareWithTempBufferToolStripMenuItem.Text = "Compare with temp buffer";
             this.compareWithTempBufferToolStripMenuItem.Click += new System.EventHandler(this.compareWithTempBufferToolStripMenuItem_Click);
             // 
             // toolStripMenuItem13
             // 
             this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(261, 6);
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(269, 6);
             // 
             // editIconToolStripMenuItem
             // 
             this.editIconToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.iconedit;
             this.editIconToolStripMenuItem.Name = "editIconToolStripMenuItem";
-            this.editIconToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.editIconToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.editIconToolStripMenuItem.Text = "Edit icon...";
             this.editIconToolStripMenuItem.Click += new System.EventHandler(this.editIconToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(261, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(269, 6);
             // 
             // deleteSaveToolStripMenuItem
             // 
             this.deleteSaveToolStripMenuItem.Name = "deleteSaveToolStripMenuItem";
-            this.deleteSaveToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.deleteSaveToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.deleteSaveToolStripMenuItem.Text = "Delete save";
             this.deleteSaveToolStripMenuItem.Click += new System.EventHandler(this.deleteSaveToolStripMenuItem_Click);
             // 
             // restoreSaveToolStripMenuItem
             // 
             this.restoreSaveToolStripMenuItem.Name = "restoreSaveToolStripMenuItem";
-            this.restoreSaveToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.restoreSaveToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.restoreSaveToolStripMenuItem.Text = "Restore save";
             this.restoreSaveToolStripMenuItem.Click += new System.EventHandler(this.restoreSaveToolStripMenuItem_Click);
             // 
@@ -345,20 +348,20 @@
             // 
             this.removeSaveformatSlotsToolStripMenuItem.Name = "removeSaveformatSlotsToolStripMenuItem";
             this.removeSaveformatSlotsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.removeSaveformatSlotsToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.removeSaveformatSlotsToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.removeSaveformatSlotsToolStripMenuItem.Text = "Remove save (format slot(s))";
             this.removeSaveformatSlotsToolStripMenuItem.Click += new System.EventHandler(this.removeSaveformatSlotsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(261, 6);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(269, 6);
             // 
             // copySaveToTempraryBufferToolStripMenuItem
             // 
             this.copySaveToTempraryBufferToolStripMenuItem.Name = "copySaveToTempraryBufferToolStripMenuItem";
             this.copySaveToTempraryBufferToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copySaveToTempraryBufferToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.copySaveToTempraryBufferToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.copySaveToTempraryBufferToolStripMenuItem.Text = "Copy save to temp buffer";
             this.copySaveToTempraryBufferToolStripMenuItem.Click += new System.EventHandler(this.copySaveToTempraryBufferToolStripMenuItem_Click);
             // 
@@ -366,20 +369,20 @@
             // 
             this.pasteSaveFromTemporaryBufferToolStripMenuItem.Name = "pasteSaveFromTemporaryBufferToolStripMenuItem";
             this.pasteSaveFromTemporaryBufferToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteSaveFromTemporaryBufferToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.pasteSaveFromTemporaryBufferToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.pasteSaveFromTemporaryBufferToolStripMenuItem.Text = "Paste save from temp buffer";
             this.pasteSaveFromTemporaryBufferToolStripMenuItem.Click += new System.EventHandler(this.pasteSaveFromTemporaryBufferToolStripMenuItem_Click);
             // 
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(261, 6);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(269, 6);
             // 
             // importSaveToolStripMenuItem
             // 
             this.importSaveToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.importsave;
             this.importSaveToolStripMenuItem.Name = "importSaveToolStripMenuItem";
-            this.importSaveToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.importSaveToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.importSaveToolStripMenuItem.Text = "Import save...";
             this.importSaveToolStripMenuItem.Click += new System.EventHandler(this.importSaveToolStripMenuItem_Click);
             // 
@@ -387,7 +390,7 @@
             // 
             this.exportSaveToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.exportsave;
             this.exportSaveToolStripMenuItem.Name = "exportSaveToolStripMenuItem";
-            this.exportSaveToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.exportSaveToolStripMenuItem.Size = new System.Drawing.Size(272, 22);
             this.exportSaveToolStripMenuItem.Text = "Export save...";
             this.exportSaveToolStripMenuItem.Click += new System.EventHandler(this.exportSaveToolStripMenuItem_Click);
             // 
@@ -410,52 +413,60 @@
             this.memCARDuinoMenuRead,
             this.toolStripMenuItem18,
             this.pS1CardLinkMenuRead,
+            this.pS1CardLinkRemoteMenuRead,
             this.toolStripMenuItem16,
             this.pS3MemoryCardAdaptorMenuRead});
             this.readFromToolStripMenuItem.Name = "readFromToolStripMenuItem";
-            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.readFromToolStripMenuItem.Text = "Read save data";
             // 
             // dexDriveMenuRead
             // 
             this.dexDriveMenuRead.Name = "dexDriveMenuRead";
-            this.dexDriveMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.dexDriveMenuRead.Size = new System.Drawing.Size(266, 22);
             this.dexDriveMenuRead.Text = "DexDrive";
             this.dexDriveMenuRead.Click += new System.EventHandler(this.dexDriveMenuRead_Click);
             // 
             // toolStripMenuItem17
             // 
             this.toolStripMenuItem17.Name = "toolStripMenuItem17";
-            this.toolStripMenuItem17.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem17.Size = new System.Drawing.Size(263, 6);
             // 
             // memCARDuinoMenuRead
             // 
             this.memCARDuinoMenuRead.Name = "memCARDuinoMenuRead";
-            this.memCARDuinoMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.memCARDuinoMenuRead.Size = new System.Drawing.Size(266, 22);
             this.memCARDuinoMenuRead.Text = "MemCARDuino";
             this.memCARDuinoMenuRead.Click += new System.EventHandler(this.memCARDuinoMenuRead_Click);
             // 
             // toolStripMenuItem18
             // 
             this.toolStripMenuItem18.Name = "toolStripMenuItem18";
-            this.toolStripMenuItem18.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem18.Size = new System.Drawing.Size(263, 6);
             // 
             // pS1CardLinkMenuRead
             // 
             this.pS1CardLinkMenuRead.Name = "pS1CardLinkMenuRead";
-            this.pS1CardLinkMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.pS1CardLinkMenuRead.Size = new System.Drawing.Size(266, 22);
             this.pS1CardLinkMenuRead.Text = "PS1CardLink";
             this.pS1CardLinkMenuRead.Click += new System.EventHandler(this.pS1CardLinkMenuRead_Click);
+            // 
+            // pS1CardLinkRemoteMenuRead
+            // 
+            this.pS1CardLinkRemoteMenuRead.Name = "pS1CardLinkRemoteMenuRead";
+            this.pS1CardLinkRemoteMenuRead.Size = new System.Drawing.Size(266, 22);
+            this.pS1CardLinkRemoteMenuRead.Text = "PS1CardLink (Remote Link over TCP)";
+            this.pS1CardLinkRemoteMenuRead.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuRead_Click);
             // 
             // toolStripMenuItem16
             // 
             this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(263, 6);
             // 
             // pS3MemoryCardAdaptorMenuRead
             // 
             this.pS3MemoryCardAdaptorMenuRead.Name = "pS3MemoryCardAdaptorMenuRead";
-            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuRead.Size = new System.Drawing.Size(266, 22);
             this.pS3MemoryCardAdaptorMenuRead.Text = "PS3 Memory Card Adaptor";
             this.pS3MemoryCardAdaptorMenuRead.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuRead_Click);
             // 
@@ -467,59 +478,60 @@
             this.memCARDuinoMenuWrite,
             this.toolStripMenuItem19,
             this.pS1CardLinkMenuWrite,
+            this.pS1CardLinkRemoteMenuWrite,
             this.toolStripMenuItem22,
             this.pS3MemoryCardAdaptorMenuWrite});
             this.writeToToolStripMenuItem.Name = "writeToToolStripMenuItem";
-            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.writeToToolStripMenuItem.Text = "Write save data";
             // 
             // dexDriveMenuWrite
             // 
             this.dexDriveMenuWrite.Name = "dexDriveMenuWrite";
-            this.dexDriveMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.dexDriveMenuWrite.Size = new System.Drawing.Size(266, 22);
             this.dexDriveMenuWrite.Text = "DexDrive";
             this.dexDriveMenuWrite.Click += new System.EventHandler(this.dexDriveMenuWrite_Click);
             // 
             // toolStripMenuItem12
             // 
             this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(263, 6);
             // 
             // memCARDuinoMenuWrite
             // 
             this.memCARDuinoMenuWrite.Name = "memCARDuinoMenuWrite";
-            this.memCARDuinoMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.memCARDuinoMenuWrite.Size = new System.Drawing.Size(266, 22);
             this.memCARDuinoMenuWrite.Text = "MemCARDuino";
             this.memCARDuinoMenuWrite.Click += new System.EventHandler(this.memCARDuinoMenuWrite_Click);
             // 
             // toolStripMenuItem19
             // 
             this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-            this.toolStripMenuItem19.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem19.Size = new System.Drawing.Size(263, 6);
             // 
             // pS1CardLinkMenuWrite
             // 
             this.pS1CardLinkMenuWrite.Name = "pS1CardLinkMenuWrite";
-            this.pS1CardLinkMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.pS1CardLinkMenuWrite.Size = new System.Drawing.Size(266, 22);
             this.pS1CardLinkMenuWrite.Text = "PS1CardLink";
             this.pS1CardLinkMenuWrite.Click += new System.EventHandler(this.pS1CardLinkMenuWrite_Click);
             // 
             // toolStripMenuItem22
             // 
             this.toolStripMenuItem22.Name = "toolStripMenuItem22";
-            this.toolStripMenuItem22.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem22.Size = new System.Drawing.Size(263, 6);
             // 
             // pS3MemoryCardAdaptorMenuWrite
             // 
             this.pS3MemoryCardAdaptorMenuWrite.Name = "pS3MemoryCardAdaptorMenuWrite";
-            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuWrite.Size = new System.Drawing.Size(266, 22);
             this.pS3MemoryCardAdaptorMenuWrite.Text = "PS3 Memory Card Adaptor";
             this.pS3MemoryCardAdaptorMenuWrite.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuWrite_Click);
             // 
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
-            this.toolStripMenuItem21.Size = new System.Drawing.Size(151, 6);
+            this.toolStripMenuItem21.Size = new System.Drawing.Size(177, 6);
             // 
             // formatMemoryCardToolStripMenuItem
             // 
@@ -529,45 +541,46 @@
             this.memCARDuinoMenuFormat,
             this.toolStripMenuItem20,
             this.pS1CardLinkMenuFormat,
+            this.pS1CardLinkRemoteMenuFormat,
             this.toolStripMenuItem24,
             this.pS3MemoryCardAdaptorMenuFormat});
             this.formatMemoryCardToolStripMenuItem.Name = "formatMemoryCardToolStripMenuItem";
-            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.formatMemoryCardToolStripMenuItem.Text = "Format card";
             // 
             // toolStripMenuItem23
             // 
             this.toolStripMenuItem23.Name = "toolStripMenuItem23";
-            this.toolStripMenuItem23.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem23.Size = new System.Drawing.Size(263, 6);
             // 
             // memCARDuinoMenuFormat
             // 
             this.memCARDuinoMenuFormat.Name = "memCARDuinoMenuFormat";
-            this.memCARDuinoMenuFormat.Size = new System.Drawing.Size(215, 22);
+            this.memCARDuinoMenuFormat.Size = new System.Drawing.Size(266, 22);
             this.memCARDuinoMenuFormat.Text = "MemCARDuino";
             this.memCARDuinoMenuFormat.Click += new System.EventHandler(this.memCARDuinoMenuFormat_Click);
             // 
             // toolStripMenuItem20
             // 
             this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-            this.toolStripMenuItem20.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem20.Size = new System.Drawing.Size(263, 6);
             // 
             // pS1CardLinkMenuFormat
             // 
             this.pS1CardLinkMenuFormat.Name = "pS1CardLinkMenuFormat";
-            this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(215, 22);
+            this.pS1CardLinkMenuFormat.Size = new System.Drawing.Size(266, 22);
             this.pS1CardLinkMenuFormat.Text = "PS1CardLink";
             this.pS1CardLinkMenuFormat.Click += new System.EventHandler(this.pS1CardLinkMenuFormat_Click);
             // 
             // toolStripMenuItem24
             // 
             this.toolStripMenuItem24.Name = "toolStripMenuItem24";
-            this.toolStripMenuItem24.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(263, 6);
             // 
             // pS3MemoryCardAdaptorMenuFormat
             // 
             this.pS3MemoryCardAdaptorMenuFormat.Name = "pS3MemoryCardAdaptorMenuFormat";
-            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(215, 22);
+            this.pS3MemoryCardAdaptorMenuFormat.Size = new System.Drawing.Size(266, 22);
             this.pS3MemoryCardAdaptorMenuFormat.Text = "PS3 Memory Card Adaptor";
             this.pS3MemoryCardAdaptorMenuFormat.Click += new System.EventHandler(this.pS3MemoryCardAdaptorMenuFormat_Click);
             // 
@@ -963,6 +976,20 @@
             this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
             // 
+            // pS1CardLinkRemoteMenuWrite
+            // 
+            this.pS1CardLinkRemoteMenuWrite.Name = "pS1CardLinkRemoteMenuWrite";
+            this.pS1CardLinkRemoteMenuWrite.Size = new System.Drawing.Size(266, 22);
+            this.pS1CardLinkRemoteMenuWrite.Text = "PS1CardLink (Remote Link over TCP)";
+            this.pS1CardLinkRemoteMenuWrite.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuWrite_Click);
+            // 
+            // pS1CardLinkRemoteMenuFormat
+            // 
+            this.pS1CardLinkRemoteMenuFormat.Name = "pS1CardLinkRemoteMenuFormat";
+            this.pS1CardLinkRemoteMenuFormat.Size = new System.Drawing.Size(266, 22);
+            this.pS1CardLinkRemoteMenuFormat.Text = "PS1CardLink (Remote Link over TCP)";
+            this.pS1CardLinkRemoteMenuFormat.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuFormat_Click);
+            // 
             // mainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1097,6 +1124,9 @@
         private System.Windows.Forms.ToolStripMenuItem pS3MemoryCardAdaptorMenuWrite;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem24;
         private System.Windows.Forms.ToolStripMenuItem pS3MemoryCardAdaptorMenuFormat;
+        private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuRead;
+        private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuWrite;
+        private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuFormat;
     }
 }
 
