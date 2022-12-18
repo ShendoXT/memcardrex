@@ -3,7 +3,9 @@
 ![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
 
 <b>Requirements:</b>
-* .NET Framework 4.5.
+* .NET Framework 4.8 (Thanks Microsoft 😐).
+
+<b>Extras:</b>
 * Windows® Vista™ or 7 for the glass status bar.
 
 <b>Supported Memory Card formats:</b>
@@ -69,7 +71,7 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 
 ### Credits
 <b>Authors:</b>
-<br>Alvaro Tanarro, Nico de Poel, Robxnano and Shendo.
+<br>Alvaro Tanarro, bitrot-alpha, Nico de Poel, KuromeSan, Robxnano, Shendo.
 
 <b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
