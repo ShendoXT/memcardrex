@@ -86,10 +86,10 @@ namespace MemcardRex
         }
 
         //Read a Memory Card from MemCARDuino
-        public byte[] readMemoryCardCARDuino(Form hostWindow, string applicationName, string comPort)
+        public byte[] readMemoryCardCARDuino(Form hostWindow, string applicationName, string comPort, int comSpeed)
         {
             //Initialize MemCARDuino
-            string errorString = CARDuino.StartMemCARDuino(comPort);
+            string errorString = CARDuino.StartMemCARDuino(comPort, comSpeed);
 
             //Check if there were any errors
             if (errorString != null)
@@ -124,18 +124,18 @@ namespace MemcardRex
         }
 
         //Read a Memory Card from PS1CardLink
-        public byte[] readMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort)
+        public byte[] readMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, int comSpeed, string remoteAddress, int remotePort)
         {
             string errorString;
 
             //Initialize PS1CardLink
             if (remoteAddress.Length > 0)
             {
-                errorString = PS1CLnk.StartPS1CardLink(remoteAddress, remotePort);
+                errorString = PS1CLnk.StartPS1CardLinkTCP(remoteAddress, remotePort);
             }
             else
             {
-                errorString = PS1CLnk.StartPS1CardLink(comPort);
+                errorString = PS1CLnk.StartPS1CardLink(comPort, comSpeed);
             }
 
             //Check if there were any errors
@@ -249,10 +249,10 @@ namespace MemcardRex
         }
         
         //Write a Memory Card to MemCARDuino
-        public void writeMemoryCardCARDuino(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
+        public void writeMemoryCardCARDuino(Form hostWindow, string applicationName, string comPort, int comSpeed, byte[] memoryCardData, int frameNumber)
         {
             //Initialize MemCARDuino
-            string errorString = CARDuino.StartMemCARDuino(comPort);
+            string errorString = CARDuino.StartMemCARDuino(comPort, comSpeed);
 
             //Check if there were any errors
             if (errorString != null)
@@ -289,18 +289,18 @@ namespace MemcardRex
         }
 
         //Write a Memory Card to PS1CardLink
-        public void writeMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort, byte[] memoryCardData, int frameNumber)
+        public void writeMemoryCardPS1CLnk(Form hostWindow, string applicationName, string comPort, int comSpeed, string remoteAddress, int remotePort, byte[] memoryCardData, int frameNumber)
         {
             //Initialize PS1CardLink
             string errorString;
 
             if (remoteAddress.Length > 0)
             {
-                errorString = PS1CLnk.StartPS1CardLink(remoteAddress, remotePort);
+                errorString = PS1CLnk.StartPS1CardLinkTCP(remoteAddress, remotePort);
             }
             else
             {
-                errorString = PS1CLnk.StartPS1CardLink(comPort);
+                errorString = PS1CLnk.StartPS1CardLink(comPort, comSpeed);
             }
 
 

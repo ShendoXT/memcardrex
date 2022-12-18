@@ -20,10 +20,13 @@ namespace MemCARDuinoCommunication
         //Contains a firmware version of a detected device
         string FirmwareVersion = "0.0";
 
-        public string StartMemCARDuino(string ComPortName)
+        public string StartMemCARDuino(string ComPortName, int ComPortSpeed)
         {
+            int PortBaudrate = 115200;
+            if(ComPortSpeed == 1) PortBaudrate = 38400;
+
             //Define a port to open
-            OpenedPort = new SerialPort(ComPortName, 38400, Parity.None, 8, StopBits.One);
+            OpenedPort = new SerialPort(ComPortName, PortBaudrate, Parity.None, 8, StopBits.One);
             OpenedPort.ReadBufferSize = 256;
 
             //Buffer for storing read data from the MCino

@@ -41,7 +41,8 @@ namespace MemcardRex
             if (progSettings.fixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
             remoteAddressBox.Text = progSettings.remoteCommunicationAddress;
             remotePortUpDown.Value = progSettings.remoteCommunicationPort;
-            
+            hardwareSpeedCombo.SelectedIndex = progSettings.communicationSpeed;
+
 
             //Load all COM ports found on the system
             foreach (string port in SerialPort.GetPortNames())
@@ -78,6 +79,7 @@ namespace MemcardRex
             progSettings.communicationPort = SavedComPort;
             progSettings.remoteCommunicationAddress = remoteAddressBox.Text;
             progSettings.remoteCommunicationPort = Convert.ToUInt16(remotePortUpDown.Value);
+            progSettings.communicationSpeed = hardwareSpeedCombo.SelectedIndex;
 
             if (gridCheckbox.Checked == true) progSettings.showListGrid = 1; else progSettings.showListGrid = 0;
             if (backupCheckbox.Checked == true) progSettings.backupMemcards = 1; else progSettings.backupMemcards = 0;
@@ -110,16 +112,6 @@ namespace MemcardRex
         {
             //Save the COM port if the user selected a new one
             SavedComPort = dexDriveCombo.Text;
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

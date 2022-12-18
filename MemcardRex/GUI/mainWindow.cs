@@ -35,9 +35,9 @@ namespace MemcardRex
         const string appDate = "Unknown";
 
 #if DEBUG
-        const string appVersion = "1.10 (Debug)";
+        const string appVersion = "1.9 (Debug)";
 #else
-        const string appVersion = "1.10";
+        const string appVersion = "1.9";
 #endif
 
         //Location of the application
@@ -80,6 +80,7 @@ namespace MemcardRex
             public int formatType;                 //Type of formatting for hardware interfaces
             public string listFont;                //List font
             public string communicationPort;       //Communication port for Hardware interfaces
+            public int communicationSpeed;         //Speed setting for serial port
             public int lastSaveFormat;             //Last used format to save memory card
             public int lastExportFormat;           //Last used format to export save
             public string remoteCommunicationAddress; // Address / hostname of the remote serial bridge host
@@ -99,7 +100,8 @@ namespace MemcardRex
                 glassStatusBar = 0;             
                 formatType = 0;                 
                 listFont = "";                
-                communicationPort = "";       
+                communicationPort = "";
+                communicationSpeed = 0;
                 lastSaveFormat = 0;             
                 lastExportFormat = 0;       
                 // Default values for esp-link
@@ -211,6 +213,7 @@ namespace MemcardRex
 
                 //Load DexDrive COM port
                 mainSettings.communicationPort = xmlAppSettings.readXmlEntry("ComPort");
+                mainSettings.communicationSpeed = xmlAppSettings.readXmlEntryInt("ComSpeed", 0, 1);
 
                 // Load TCP/IP settings
                 mainSettings.remoteCommunicationAddress = xmlAppSettings.readXmlEntry("RemoteComAddress");
@@ -290,6 +293,7 @@ namespace MemcardRex
 
             //Set DexDrive port
             xmlAppSettings.writeXmlEntry("ComPort", mainSettings.communicationPort);
+            xmlAppSettings.writeXmlEntry("ComSpeed", mainSettings.communicationSpeed.ToString());
 
             //Set TCP/IP settings
             xmlAppSettings.writeXmlEntry("RemoteComAddress", mainSettings.remoteCommunicationAddress);
@@ -1138,7 +1142,7 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2022", "Authors: Alvaro Tanarro, bitrot-alpha, Nico de Poel,\nKuromeSan, Robxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2022", "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
 
@@ -2188,7 +2192,7 @@ namespace MemcardRex
         private void memCARDuinoMenuRead_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from MemCARDuino
-            byte[] tempByteArray = new cardReaderWindow().readMemoryCardCARDuino(this, appName, mainSettings.communicationPort);
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardCARDuino(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed);
 
             cardReaderRead(tempByteArray);
         }
@@ -2202,14 +2206,14 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+                new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
         private void pS1CardLinkMenuRead_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from PS1CardLink
-            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0);
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed, "", 0);
 
             cardReaderRead(tempByteArray);
         }
@@ -2222,8 +2226,8 @@ namespace MemcardRex
             //Check if there are any cards to write
             if (PScard.Count > 0)
             {
-                //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+                //Open a PS1CardLink communication window
+                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed, "", 0, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2297,18 +2301,19 @@ namespace MemcardRex
                     break;
 
                 case 1:         //MemCARDuino
-                    new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
+                    new cardReaderWindow().writeMemoryCardCARDuino(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
 
                 case 2:         //PS1CardLink
-                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, "", 0, blankCard.saveMemoryCardStream(true), frameNumber);
+                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, mainSettings.communicationPort, mainSettings.communicationSpeed, "", 0, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
 
                 case 3:         //PS3 Memory Card Adaptor
                     new cardReaderWindow().writeMemoryCardPS3MCA(this, appName, mainSettings.communicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
+                
                 case 4:         //PS1CardLink (Remote TCP)
-                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
+                    new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.communicationSpeed, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
             }
         }
@@ -2316,7 +2321,7 @@ namespace MemcardRex
         private void pS1CardLinkRemoteMenuRead_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from PS1CardLink
-            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort);
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardPS1CLnk(this, appName, "", mainSettings.communicationSpeed, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort);
 
             cardReaderRead(tempByteArray);
         }
@@ -2335,7 +2340,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open a DexDrive communication window
-                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+                new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.communicationSpeed, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
     }

@@ -28,13 +28,16 @@ namespace PS1CardLinkCommunication
         int MaxTimeout5msTickCount = 18;
 
         // This constructor is used to setup a Serial Port communication with PS1Link
-        public string StartPS1CardLink(string ComPortName)
+        public string StartPS1CardLink(string ComPortName, int ComPortSpeed)
         {
+            int PortBaudrate = 115200;
+            if (ComPortSpeed == 1) PortBaudrate = 38400;
+
             //Setup the protocol parameters
             MaxTimeout5msTickCount = 18;  /* 5ms * 18 = 90ms */
 
             //Define a port to open
-            OpenedPort = new SerialPort(ComPortName, 38400, Parity.None, 8, StopBits.One);
+            OpenedPort = new SerialPort(ComPortName, PortBaudrate, Parity.None, 8, StopBits.One);
             OpenedPort.ReadBufferSize = 256;
 
             //Try to open a selected port (in case of an error return a descriptive string)
@@ -46,7 +49,7 @@ namespace PS1CardLinkCommunication
         }
 
         // This constructor is used to setup a Serial Port over TCP/IP with PS1Link
-        public string StartPS1CardLink(string Address, int Port)
+        public string StartPS1CardLinkTCP(string Address, int Port)
         {
             //Setup the protocol parameters
             MaxTimeout5msTickCount = 400;  /* 5ms * 400 = 2000ms */

@@ -35,17 +35,15 @@
 * PS3 virtual saves (*.psv)
 
 ### Hardware interfaces
-MemcardRex supports communication with the real Memory Cards via external devices:
+MemcardRex supports communication with the real Memory Cards via external devices.
+<br>Make sure to select a proper COM port in Options->Preferences.
 
 <b>1. DexDrive</b>
-<br>As you may or may not know DexDrive is a very quirky device and sometimes it just refuses to work.
-<br>Even the first party software (DexPlorer) has problems with it (failed detection of a device).
+<br>Original way of transferring data from MemoryCard to PC and vice versa albeit a little quirky.
 <br>If you encounter problems, unplug power from DexDrive, unplug it from COM port and connect it all again.
 
 It is recommended that a power cord is connected to DexDrive, otherwise some cards won't be detected.
-<br>Communication was tested on Windows 7 x64 on a real COM port and with a Prolific and FTDI based USB adapters.
-
-To select a COM port DexDrive is connected to go to "Options"->"Preferences".
+<br>Works with native COM port or USB based adapters.
 
 <b>2. MemCARDuino</b>
 <br>[MemCARDuino](https://github.com/ShendoXT/memcarduino) is an open source Memory Card communication software for various Arduino boards.
@@ -57,7 +55,7 @@ To select a COM port DexDrive is connected to go to "Options"->"Preferences".
 With it your console becomes a Memory Card reader similar to the DexDrive and MemCARDuino.
 
 MemcardRex can also talk to the serial port remotely by using a Serial Port Bridge like [esp-link](https://github.com/jeelabs/esp-link).
-It conveniently fits into a PSOne which has otherwise no external hardware ports.
+<br>It conveniently fits into a PSOne which has otherwise no external hardware ports.
 
 <b>4. PS3 Memory Card Adaptor</b>
 <br>The PS3 Memory Card Adaptor is an official Sony USB adapter that allows reading and writing PS1 Memory Cards on a PlayStation 3.
@@ -74,7 +72,7 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 
 ### Credits
 <b>Authors:</b>
-<br>Alvaro Tanarro, bitrot-alpha, Nico de Poel, KuromeSan, Robxnano, Shendo.
+<br>Alvaro Tanarro, bitrot-alpha, lmiori92, Nico de Poel, KuromeSan, Robxnano, Shendo.
 
 <b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
