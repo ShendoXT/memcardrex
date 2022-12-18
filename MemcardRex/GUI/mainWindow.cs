@@ -397,7 +397,7 @@ namespace MemcardRex
             OpenFileDialog openFileDlg = new OpenFileDialog
             {
                 Title = "Open Memory Card",
-                Filter = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp|Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.VM1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs|All files|*.*",
+                Filter = ps1card.mcExtensions + "|All files|*.*",
                 Multiselect = true
             };
 
@@ -498,7 +498,7 @@ namespace MemcardRex
                 SaveFileDialog saveFileDlg = new SaveFileDialog
                 {
                     Title = "Save Memory Card",
-                    Filter = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1|PSP/Vita Memory Card|*.VMP|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs",
+                    Filter = ps1card.mcExtensions,
                     FilterIndex = mainSettings.lastSaveFormat
                 };
 
@@ -521,13 +521,18 @@ namespace MemcardRex
                             memoryCardType = 4;
                             break;
 
-                        case 3:         //GME Memory Card
+                        case 3:         //MCX Memory Card
+                            memoryCardType = 5;
+                            break;
+
+                        case 4:         //GME Memory Card
                             memoryCardType = 2;
                             break;
 
-                        case 4:         //VGS Memory Card
+                        case 5:         //VGS Memory Card
                             memoryCardType = 3;
                             break;
+
                     }
                     saveMemoryCard(listIndex, saveFileDlg.FileName, memoryCardType);
                 }
@@ -946,7 +951,7 @@ namespace MemcardRex
                         {
                             Title = "Export save",
                             FileName = outputFilename,
-                            Filter = "PSXGameEdit/Memory Juggler|*.mcs;*.ps1|PS3 single save|*.PSV|Smart Link/XP, AR, GS, Caetla/Datel|*.mcb;*.mcx;*.pda;*.psx|RAW single save|B???????????*",
+                            Filter = ps1card.ssExtensions,
                             FilterIndex = mainSettings.lastExportFormat
                         };
 
@@ -978,7 +983,7 @@ namespace MemcardRex
                                     singleSaveType = 3;
 
                                     //Omit the extension if the user left it
-                                    saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
+                                    //saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
                                     break;
                             }
                             PScard[listIndex].saveSingleSave(saveFileDlg.FileName, slotNumber, singleSaveType);
@@ -1017,7 +1022,7 @@ namespace MemcardRex
                     OpenFileDialog openFileDlg = new OpenFileDialog
                     {
                         Title = "Import save",
-                        Filter = "All supported|*.mcs;*.psv;*.psx;*.ps1;*.mcb;*.mcx;*.pda;B???????????*|PSXGameEdit single save|*.mcs|PS3 signed save|*.PSV|XP, AR, GS, Caetla single save|*.psx|Memory Juggler|*.ps1|Smart Link|*.mcb|Datel|*.mcx;*.pda|RAW single save|B???????????*"
+                        Filter = ps1card.ssExtensions
                     };
 
                     //If user selected a save load it
@@ -1133,7 +1138,7 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2021", "Authors: Alvaro Tanarro, Nico de Poel,\nRobxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2022", "Authors: Alvaro Tanarro, bitrot-alpha, Nico de Poel,\nKuromeSan, Robxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
 
