@@ -944,7 +944,7 @@ namespace MemcardRex
                                     singleSaveType = 3;
 
                                     //Omit the extension if the user left it
-                                    saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
+                                    //saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
                                     break;
                             }
                             PScard[listIndex].saveSingleSave(saveFileDlg.FileName, slotNumber, singleSaveType);
