@@ -20,6 +20,8 @@
 * PCSX ReARMed/RetroArch(*.srm)
 * PSP virtual Memory Card(*.VMP)
 * PS3 virtual Memory Card(*.VM1)
+* PS Vita "MCX" PocketStation Memory Card(*.BIN)
+* POPStarter Virtual Memory Card(*.VMC)
 
 <b>Supported single save formats:</b>
 * PSXGame Edit single save(*.mcs)
