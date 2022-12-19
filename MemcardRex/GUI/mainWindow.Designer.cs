@@ -60,6 +60,7 @@
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.importSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportRAWSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hardwareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dexDriveMenuRead = new System.Windows.Forms.ToolStripMenuItem();
@@ -131,6 +132,7 @@
             this.teToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.importSaveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSaveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportRAWSaveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
             this.saveInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -268,7 +270,8 @@
             this.pasteSaveFromTemporaryBufferToolStripMenuItem,
             this.toolStripMenuItem6,
             this.importSaveToolStripMenuItem,
-            this.exportSaveToolStripMenuItem});
+            this.exportSaveToolStripMenuItem,
+            this.exportRAWSaveToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -394,6 +397,14 @@
             this.exportSaveToolStripMenuItem.Text = "Export save...";
             this.exportSaveToolStripMenuItem.Click += new System.EventHandler(this.exportSaveToolStripMenuItem_Click);
             // 
+            // exportRAWSaveToolStripMenuItem
+            // 
+            this.exportRAWSaveToolStripMenuItem.Image = global::MemcardRex.Properties.Resources.exportsave;
+            this.exportRAWSaveToolStripMenuItem.Name = "exportRAWSaveToolStripMenuItem";
+            this.exportRAWSaveToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.exportRAWSaveToolStripMenuItem.Text = "Export RAW save...";
+            this.exportRAWSaveToolStripMenuItem.Click += new System.EventHandler(this.exportRAWSaveToolStripMenuItem_Click);
+            // 
             // hardwareToolStripMenuItem
             // 
             this.hardwareToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -417,7 +428,7 @@
             this.toolStripMenuItem16,
             this.pS3MemoryCardAdaptorMenuRead});
             this.readFromToolStripMenuItem.Name = "readFromToolStripMenuItem";
-            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.readFromToolStripMenuItem.Text = "Read save data";
             // 
             // dexDriveMenuRead
@@ -482,7 +493,7 @@
             this.toolStripMenuItem22,
             this.pS3MemoryCardAdaptorMenuWrite});
             this.writeToToolStripMenuItem.Name = "writeToToolStripMenuItem";
-            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.writeToToolStripMenuItem.Text = "Write save data";
             // 
             // dexDriveMenuWrite
@@ -538,7 +549,7 @@
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
-            this.toolStripMenuItem21.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem21.Size = new System.Drawing.Size(151, 6);
             // 
             // formatMemoryCardToolStripMenuItem
             // 
@@ -552,7 +563,7 @@
             this.toolStripMenuItem24,
             this.pS3MemoryCardAdaptorMenuFormat});
             this.formatMemoryCardToolStripMenuItem.Name = "formatMemoryCardToolStripMenuItem";
-            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.formatMemoryCardToolStripMenuItem.Text = "Format card";
             // 
             // toolStripMenuItem23
@@ -840,10 +851,11 @@
             this.teToolStripMenuItem,
             this.importSaveToolStripMenuItem1,
             this.exportSaveToolStripMenuItem1,
+            this.exportRAWSaveToolStripMenuItem1,
             this.toolStripMenuItem14,
             this.saveInformationToolStripMenuItem});
             this.mainContextMenu.Name = "mainContextMenu";
-            this.mainContextMenu.Size = new System.Drawing.Size(226, 326);
+            this.mainContextMenu.Size = new System.Drawing.Size(226, 370);
             // 
             // editSaveHeaderToolStripMenuItem1
             // 
@@ -962,6 +974,14 @@
             this.exportSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
             this.exportSaveToolStripMenuItem1.Text = "Export save...";
             this.exportSaveToolStripMenuItem1.Click += new System.EventHandler(this.exportSaveToolStripMenuItem1_Click);
+            // 
+            // exportRAWSaveToolStripMenuItem1
+            // 
+            this.exportRAWSaveToolStripMenuItem1.Image = global::MemcardRex.Properties.Resources.exportsave;
+            this.exportRAWSaveToolStripMenuItem1.Name = "exportRAWSaveToolStripMenuItem1";
+            this.exportRAWSaveToolStripMenuItem1.Size = new System.Drawing.Size(225, 22);
+            this.exportRAWSaveToolStripMenuItem1.Text = "Export RAW save...";
+            this.exportRAWSaveToolStripMenuItem1.Click += new System.EventHandler(this.exportRAWSaveToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem14
             // 
@@ -1127,6 +1147,8 @@
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuRead;
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuWrite;
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuFormat;
+        private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem1;
     }
 }
 

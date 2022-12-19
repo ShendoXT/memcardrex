@@ -126,6 +126,15 @@ namespace MemcardRex
         byte[] tempBuffer = null;
         string tempBufferName = null;
 
+        //Supported Memory Card extensions
+        private const string mcSupportedExtensions = "All supported|*.bin;*.ddf;*.gme;*.mc;*.mcd;*.mci;*.mcr;*.mem;*.ps;*.psm;*.srm;*.vgs;*.vm1;*.vmp;*.vmc";
+        private const string mcExtensions = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1;*.vmc|PSP/Vita Memory Card|*.VMP|PS Vita \"MCX\" PocketStation Memory Card|*.BIN|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs";
+
+        //Supported single save extensions
+        private const string ssSupportedExtensions = "All supported|*.mcs;*.ps1;*.PSV;*.mcb;*.mcx;*.pda;*.psx;B???????????*";
+        private const string ssExtensions = "PSXGameEdit/Memory Juggler|*.mcs;*.ps1|PS3 single save|*.PSV|Smart Link/XP, AR, GS, Caetla/Datel|*.mcb;*.mcx;*.pda;*.psx";
+
+
         public mainWindow()
         {
             InitializeComponent();
@@ -401,7 +410,7 @@ namespace MemcardRex
             OpenFileDialog openFileDlg = new OpenFileDialog
             {
                 Title = "Open Memory Card",
-                Filter = ps1card.mcExtensions + "|All files|*.*",
+                Filter = mcSupportedExtensions + "|" + mcExtensions + " | All files|*.*",
                 Multiselect = true
             };
 
@@ -502,7 +511,7 @@ namespace MemcardRex
                 SaveFileDialog saveFileDlg = new SaveFileDialog
                 {
                     Title = "Save Memory Card",
-                    Filter = ps1card.mcExtensions,
+                    Filter = mcExtensions,
                     FilterIndex = mainSettings.lastSaveFormat
                 };
 
@@ -919,7 +928,7 @@ namespace MemcardRex
         }
 
         //Export a save
-        private void exportSaveDialog()
+        private void exportSaveDialog(bool isRaw)
         {
             //Check if there are any cards available
             if (PScard.Count > 0)
@@ -939,15 +948,29 @@ namespace MemcardRex
 
                     case 1:         //Initial save
                         byte singleSaveType;
+                        string outputFilename;
 
-                        //Set output filename to be compatible with PS3
-                        byte[] identifierASCII = Encoding.ASCII.GetBytes(PScard[listIndex].saveIdentifier[slotNumber]);
-                        string outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] +
-                            BitConverter.ToString(identifierASCII).Replace("-","");
-                        
-                        //Filter illegal characters from the name
-                        foreach (char illegalChar in Path.GetInvalidPathChars())
+                        if (isRaw)
                         {
+                            //RAW file name on the system
+                            outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] + PScard[listIndex].saveIdentifier[slotNumber];
+                        }
+                        else
+                        {
+                            //Set output filename to be compatible with PS3
+                            byte[] identifierASCII = Encoding.ASCII.GetBytes(PScard[listIndex].saveIdentifier[slotNumber]);
+                            outputFilename = getRegionString(PScard[listIndex].saveRegion[slotNumber]) + PScard[listIndex].saveProdCode[slotNumber] +
+                                BitConverter.ToString(identifierASCII).Replace("-", "");
+                        }
+
+                        //This will help us preserve full file title if illegal characters were found in save file name
+                        int illegalCharCount = 0;
+                        string completeFileName = outputFilename;
+
+                        //Filter illegal characters from the name
+                        foreach (char illegalChar in "\\/\":*?<>|".ToCharArray())
+                        {
+                            if(outputFilename.Contains(illegalChar.ToString())) illegalCharCount++;
                             outputFilename = outputFilename.Replace(illegalChar.ToString(), "");
                         }
 
@@ -955,14 +978,16 @@ namespace MemcardRex
                         {
                             Title = "Export save",
                             FileName = outputFilename,
-                            Filter = ps1card.ssExtensions,
+                            Filter = ssExtensions,
                             FilterIndex = mainSettings.lastExportFormat
                         };
+
+                        if (isRaw) saveFileDlg.Filter = "RAW single save|B???????????*";
 
                         //If user selected a card save to it
                         if (saveFileDlg.ShowDialog() == DialogResult.OK)
                         {
-                            if (saveFileDlg.FilterIndex != mainSettings.lastExportFormat)
+                            if (!isRaw && saveFileDlg.FilterIndex != mainSettings.lastExportFormat)
                             {
                                 mainSettings.lastExportFormat = saveFileDlg.FilterIndex;
                                 saveProgramSettings();
@@ -982,14 +1007,51 @@ namespace MemcardRex
                                 case 3:        //Action Replay
                                     singleSaveType = 1;
                                     break;
-
-                                case 4:         //RAW single save
-                                    singleSaveType = 3;
-
-                                    //Omit the extension if the user left it
-                                    //saveFileDlg.FileName = saveFileDlg.FileName.Split('.')[0];
-                                    break;
                             }
+
+                            //RAW save type
+                            if (isRaw)
+                            {
+                                singleSaveType = 3;
+
+                                //Create text file with full file name if illegal characters were found
+                                if(illegalCharCount > 0)
+                                {
+                                    StreamWriter sw = File.CreateText(saveFileDlg.FileName + "_info.txt");
+                                    sw.WriteLine(completeFileName);
+                                    sw.WriteLine("");
+                                    sw.Write("Region: \"");
+
+                                    switch (PScard[listIndex].saveRegion[slotNumber])
+                                    {
+                                        default:        //Formatted save, Corrupted save, Unknown region
+                                            sw.WriteLine("Unknown\"");
+                                            break;
+
+                                        case 0x4142:    //American region
+                                            sw.WriteLine("America\"");
+                                            break;
+
+                                        case 0x4542:    //European region
+                                            sw.WriteLine("Europe\"");
+                                            break;
+
+                                        case 0x4942:    //Japanese region
+                                            sw.WriteLine("Japan\"");
+                                            break;
+                                    }
+
+
+                                    sw.WriteLine("Product code: \"" + PScard[listIndex].saveProdCode[slotNumber] + "\"");
+                                    sw.WriteLine("Identifier: \"" + PScard[listIndex].saveIdentifier[slotNumber] + "\"");
+                                    sw.WriteLine("");
+                                    sw.WriteLine("This text file was created because the exported RAW save file name contains forbidden characters.");
+                                    sw.WriteLine("You can use this info when importing for example with uLaunchELF to make your save valid.");
+                                    sw.Write("Rename \"" + outputFilename + "\" to \"" + completeFileName + "\" after importing the save.");
+                                    sw.Close();
+                                }
+                            }
+
                             PScard[listIndex].saveSingleSave(saveFileDlg.FileName, slotNumber, singleSaveType);
                         }
                         break;
@@ -1026,7 +1088,7 @@ namespace MemcardRex
                     OpenFileDialog openFileDlg = new OpenFileDialog
                     {
                         Title = "Import save",
-                        Filter = ps1card.ssExtensions
+                        Filter = ssSupportedExtensions + "|" + ssExtensions + "|RAW single save|B???????????*"
                     };
 
                     //If user selected a save load it
@@ -1056,7 +1118,7 @@ namespace MemcardRex
         //Get region string from region data
         private string getRegionString(ushort regionUshort)
         {
-            byte[] tempRegion = new byte[3];
+            byte[] tempRegion = new byte[2];
 
             //Convert region to byte array
             tempRegion[0] = (byte)(regionUshort & 0xFF);
@@ -1556,6 +1618,7 @@ namespace MemcardRex
             pasteSaveFromTemporaryBufferToolStripMenuItem.Enabled = false;
             importSaveToolStripMenuItem.Enabled = false;
             exportSaveToolStripMenuItem.Enabled = false;
+            exportRAWSaveToolStripMenuItem.Enabled = false;
 
             //Edit toolbar
             editHeaderButton.Enabled = false;
@@ -1576,6 +1639,7 @@ namespace MemcardRex
             paseToolStripMenuItem.Enabled = false;
             importSaveToolStripMenuItem1.Enabled = false;
             exportSaveToolStripMenuItem1.Enabled = false;
+            exportRAWSaveToolStripMenuItem1.Enabled = false;
             saveInformationToolStripMenuItem.Enabled = false;
         }
 
@@ -1593,6 +1657,7 @@ namespace MemcardRex
             pasteSaveFromTemporaryBufferToolStripMenuItem.Enabled = true;
             importSaveToolStripMenuItem.Enabled = true;
             exportSaveToolStripMenuItem.Enabled = true;
+            exportRAWSaveToolStripMenuItem.Enabled = true;
 
             //Edit toolbar
             editHeaderButton.Enabled = true;
@@ -1612,6 +1677,7 @@ namespace MemcardRex
             paseToolStripMenuItem.Enabled = true;
             importSaveToolStripMenuItem1.Enabled = true;
             exportSaveToolStripMenuItem1.Enabled = true;
+            exportRAWSaveToolStripMenuItem1.Enabled = true;
             saveInformationToolStripMenuItem.Enabled = true;
 
             //Temp buffer related
@@ -2004,19 +2070,19 @@ namespace MemcardRex
         private void exportSaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Export a save
-            exportSaveDialog();
+            exportSaveDialog(false);
         }
 
         private void exportSaveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             //Export a save
-            exportSaveDialog();
+            exportSaveDialog(false);
         }
 
         private void exportButton_Click(object sender, EventArgs e)
         {
             //Export a save
-            exportSaveDialog();
+            exportSaveDialog(false);
         }
 
         private void importSaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2342,6 +2408,18 @@ namespace MemcardRex
                 //Open a DexDrive communication window
                 new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.communicationSpeed, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
+        }
+
+        private void exportRAWSaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Export RAW save
+            exportSaveDialog(true);
+        }
+
+        private void exportRAWSaveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //Export RAW save
+            exportSaveDialog(true);
         }
     }
 }

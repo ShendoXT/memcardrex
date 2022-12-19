@@ -12,12 +12,6 @@ namespace MemcardRex
 {
     class ps1card
     {
-        //Supported Memory Card extensions
-        public const string mcExtensions = "Standard Memory Card|*.mcr;*.bin;*.ddf;*.mc;*.mcd;*.mci;*.ps;*.psm;*.srm;*.vm1;*.vmc|PSP/Vita Memory Card|*.VMP|PS Vita \"MCX\" PocketStation Memory Card|*.BIN|DexDrive Memory Card|*.gme|VGS Memory Card|*.mem;*.vgs";
-
-        //Supported single save extensions
-        public const string ssExtensions = "PSXGameEdit/Memory Juggler|*.mcs;*.ps1|PS3 single save|*.PSV|Smart Link/XP, AR, GS, Caetla/Datel|*.mcb;*.mcx;*.pda;*.psx|RAW single save|B???????????*";
-
         //Memory Card's name
         public string cardName = null;
 
