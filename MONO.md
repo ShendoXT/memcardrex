@@ -2,7 +2,8 @@
 
 The project is working well with Mono.
 
-If you just want to run MemcardRex, follow Step 1 of [Install Build tools and Dependencies](#install-build-tools-and-dependencies) below, and then download MemcardRex from [releases](https://github.com/ShendoXT/memcardrex/releases).
+If you just want to run MemcardRex, follow Step 1 of [Install Build tools and Dependencies](#install-build-tools-and-dependencies) below, and then download MemcardRex from [releases](https://github.com/ShendoXT/memcardrex/releases). Then, follow [Run MemcardRex](#run-memcardrex) and you're running! 
+> Note: This last step has to be done every time you want to run MemcardRex. If you want to make this easier, make a `.sh` or `.desktop` file.
 
 ### Clone the project
 In a directory of your choice, download MemcardRex:
@@ -47,7 +48,8 @@ Either use the configuration below, or make your own with [Microsoft's documenta
 
 ### Build MemcardRex
 
- In the folder where the git project is located, run the following in your terminal: ``xbuild /property:TargetFrameworkVersion=v4.0``
+ In the folder where the git project is located, run `msbuild` in your terminal.
+ If that didn't work (probably because your distro's version of mono is misconfigured) try: ``xbuild /property:TargetFrameworkVersion=v4.0``
  
  If the build is successful, the executable will be in `memcardrex/MemcardRex/bin/Debug/`
  
@@ -56,4 +58,5 @@ Either use the configuration below, or make your own with [Microsoft's documenta
 Navigate to where the executable is located (see last step) in terminal and run `mono MemcardRex.exe`
 
 If you are trying to use a DexDrive connected by serial port or USB serial, you may have to run mono as root: `sudo mono MemcardRex.exe`
- 
+> If you don't want to run MemcardRex with `sudo`, try adding your user to the `dialout` user group with `sudo usermod -a -G dialout $USER` as detailed in this StackExchange post: [Unix StackExchange](https://unix.stackexchange.com/questions/14354/read-write-to-a-serial-port-without-root)
+
