@@ -43,15 +43,6 @@ namespace MemcardRex
         //Location of the application
         string appPath = Application.StartupPath;
 
-        //API for the Aero glass effect
-        glassSupport windowGlass = new glassSupport();
-
-        //Margins for the Aero glass
-        glassSupport.margins windowMargins = new glassSupport.margins();
-
-        //Rectangle for the Aero glass
-        Rectangle windowRectangle = new Rectangle();
-
         //Plugin system (public because plugin dialog has to access it)
         public rexPluginSystem pluginSystem = new rexPluginSystem();
 
@@ -76,7 +67,6 @@ namespace MemcardRex
             public int warningMessage;             //Warning message settings
             public int restoreWindowPosition;      //Restore window position
             public int fixCorruptedCards;          //Try to fix corrupted memory cards
-            public int glassStatusBar;             //Vista glass status bar
             public int formatType;                 //Type of formatting for hardware interfaces
             public string listFont;                //List font
             public string communicationPort;       //Communication port for Hardware interfaces
@@ -96,8 +86,7 @@ namespace MemcardRex
                 backupMemcards = 0;             
                 warningMessage = 0;             
                 restoreWindowPosition = 0;      
-                fixCorruptedCards = 0;          
-                glassStatusBar = 0;             
+                fixCorruptedCards = 0;                       
                 formatType = 0;                 
                 listFont = "";                
                 communicationPort = "";
@@ -145,55 +134,12 @@ namespace MemcardRex
             }
         }
 
-        //Apply glass effect on the client area
-        private void applyGlass()
-        {
-            //Reset margins to zero
-            windowMargins.top = 0;
-            windowMargins.bottom = 0;
-            windowMargins.left = 0;
-            windowMargins.right = 0;
-
-            //Check if the requirements for the Aero glass are met
-            if (windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)
-            {
-                //Hide status strip
-                this.mainStatusStrip.Visible = false;
-
-                windowMargins.bottom = (int)(xScale * 22);
-                windowRectangle = new Rectangle(0, this.ClientSize.Height - windowMargins.bottom, this.ClientSize.Width, windowMargins.bottom + 5);
-                glassSupport.DwmExtendFrameIntoClientArea(this.Handle, ref windowMargins);
-
-                //Repaint the form
-                this.Refresh();
-            }
-            else
-            {
-                //Check if effect of aero needs to be supressed
-                if (Environment.OSVersion.Version.Major >= 6)
-                {
-                    windowMargins.bottom = 0;
-                    windowRectangle = new Rectangle(0, this.ClientSize.Height - windowMargins.bottom, this.ClientSize.Width, windowMargins.bottom + 5);
-                    glassSupport.DwmExtendFrameIntoClientArea(this.Handle, ref windowMargins);
-
-                    //Repaint the form
-                    this.Refresh();
-                }
-
-                //Show status strip
-                this.mainStatusStrip.Visible = true;
-            }
-        }
-
         //Apply program settings
         private void applySettings()
         {
             //Refresh all active lists
             for (int i = 0; i < cardList.Count; i++)
                 refreshListView(i, cardList[i].SelectedIndices[0]);
-
-            //Refresh status of Aero glass
-            applyGlass();
         }
 
         //Apply program settings from given values
@@ -233,9 +179,6 @@ namespace MemcardRex
 
                 //Load List Grid settings
                 mainSettings.showListGrid = xmlAppSettings.readXmlEntryInt("ShowGrid", 0, 1);
-
-                //Load glass option switch
-                mainSettings.glassStatusBar = xmlAppSettings.readXmlEntryInt("GlassStatusBar", 0, 1);
 
                 //Load icon interpolation settings
                 mainSettings.iconInterpolationMode = xmlAppSettings.readXmlEntryInt("IconInterpolationMode", 0, 1);
@@ -313,9 +256,6 @@ namespace MemcardRex
 
             //Set List Grid settings
             xmlAppSettings.writeXmlEntry("ShowGrid", mainSettings.showListGrid.ToString());
-
-            //Set glass option switch
-            xmlAppSettings.writeXmlEntry("GlassStatusBar", mainSettings.glassStatusBar.ToString());
 
             //Set icon interpolation settings
             xmlAppSettings.writeXmlEntry("IconInterpolationMode", mainSettings.iconInterpolationMode.ToString());
@@ -1399,9 +1339,6 @@ namespace MemcardRex
                 toolString.Text = PScard[mainTabControl.SelectedIndex].cardLocation + " ";
             else
                 toolString.Text = " ";
-
-            //If glass is enabled repaint the form
-            if(windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)this.Refresh();
         }
 
         //Save work and close the application
@@ -1486,7 +1423,6 @@ namespace MemcardRex
             mainSettings.restoreWindowPosition = 0;
             mainSettings.communicationPort = "COM1";
             mainSettings.formatType = 0;
-            mainSettings.glassStatusBar = 1;
 
             //Load settings from Settings.ini
             loadProgramSettings();
@@ -1496,9 +1432,6 @@ namespace MemcardRex
 
             //Create an empty card upon startup or load one given by the command line
             if(loadCommandLine() == false)openCard(null);
-
-            //Apply Aero glass effect to the window
-            applyGlass();
         }
 
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2178,47 +2111,6 @@ namespace MemcardRex
             foreach (string fileName in droppedFiles)
             {
                 openCard(fileName);
-            }
-        }
-
-        private void mainWindow_Paint(object sender, PaintEventArgs e)
-        {
-            if (windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)
-            {
-                Brush blackBrush = new SolidBrush(Color.Black);
-                Graphics windowGraphics = e.Graphics;
-
-                //Create a black rectangle for Aero glass
-                windowGraphics.FillRectangle(blackBrush, windowRectangle);
-
-                //Show path of the currently active card
-                windowGlass.DrawTextOnGlass(this.Handle, toolString.Text, new Font("Segoe UI", 9f, FontStyle.Regular), windowRectangle, 10);
-            }
-        }
-
-        protected override void WndProc(ref Message message)
-        {
-            base.WndProc(ref message);
-
-            //DWM composition is changed and glass support should be revaluated
-            if (message.Msg == glassSupport.WM_DWMCOMPOSITIONCHANGED)
-            {
-                applyGlass();
-            }
-
-            //Move the window if user clicked on the glass area
-            if (message.Msg == glassSupport.WM_NCHITTEST && message.Result.ToInt32() == glassSupport.HTCLIENT)
-            {
-                //Check if DWM composition is enabled
-                if (windowGlass.isGlassSupported() && mainSettings.glassStatusBar == 1)
-                {
-                    int mouseX = (message.LParam.ToInt32() & 0xFFFF);
-                    int mouseY = (message.LParam.ToInt32() >> 16);
-                    Point windowPoint = this.PointToClient(new Point(mouseX,mouseY));
-
-                    //Check if the clicked area is on glass
-                    if(windowRectangle.Contains(windowPoint)) message.Result = new IntPtr(glassSupport.HTCAPTION);
-                }
             }
         }
 

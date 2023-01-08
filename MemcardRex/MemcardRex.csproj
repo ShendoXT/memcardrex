@@ -115,7 +115,6 @@
     <Compile Include="GUI\cardReaderWindow.designer.cs">
       <DependentUpon>cardReaderWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Extras\glassSupport.cs" />
     <Compile Include="GUI\headerWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -39,7 +39,6 @@
             this.interpolationCombo = new System.Windows.Forms.ComboBox();
             this.interpolationLabel = new System.Windows.Forms.Label();
             this.backupWarningCheckBox = new System.Windows.Forms.CheckBox();
-            this.glassCheckbox = new System.Windows.Forms.CheckBox();
             this.backupCheckbox = new System.Windows.Forms.CheckBox();
             this.dexDriveCombo = new System.Windows.Forms.ComboBox();
             this.hardwarePortLabel = new System.Windows.Forms.Label();
@@ -172,16 +171,6 @@
             this.backupWarningCheckBox.Text = "Show warning messages (save editing).";
             this.backupWarningCheckBox.UseVisualStyleBackColor = true;
             // 
-            // glassCheckbox
-            // 
-            this.glassCheckbox.AutoSize = true;
-            this.glassCheckbox.Location = new System.Drawing.Point(248, 84);
-            this.glassCheckbox.Name = "glassCheckbox";
-            this.glassCheckbox.Size = new System.Drawing.Size(101, 17);
-            this.glassCheckbox.TabIndex = 12;
-            this.glassCheckbox.Text = "Glass status bar";
-            this.glassCheckbox.UseVisualStyleBackColor = true;
-            // 
             // backupCheckbox
             // 
             this.backupCheckbox.AutoSize = true;
@@ -222,7 +211,7 @@
             // restorePositionCheckbox
             // 
             this.restorePositionCheckbox.AutoSize = true;
-            this.restorePositionCheckbox.Location = new System.Drawing.Point(248, 108);
+            this.restorePositionCheckbox.Location = new System.Drawing.Point(248, 84);
             this.restorePositionCheckbox.Name = "restorePositionCheckbox";
             this.restorePositionCheckbox.Size = new System.Drawing.Size(191, 17);
             this.restorePositionCheckbox.TabIndex = 13;
@@ -276,7 +265,7 @@
             // fixCorruptedCardsCheckbox
             // 
             this.fixCorruptedCardsCheckbox.AutoSize = true;
-            this.fixCorruptedCardsCheckbox.Location = new System.Drawing.Point(248, 132);
+            this.fixCorruptedCardsCheckbox.Location = new System.Drawing.Point(248, 108);
             this.fixCorruptedCardsCheckbox.Name = "fixCorruptedCardsCheckbox";
             this.fixCorruptedCardsCheckbox.Size = new System.Drawing.Size(184, 17);
             this.fixCorruptedCardsCheckbox.TabIndex = 103;
@@ -355,7 +344,6 @@
             this.Controls.Add(this.restorePositionCheckbox);
             this.Controls.Add(this.spacerLabel);
             this.Controls.Add(this.gridCheckbox);
-            this.Controls.Add(this.glassCheckbox);
             this.Controls.Add(this.backupWarningCheckBox);
             this.Controls.Add(this.iconSizeLabel);
             this.Controls.Add(this.backupCheckbox);
@@ -393,7 +381,6 @@
         private System.Windows.Forms.ComboBox interpolationCombo;
         private System.Windows.Forms.Label interpolationLabel;
         private System.Windows.Forms.CheckBox backupCheckbox;
-        private System.Windows.Forms.CheckBox glassCheckbox;
         private System.Windows.Forms.CheckBox backupWarningCheckBox;
         private System.Windows.Forms.Label iconSizeLabel;
         private System.Windows.Forms.ComboBox iconSizeCombo;

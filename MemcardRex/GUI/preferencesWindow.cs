@@ -32,10 +32,6 @@ namespace MemcardRex
             SavedComPort = progSettings.communicationPort;
             if (progSettings.showListGrid == 1) gridCheckbox.Checked = true; else gridCheckbox.Checked = false;
             if (progSettings.backupMemcards == 1) backupCheckbox.Checked = true; else backupCheckbox.Checked = false;
-            if (progSettings.glassStatusBar == 1) glassCheckbox.Checked = true; else glassCheckbox.Checked = false;
-            glassSupport glass = new glassSupport();
-            if (!glass.isGlassSupported())
-                glassCheckbox.Enabled = false;
             if (progSettings.warningMessage == 1) backupWarningCheckBox.Checked = true; else backupWarningCheckBox.Checked = false;
             if (progSettings.restoreWindowPosition == 1) restorePositionCheckbox.Checked = true; else restorePositionCheckbox.Checked = false;
             if (progSettings.fixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
@@ -83,7 +79,6 @@ namespace MemcardRex
 
             if (gridCheckbox.Checked == true) progSettings.showListGrid = 1; else progSettings.showListGrid = 0;
             if (backupCheckbox.Checked == true) progSettings.backupMemcards = 1; else progSettings.backupMemcards = 0;
-            if (glassCheckbox.Checked == true) progSettings.glassStatusBar = 1; else progSettings.glassStatusBar = 0;
             if (backupWarningCheckBox.Checked == true) progSettings.warningMessage = 1; else progSettings.warningMessage = 0;
             if (restorePositionCheckbox.Checked == true) progSettings.restoreWindowPosition = 1; else progSettings.restoreWindowPosition = 0;
             if (fixCorruptedCardsCheckbox.Checked == true) progSettings.fixCorruptedCards = 1; else progSettings.fixCorruptedCards = 0;

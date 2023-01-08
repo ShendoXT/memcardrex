@@ -1028,7 +1028,6 @@
             this.Text = "mainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainWindow_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.mainWindow_Paint);
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
             this.mainToolbar.ResumeLayout(false);
