@@ -44,16 +44,22 @@ namespace MemCARDuinoCommunication
             OpenedPort.DtrEnable = false;
             Thread.Sleep(2000);
 
-            //Required for Arduino Leonardo and Micro
-            OpenedPort.DtrEnable = true;
-
             //Check if this is MCino
             SendDataToPort((byte)MCinoCommands.GETID, 100);
             ReadData = ReadDataFromPort();
 
-            if (ReadData[0] != 'M' || ReadData[1] != 'C' || ReadData[2] != 'D' || ReadData[3] != 'I' || ReadData[4] != 'N' || ReadData[5] != 'O')
+            if(!"MCDINO".Equals(Encoding.UTF8.GetString(ReadData, 0, 6)))
             {
-                return "MemCARDuino was not detected on '" + ComPortName + "' port.";
+                //Maybe this is Arduino Leonardo or Micro
+                OpenedPort.DtrEnable = true;
+
+                //Repeat GETID command
+                SendDataToPort((byte)MCinoCommands.GETID, 100);
+                ReadData = ReadDataFromPort();
+
+                //If there is still no response this is definitely not MemCARDuino
+                if (!"MCDINO".Equals(Encoding.UTF8.GetString(ReadData, 0, 6)))
+                    return "MemCARDuino was not detected on '" + ComPortName + "' port.";
             }
 
             //Get the firmware version

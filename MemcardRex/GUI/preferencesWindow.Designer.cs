@@ -55,13 +55,15 @@
             this.remotePortUpDown = new System.Windows.Forms.NumericUpDown();
             this.hardwareSpeedCombo = new System.Windows.Forms.ComboBox();
             this.hardwareSpeedLabel = new System.Windows.Forms.Label();
+            this.cardSlotLabel = new System.Windows.Forms.Label();
+            this.cardSlotCombo = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.remotePortUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // okButton
             // 
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(224, 272);
+            this.okButton.Location = new System.Drawing.Point(252, 228);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(76, 24);
             this.okButton.TabIndex = 99;
@@ -72,7 +74,7 @@
             // cancelButton
             // 
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(304, 272);
+            this.cancelButton.Location = new System.Drawing.Point(332, 228);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(76, 24);
             this.cancelButton.TabIndex = 0;
@@ -83,7 +85,7 @@
             // applyButton
             // 
             this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.applyButton.Location = new System.Drawing.Point(384, 272);
+            this.applyButton.Location = new System.Drawing.Point(412, 228);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(76, 24);
             this.applyButton.TabIndex = 1;
@@ -203,9 +205,9 @@
             // spacerLabel
             // 
             this.spacerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.spacerLabel.Location = new System.Drawing.Point(4, 267);
+            this.spacerLabel.Location = new System.Drawing.Point(4, 223);
             this.spacerLabel.Name = "spacerLabel";
-            this.spacerLabel.Size = new System.Drawing.Size(456, 2);
+            this.spacerLabel.Size = new System.Drawing.Size(484, 2);
             this.spacerLabel.TabIndex = 8;
             // 
             // restorePositionCheckbox
@@ -275,7 +277,7 @@
             // remotePortLabel
             // 
             this.remotePortLabel.AutoSize = true;
-            this.remotePortLabel.Location = new System.Drawing.Point(124, 226);
+            this.remotePortLabel.Location = new System.Drawing.Point(365, 179);
             this.remotePortLabel.Name = "remotePortLabel";
             this.remotePortLabel.Size = new System.Drawing.Size(69, 13);
             this.remotePortLabel.TabIndex = 105;
@@ -284,7 +286,7 @@
             // remoteAddressLabel
             // 
             this.remoteAddressLabel.AutoSize = true;
-            this.remoteAddressLabel.Location = new System.Drawing.Point(4, 226);
+            this.remoteAddressLabel.Location = new System.Drawing.Point(245, 179);
             this.remoteAddressLabel.Name = "remoteAddressLabel";
             this.remoteAddressLabel.Size = new System.Drawing.Size(88, 13);
             this.remoteAddressLabel.TabIndex = 104;
@@ -292,14 +294,14 @@
             // 
             // remoteAddressBox
             // 
-            this.remoteAddressBox.Location = new System.Drawing.Point(7, 243);
+            this.remoteAddressBox.Location = new System.Drawing.Point(248, 196);
             this.remoteAddressBox.Name = "remoteAddressBox";
             this.remoteAddressBox.Size = new System.Drawing.Size(113, 20);
             this.remoteAddressBox.TabIndex = 106;
             // 
             // remotePortUpDown
             // 
-            this.remotePortUpDown.Location = new System.Drawing.Point(124, 243);
+            this.remotePortUpDown.Location = new System.Drawing.Point(365, 196);
             this.remotePortUpDown.Name = "remotePortUpDown";
             this.remotePortUpDown.Size = new System.Drawing.Size(120, 20);
             this.remotePortUpDown.TabIndex = 107;
@@ -325,11 +327,34 @@
             this.hardwareSpeedLabel.TabIndex = 108;
             this.hardwareSpeedLabel.Text = "Communication speed:";
             // 
+            // cardSlotLabel
+            // 
+            this.cardSlotLabel.AutoSize = true;
+            this.cardSlotLabel.Location = new System.Drawing.Point(248, 136);
+            this.cardSlotLabel.Name = "cardSlotLabel";
+            this.cardSlotLabel.Size = new System.Drawing.Size(153, 13);
+            this.cardSlotLabel.TabIndex = 111;
+            this.cardSlotLabel.Text = "PS1CardLink/Unirom card slot:";
+            // 
+            // cardSlotCombo
+            // 
+            this.cardSlotCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cardSlotCombo.FormattingEnabled = true;
+            this.cardSlotCombo.Items.AddRange(new object[] {
+            "Slot 1",
+            "Slot 2"});
+            this.cardSlotCombo.Location = new System.Drawing.Point(248, 152);
+            this.cardSlotCombo.Name = "cardSlotCombo";
+            this.cardSlotCombo.Size = new System.Drawing.Size(236, 21);
+            this.cardSlotCombo.TabIndex = 110;
+            // 
             // preferencesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(463, 299);
+            this.ClientSize = new System.Drawing.Size(490, 257);
+            this.Controls.Add(this.cardSlotLabel);
+            this.Controls.Add(this.cardSlotCombo);
             this.Controls.Add(this.hardwareSpeedCombo);
             this.Controls.Add(this.hardwareSpeedLabel);
             this.Controls.Add(this.remotePortUpDown);
@@ -399,5 +424,7 @@
         private System.Windows.Forms.NumericUpDown remotePortUpDown;
         private System.Windows.Forms.ComboBox hardwareSpeedCombo;
         private System.Windows.Forms.Label hardwareSpeedLabel;
+        private System.Windows.Forms.Label cardSlotLabel;
+        private System.Windows.Forms.ComboBox cardSlotCombo;
     }
 }

@@ -69,6 +69,9 @@
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.pS1CardLinkRemoteMenuRead = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem25 = new System.Windows.Forms.ToolStripSeparator();
+            this.uniromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uniromOverTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
             this.pS3MemoryCardAdaptorMenuRead = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +81,9 @@
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.pS1CardLinkRemoteMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem26 = new System.Windows.Forms.ToolStripSeparator();
+            this.uniromToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.uniromOverTCPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem22 = new System.Windows.Forms.ToolStripSeparator();
             this.pS3MemoryCardAdaptorMenuWrite = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
@@ -87,6 +93,9 @@
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
             this.pS1CardLinkMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.pS1CardLinkRemoteMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem27 = new System.Windows.Forms.ToolStripSeparator();
+            this.uniromToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.uniromOverTCPToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
             this.pS3MemoryCardAdaptorMenuFormat = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -425,10 +434,13 @@
             this.toolStripMenuItem18,
             this.pS1CardLinkMenuRead,
             this.pS1CardLinkRemoteMenuRead,
+            this.toolStripMenuItem25,
+            this.uniromToolStripMenuItem,
+            this.uniromOverTCPToolStripMenuItem,
             this.toolStripMenuItem16,
             this.pS3MemoryCardAdaptorMenuRead});
             this.readFromToolStripMenuItem.Name = "readFromToolStripMenuItem";
-            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.readFromToolStripMenuItem.Text = "Read save data";
             // 
             // dexDriveMenuRead
@@ -469,6 +481,24 @@
             this.pS1CardLinkRemoteMenuRead.Text = "PS1CardLink over TCP";
             this.pS1CardLinkRemoteMenuRead.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuRead_Click);
             // 
+            // toolStripMenuItem25
+            // 
+            this.toolStripMenuItem25.Name = "toolStripMenuItem25";
+            this.toolStripMenuItem25.Size = new System.Drawing.Size(212, 6);
+            // 
+            // uniromToolStripMenuItem
+            // 
+            this.uniromToolStripMenuItem.Name = "uniromToolStripMenuItem";
+            this.uniromToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.uniromToolStripMenuItem.Text = "Unirom";
+            this.uniromToolStripMenuItem.Click += new System.EventHandler(this.uniromToolStripMenuItem_Click);
+            // 
+            // uniromOverTCPToolStripMenuItem
+            // 
+            this.uniromOverTCPToolStripMenuItem.Name = "uniromOverTCPToolStripMenuItem";
+            this.uniromOverTCPToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.uniromOverTCPToolStripMenuItem.Text = "Unirom over TCP";
+            // 
             // toolStripMenuItem16
             // 
             this.toolStripMenuItem16.Name = "toolStripMenuItem16";
@@ -490,10 +520,13 @@
             this.toolStripMenuItem19,
             this.pS1CardLinkMenuWrite,
             this.pS1CardLinkRemoteMenuWrite,
+            this.toolStripMenuItem26,
+            this.uniromToolStripMenuItem1,
+            this.uniromOverTCPToolStripMenuItem1,
             this.toolStripMenuItem22,
             this.pS3MemoryCardAdaptorMenuWrite});
             this.writeToToolStripMenuItem.Name = "writeToToolStripMenuItem";
-            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.writeToToolStripMenuItem.Text = "Write save data";
             // 
             // dexDriveMenuWrite
@@ -534,6 +567,24 @@
             this.pS1CardLinkRemoteMenuWrite.Text = "PS1CardLink over TCP";
             this.pS1CardLinkRemoteMenuWrite.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuWrite_Click);
             // 
+            // toolStripMenuItem26
+            // 
+            this.toolStripMenuItem26.Name = "toolStripMenuItem26";
+            this.toolStripMenuItem26.Size = new System.Drawing.Size(212, 6);
+            // 
+            // uniromToolStripMenuItem1
+            // 
+            this.uniromToolStripMenuItem1.Name = "uniromToolStripMenuItem1";
+            this.uniromToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
+            this.uniromToolStripMenuItem1.Text = "Unirom";
+            this.uniromToolStripMenuItem1.Click += new System.EventHandler(this.uniromToolStripMenuItem1_Click);
+            // 
+            // uniromOverTCPToolStripMenuItem1
+            // 
+            this.uniromOverTCPToolStripMenuItem1.Name = "uniromOverTCPToolStripMenuItem1";
+            this.uniromOverTCPToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
+            this.uniromOverTCPToolStripMenuItem1.Text = "Unirom over TCP";
+            // 
             // toolStripMenuItem22
             // 
             this.toolStripMenuItem22.Name = "toolStripMenuItem22";
@@ -549,7 +600,7 @@
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
-            this.toolStripMenuItem21.Size = new System.Drawing.Size(151, 6);
+            this.toolStripMenuItem21.Size = new System.Drawing.Size(177, 6);
             // 
             // formatMemoryCardToolStripMenuItem
             // 
@@ -560,10 +611,13 @@
             this.toolStripMenuItem20,
             this.pS1CardLinkMenuFormat,
             this.pS1CardLinkRemoteMenuFormat,
+            this.toolStripMenuItem27,
+            this.uniromToolStripMenuItem2,
+            this.uniromOverTCPToolStripMenuItem2,
             this.toolStripMenuItem24,
             this.pS3MemoryCardAdaptorMenuFormat});
             this.formatMemoryCardToolStripMenuItem.Name = "formatMemoryCardToolStripMenuItem";
-            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.formatMemoryCardToolStripMenuItem.Text = "Format card";
             // 
             // toolStripMenuItem23
@@ -596,6 +650,24 @@
             this.pS1CardLinkRemoteMenuFormat.Size = new System.Drawing.Size(215, 22);
             this.pS1CardLinkRemoteMenuFormat.Text = "PS1CardLink over TCP";
             this.pS1CardLinkRemoteMenuFormat.Click += new System.EventHandler(this.pS1CardLinkRemoteMenuFormat_Click);
+            // 
+            // toolStripMenuItem27
+            // 
+            this.toolStripMenuItem27.Name = "toolStripMenuItem27";
+            this.toolStripMenuItem27.Size = new System.Drawing.Size(212, 6);
+            // 
+            // uniromToolStripMenuItem2
+            // 
+            this.uniromToolStripMenuItem2.Name = "uniromToolStripMenuItem2";
+            this.uniromToolStripMenuItem2.Size = new System.Drawing.Size(215, 22);
+            this.uniromToolStripMenuItem2.Text = "Unirom";
+            this.uniromToolStripMenuItem2.Click += new System.EventHandler(this.uniromToolStripMenuItem2_Click);
+            // 
+            // uniromOverTCPToolStripMenuItem2
+            // 
+            this.uniromOverTCPToolStripMenuItem2.Name = "uniromOverTCPToolStripMenuItem2";
+            this.uniromOverTCPToolStripMenuItem2.Size = new System.Drawing.Size(215, 22);
+            this.uniromOverTCPToolStripMenuItem2.Text = "Unirom over TCP";
             // 
             // toolStripMenuItem24
             // 
@@ -855,7 +927,7 @@
             this.toolStripMenuItem14,
             this.saveInformationToolStripMenuItem});
             this.mainContextMenu.Name = "mainContextMenu";
-            this.mainContextMenu.Size = new System.Drawing.Size(226, 370);
+            this.mainContextMenu.Size = new System.Drawing.Size(226, 348);
             // 
             // editSaveHeaderToolStripMenuItem1
             // 
@@ -1148,6 +1220,15 @@
         private System.Windows.Forms.ToolStripMenuItem pS1CardLinkRemoteMenuFormat;
         private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem25;
+        private System.Windows.Forms.ToolStripMenuItem uniromToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uniromToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem26;
+        private System.Windows.Forms.ToolStripMenuItem uniromToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem27;
+        private System.Windows.Forms.ToolStripMenuItem uniromOverTCPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uniromOverTCPToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem uniromOverTCPToolStripMenuItem2;
     }
 }
 

@@ -1,18 +1,14 @@
 ﻿//Hardware card reading device information window
-//Shendo 2012 - 2013
+//Shendo 2012 - 2023
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using DexDriveCommunication;
 using MemCARDuinoCommunication;
 using PS1CardLinkCommunication;
 using PS3MemCardAdaptorCommunication;
+using UniromCommunication;
 
 namespace MemcardRex
 {
@@ -30,6 +26,9 @@ namespace MemcardRex
         //PS3 Memory Card Adaptor device
         PS3MemCardAdaptor PS3MCA = new PS3MemCardAdaptor();
 
+        //Unirom Memory Card reading device
+        Unirom uniromDevice = new Unirom();
+
         //Maximum number of frames for writing (usually 1024 but 16 for quick format)
         int maxWritingFrames = 0;
 
@@ -39,8 +38,16 @@ namespace MemcardRex
         //Reading status flag
         bool sucessfullRead = false;
 
-        //Currently active device (0 - DexDrive, 1 - MemCARDuino, 2 - PS1CardLink)
-        int currentDeviceIdentifier = 0;
+        //Device identifiers
+        enum DeviceId:int {
+            DexDrive,
+            MemCARDuino,
+            PS1CardLink,
+            PS3MemCardAdaptor,
+            Unirom
+        };
+
+        int currentDeviceIdentifier;
 
         public cardReaderWindow()
         {
@@ -66,7 +73,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = 1024;
 
             //Set current device to DexDrive
-            currentDeviceIdentifier = 0;
+            currentDeviceIdentifier = (int) DeviceId.DexDrive;
 
             //Set window title and information
             this.Text = "DexDrive communication";
@@ -104,7 +111,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = 1024;
 
             //Set current device to MemCARDuino
-            currentDeviceIdentifier = 1;
+            currentDeviceIdentifier = (int) DeviceId.MemCARDuino;
 
             //Set window title and information
             this.Text = "MemCARDuino communication";
@@ -151,7 +158,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = 1024;
 
             //Set current device to PS1CardLink
-            currentDeviceIdentifier = 2;
+            currentDeviceIdentifier = (int) DeviceId.MemCARDuino;
 
             //Set window title and information
             this.Text = "PS1CardLink communication";
@@ -189,7 +196,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = 1024;
 
             //Set current device to PS3 Memory Card Adaptor
-            currentDeviceIdentifier = 3;
+            currentDeviceIdentifier = (int) DeviceId.PS3MemCardAdaptor;
 
             //Set window title and information
             this.Text = "PS3 Memory Card Adaptor communication";
@@ -208,8 +215,67 @@ namespace MemcardRex
             else return null;
         }
 
-        //Write a Memory Card to DexDrive
-        public void writeMemoryCardDexDrive(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
+        //Read a Memory Card from Unirom
+        public byte[] readMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort, int cardSlot)
+        {
+            string errorString;
+
+            //Initialize Unirom
+            if (remoteAddress.Length > 0)
+            {
+                errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort);
+            }
+            else
+            {
+                errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Read, 1024);
+            }
+
+            //Check if there were any errors
+            if (errorString != null)
+            {
+                //Display an error message and cleanly close Unirom communication
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                uniromDevice.StopUnirom();
+                return null;
+            }
+
+            //Hide progress bar
+            mainProgressBar.Visible = false;
+
+            //Set scale for progress bar
+            mainProgressBar.Maximum = 1024;
+
+            //Set current device to Unirom
+            currentDeviceIdentifier = (int) DeviceId.Unirom;
+
+            //Set window title and information
+            this.Text = "Unirom communication";
+            infoLabel.Text = "Waiting for Unirom to store contents in RAM.\nTransfer will start after all the sectors have been read.";
+
+            //Start reading data
+            backgroundReader.RunWorkerAsync();
+
+            this.ShowDialog(hostWindow);
+
+            //Stop working with Unirom
+            uniromDevice.StopUnirom();
+
+            //Check the final status (return data if all is ok, otherwise return null)
+            if (sucessfullRead == true)
+            {
+                //Also check Unirom data transfer checksum
+                if (uniromDevice.LastChecksum == uniromDevice.CalculateChecksum(completeMemoryCard)) return completeMemoryCard;
+                else
+                {
+                    MessageBox.Show("Checksum mismatch. Data will not be imported.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return null;
+                }
+            }
+            else return null;
+        }
+
+            //Write a Memory Card to DexDrive
+            public void writeMemoryCardDexDrive(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
         {
             //Initialize DexDrive
             string errorString = dexDevice.StartDexDrive(comPort);
@@ -230,7 +296,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = frameNumber;
 
             //Set current device to DexDrive
-            currentDeviceIdentifier = 0;
+            currentDeviceIdentifier = (int) DeviceId.DexDrive;
 
             //Set window title and information
             this.Text = "DexDrive communication";
@@ -270,7 +336,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = frameNumber;
 
             //Set current device to MemCARDuino
-            currentDeviceIdentifier = 1;
+            currentDeviceIdentifier = (int) DeviceId.MemCARDuino;
 
             //Set window title and information
             this.Text = "MemCARDuino communication";
@@ -320,7 +386,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = frameNumber;
 
             //Set current device to PS1CardLink
-            currentDeviceIdentifier = 2;
+            currentDeviceIdentifier = (int) DeviceId.PS1CardLink;
 
             //Set window title and information
             this.Text = "PS1CardLink communication";
@@ -360,7 +426,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = frameNumber;
 
             //Set current device to PS3 Memory Card Adaptor
-            currentDeviceIdentifier = 3;
+            currentDeviceIdentifier = (int) DeviceId.PS3MemCardAdaptor;
 
             //Set window title and information
             this.Text = "PS3 Memory Card Adaptor communication";
@@ -377,6 +443,59 @@ namespace MemcardRex
             //Stop working with PS3 Memory Card Adaptor
             PS3MCA.StopPS3MemCardAdaptor();
         }
+
+        //Write a Memory Card to Unirom
+        public void writeMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, int cardSlot, string remoteAddress, int remotePort, byte[] memoryCardData, int frameNumber)
+        {
+            string errorString;
+
+            //Store checksum before opening port
+            uniromDevice.LastChecksum = uniromDevice.CalculateChecksum(memoryCardData);
+
+            //Initialize Unirom
+            if (remoteAddress.Length > 0)
+            {
+                errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort);
+            }
+            else
+            {
+                errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Write, frameNumber);
+            }
+
+            //Check if there were any errors
+            if (errorString != null)
+            {
+                //Display an error message and cleanly close Unirom communication
+                MessageBox.Show(errorString, applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                uniromDevice.StopUnirom();
+                return;
+            }
+
+            //Set number of chunks to write, not frames
+            maxWritingFrames = frameNumber / 16;
+
+            //Set scale for progress bar
+            mainProgressBar.Maximum = frameNumber / 16;
+
+            //Set current device to Unirom
+            currentDeviceIdentifier = (int)DeviceId.Unirom;
+
+            //Set window title and information
+            this.Text = "Unirom communication";
+            infoLabel.Text = "Writing data to Unirom...";
+
+            //Set reference to the Memory Card data
+            completeMemoryCard = memoryCardData;
+
+            //Start writing data
+            backgroundWriter.RunWorkerAsync();
+
+            this.ShowDialog(hostWindow);
+
+            //Stop working with Unirom
+            uniromDevice.StopUnirom();
+        }
+
 
         private void OKbutton_Click(object sender, EventArgs e)
         {
@@ -398,17 +517,29 @@ namespace MemcardRex
                 //Check if the "Abort" button has been pressed
                 if (backgroundReader.CancellationPending == true) return;
 
-                //Get 128 byte frame data from DexDrive
-                if(currentDeviceIdentifier == 0) tempDataBuffer = dexDevice.ReadMemoryCardFrame(i);
+                //Get 128 byte frame data from selected device
+                switch (currentDeviceIdentifier)
+                {
+                    case (int) DeviceId.DexDrive:
+                        tempDataBuffer = dexDevice.ReadMemoryCardFrame(i);
+                        break;
 
-                //Get 128 byte frame data from MemCARDuino
-                if (currentDeviceIdentifier == 1) tempDataBuffer = CARDuino.ReadMemoryCardFrame(i);
+                    case (int) DeviceId.MemCARDuino:
+                        tempDataBuffer = CARDuino.ReadMemoryCardFrame(i);
+                        break;
 
-                //Get 128 byte frame data from PS1CardLink
-                if (currentDeviceIdentifier == 2) tempDataBuffer = PS1CLnk.ReadMemoryCardFrame(i);
+                    case (int) DeviceId.PS1CardLink:
+                        tempDataBuffer = PS1CLnk.ReadMemoryCardFrame(i);
+                        break;
 
-                //Get 128 byte frame data from PS3 Memory Card Adaptor
-                if (currentDeviceIdentifier == 3) tempDataBuffer = PS3MCA.ReadMemoryCardFrame(i);
+                    case (int) DeviceId.PS3MemCardAdaptor:
+                        tempDataBuffer = PS3MCA.ReadMemoryCardFrame(i);
+                        break;
+
+                    case (int)DeviceId.Unirom:
+                        tempDataBuffer = uniromDevice.ReadMemoryCardFrame(i);
+                        break;
+                }
 
                 //Check if there was a checksum mismatch
                 if (tempDataBuffer != null)
@@ -425,6 +556,15 @@ namespace MemcardRex
 
         private void backgroundReader_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if(currentDeviceIdentifier == (int)DeviceId.Unirom)
+            {
+                if(!mainProgressBar.Visible && uniromDevice.StoredInRam)
+                {
+                    mainProgressBar.Visible = true;
+                    infoLabel.Text = "Reading data from Unirom...";
+                }
+            }
+
             //Report the read progress to the progress bar
             mainProgressBar.Value = e.ProgressPercentage;
         }
@@ -437,7 +577,13 @@ namespace MemcardRex
 
         private void backgroundWriter_DoWork(object sender, DoWorkEventArgs e)
         {
-            byte[] tempDataBuffer = new byte[128];
+            //Default frame size
+            int frameSize = 128;
+
+            //Unirom works with 2048 byte chunks
+            if (currentDeviceIdentifier == (int)DeviceId.Unirom) frameSize = 2048;
+
+            byte[] tempDataBuffer = new byte[frameSize];
             ushort i = 0;
             bool lastStatus = false;
 
@@ -447,23 +593,35 @@ namespace MemcardRex
                 //Check if the "Abort" button has been pressed
                 if (backgroundWriter.CancellationPending == true) return;
 
-                //Get 128 byte frame data
-                Array.Copy(completeMemoryCard, i * 128, tempDataBuffer, 0, 128);
+                //Get frame data
+                Array.Copy(completeMemoryCard, i * frameSize, tempDataBuffer, 0, frameSize);
 
                 //Reset write status
                 lastStatus = false;
 
-                //Write data to DexDrive
-                if (currentDeviceIdentifier == 0) lastStatus = dexDevice.WriteMemoryCardFrame(i, tempDataBuffer);
+                //Write 128 byte frame data to device (or 2048 in case of Unirom)
+                switch (currentDeviceIdentifier)
+                {
+                    case (int) DeviceId.DexDrive:
+                        lastStatus = dexDevice.WriteMemoryCardFrame(i, tempDataBuffer);
+                        break;
 
-                //Write data to MemCARDuino
-                if (currentDeviceIdentifier == 1) lastStatus = CARDuino.WriteMemoryCardFrame(i, tempDataBuffer);
+                    case (int) DeviceId.MemCARDuino:
+                        lastStatus = CARDuino.WriteMemoryCardFrame(i, tempDataBuffer);
+                        break;
 
-                //Write data to PS1CardLink
-                if (currentDeviceIdentifier == 2) lastStatus = PS1CLnk.WriteMemoryCardFrame(i, tempDataBuffer);
+                    case (int) DeviceId.PS1CardLink:
+                        lastStatus = PS1CLnk.WriteMemoryCardFrame(i, tempDataBuffer);
+                        break;
 
-                //Write data to PS3 Memory Card Adaptor
-                if (currentDeviceIdentifier == 3) lastStatus = PS3MCA.WriteMemoryCardFrame(i, tempDataBuffer);
+                    case (int) DeviceId.PS3MemCardAdaptor:
+                        lastStatus = PS3MCA.WriteMemoryCardFrame(i, tempDataBuffer);
+                        break;
+
+                    case (int)DeviceId.Unirom:
+                        lastStatus = uniromDevice.WriteMemoryCardChunk(i, tempDataBuffer);
+                        break;
+                }
 
                 //Check if there was a frame or checksum mismatch
                 if (lastStatus == true)

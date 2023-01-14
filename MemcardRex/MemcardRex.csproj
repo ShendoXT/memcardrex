@@ -108,6 +108,7 @@
     <Compile Include="GUI\compareWindow.Designer.cs">
       <DependentUpon>compareWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Hardware\Unirom.cs" />
     <Compile Include="Hardware\DexDrive.cs" />
     <Compile Include="GUI\cardReaderWindow.cs">
       <SubType>Form</SubType>

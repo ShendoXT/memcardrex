@@ -38,7 +38,7 @@ namespace MemcardRex
             remoteAddressBox.Text = progSettings.remoteCommunicationAddress;
             remotePortUpDown.Value = progSettings.remoteCommunicationPort;
             hardwareSpeedCombo.SelectedIndex = progSettings.communicationSpeed;
-
+            cardSlotCombo.SelectedIndex = progSettings.cardSlot;
 
             //Load all COM ports found on the system
             foreach (string port in SerialPort.GetPortNames())
@@ -76,6 +76,7 @@ namespace MemcardRex
             progSettings.remoteCommunicationAddress = remoteAddressBox.Text;
             progSettings.remoteCommunicationPort = Convert.ToUInt16(remotePortUpDown.Value);
             progSettings.communicationSpeed = hardwareSpeedCombo.SelectedIndex;
+            progSettings.cardSlot = cardSlotCombo.SelectedIndex;
 
             if (gridCheckbox.Checked == true) progSettings.showListGrid = 1; else progSettings.showListGrid = 0;
             if (backupCheckbox.Checked == true) progSettings.backupMemcards = 1; else progSettings.backupMemcards = 0;

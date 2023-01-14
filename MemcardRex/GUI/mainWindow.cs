@@ -75,6 +75,7 @@ namespace MemcardRex
             public int lastExportFormat;           //Last used format to export save
             public string remoteCommunicationAddress; // Address / hostname of the remote serial bridge host
             public int remoteCommunicationPort;    // Port to open a socket for the remote serial bridge
+            public int cardSlot;                   //Active card slot for reading data from PS1CardLink or Unirom
 
             public programSettings(int i = 0)
             {
@@ -95,7 +96,8 @@ namespace MemcardRex
                 lastExportFormat = 0;       
                 // Default values for esp-link
                 remoteCommunicationAddress = "192.168.4.1";
-                remoteCommunicationPort = 23;    
+                remoteCommunicationPort = 23;
+                cardSlot = 0;
         }
         }
 
@@ -210,6 +212,9 @@ namespace MemcardRex
                 //Load last save export format
                 mainSettings.lastExportFormat = xmlAppSettings.readXmlEntryInt("LastExportFormat", 0, 7);
 
+                //Load active card slot
+                mainSettings.cardSlot = xmlAppSettings.readXmlEntryInt("cardSlot", 0, 1);
+
                 //Check if window position should be read
                 if (mainSettings.restoreWindowPosition == 1)
                 {
@@ -292,6 +297,9 @@ namespace MemcardRex
 
             //Set last used export format
             xmlAppSettings.writeXmlEntry("LastExportFormat", mainSettings.lastExportFormat.ToString());
+
+            //Set active card slot
+            xmlAppSettings.writeXmlEntry("cardSlot", mainSettings.cardSlot.ToString());
 
             //Cleanly close opened XML file
             xmlAppSettings.closeXmlWriter();
@@ -1144,7 +1152,7 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2022", "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2023", "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\nBeta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\nThanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
 
@@ -2273,6 +2281,10 @@ namespace MemcardRex
                 case 4:         //PS1CardLink (Remote TCP)
                     new cardReaderWindow().writeMemoryCardPS1CLnk(this, appName, "", mainSettings.communicationSpeed, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
+
+                case 5:         //Unirom
+                    new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, "", 0, blankCard.saveMemoryCardStream(true), frameNumber);
+                    break;
             }
         }
 
@@ -2312,6 +2324,32 @@ namespace MemcardRex
         {
             //Export RAW save
             exportSaveDialog(true);
+        }
+
+        private void uniromToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Read a Memory Card from Unirom
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardUnirom(this, appName, mainSettings.communicationPort, "", 0, mainSettings.cardSlot);
+
+            cardReaderRead(tempByteArray);
+        }
+
+        private void uniromToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            int listIndex = mainTabControl.SelectedIndex;
+
+            //Check if there are any cards to write
+            if (PScard.Count > 0)
+            {
+                //Open Unirom communication window
+                new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, "", 0, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+            }
+        }
+
+        private void uniromToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            //Format a Memory Card on Unirom
+            formatHardwareCard(5);
         }
     }
 }
