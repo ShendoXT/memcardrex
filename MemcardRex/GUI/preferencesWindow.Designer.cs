@@ -332,9 +332,9 @@
             this.cardSlotLabel.AutoSize = true;
             this.cardSlotLabel.Location = new System.Drawing.Point(248, 136);
             this.cardSlotLabel.Name = "cardSlotLabel";
-            this.cardSlotLabel.Size = new System.Drawing.Size(153, 13);
+            this.cardSlotLabel.Size = new System.Drawing.Size(86, 13);
             this.cardSlotLabel.TabIndex = 111;
-            this.cardSlotLabel.Text = "PS1CardLink/Unirom card slot:";
+            this.cardSlotLabel.Text = "Unirom card slot:";
             // 
             // cardSlotCombo
             // 

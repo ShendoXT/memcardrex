@@ -2283,7 +2283,11 @@ namespace MemcardRex
                     break;
 
                 case 5:         //Unirom
-                    new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, "", 0, blankCard.saveMemoryCardStream(true), frameNumber);
+                    new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, blankCard.saveMemoryCardStream(true), frameNumber);
+                    break;
+
+                case 6:         //Unirom via TCP
+                    new cardReaderWindow().writeMemoryCardUniromTCP(this, appName, mainSettings.remoteCommunicationAddress,mainSettings.remoteCommunicationPort, mainSettings.cardSlot, blankCard.saveMemoryCardStream(true), frameNumber);
                     break;
             }
         }
@@ -2329,7 +2333,7 @@ namespace MemcardRex
         private void uniromToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Read a Memory Card from Unirom
-            byte[] tempByteArray = new cardReaderWindow().readMemoryCardUnirom(this, appName, mainSettings.communicationPort, "", 0, mainSettings.cardSlot);
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot);
 
             cardReaderRead(tempByteArray);
         }
@@ -2342,7 +2346,7 @@ namespace MemcardRex
             if (PScard.Count > 0)
             {
                 //Open Unirom communication window
-                new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, "", 0, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+                new cardReaderWindow().writeMemoryCardUnirom(this, appName, mainSettings.communicationPort, mainSettings.cardSlot, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
             }
         }
 
@@ -2350,6 +2354,32 @@ namespace MemcardRex
         {
             //Format a Memory Card on Unirom
             formatHardwareCard(5);
+        }
+
+        private void uniromOverTCPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Read a Memory Card from Unirom via TCP
+            byte[] tempByteArray = new cardReaderWindow().readMemoryCardUniromTCP(this, appName, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, mainSettings.cardSlot);
+
+            cardReaderRead(tempByteArray);
+        }
+
+        private void uniromOverTCPToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            int listIndex = mainTabControl.SelectedIndex;
+
+            //Check if there are any cards to write
+            if (PScard.Count > 0)
+            {
+                //Open Unirom communication window
+                new cardReaderWindow().writeMemoryCardUniromTCP(this, appName, mainSettings.remoteCommunicationAddress, mainSettings.remoteCommunicationPort, mainSettings.cardSlot, PScard[listIndex].saveMemoryCardStream(getSettingsBool(mainSettings.fixCorruptedCards)), 1024);
+            }
+        }
+
+        private void uniromOverTCPToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            //Format a Memory Card on Unirom via TCP
+            formatHardwareCard(6);
         }
     }
 }

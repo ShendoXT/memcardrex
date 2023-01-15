@@ -43,10 +43,13 @@ namespace MemcardRex
             DexDrive,
             MemCARDuino,
             PS1CardLink,
-            PS3MemCardAdaptor,
-            Unirom
+            PS1CardLinkTCP,
+            Unirom,
+            UniromTCP,
+            PS3MemCardAdaptor
         };
 
+        //Active device ID
         int currentDeviceIdentifier;
 
         public cardReaderWindow()
@@ -158,7 +161,7 @@ namespace MemcardRex
             mainProgressBar.Maximum = 1024;
 
             //Set current device to PS1CardLink
-            currentDeviceIdentifier = (int) DeviceId.MemCARDuino;
+            currentDeviceIdentifier = (int) DeviceId.PS1CardLink;
 
             //Set window title and information
             this.Text = "PS1CardLink communication";
@@ -215,21 +218,9 @@ namespace MemcardRex
             else return null;
         }
 
-        //Read a Memory Card from Unirom
-        public byte[] readMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, string remoteAddress, int remotePort, int cardSlot)
+        //Set everything for Unirom read be it via serial or TCP
+        public byte[] setupUniromRead(Form hostWindow, string applicationName, string errorString)
         {
-            string errorString;
-
-            //Initialize Unirom
-            if (remoteAddress.Length > 0)
-            {
-                errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort);
-            }
-            else
-            {
-                errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Read, 1024);
-            }
-
             //Check if there were any errors
             if (errorString != null)
             {
@@ -244,9 +235,6 @@ namespace MemcardRex
 
             //Set scale for progress bar
             mainProgressBar.Maximum = 1024;
-
-            //Set current device to Unirom
-            currentDeviceIdentifier = (int) DeviceId.Unirom;
 
             //Set window title and information
             this.Text = "Unirom communication";
@@ -274,8 +262,32 @@ namespace MemcardRex
             else return null;
         }
 
+        //Read a Memory Card from Unirom via TCP
+        public byte[] readMemoryCardUniromTCP(Form hostWindow, string applicationName, string remoteAddress, int remotePort, int cardSlot)
+        {
+            //Initialize Unirom via TCP
+            string errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort, cardSlot, (int)Unirom.Mode.Read, 1024);
+
+            //Set current device to Unirom via TCP
+            currentDeviceIdentifier = (int)DeviceId.UniromTCP;
+
+            return setupUniromRead(hostWindow, applicationName, errorString);
+        }
+
+        //Read a Memory Card from Unirom via Serial
+        public byte[] readMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, int cardSlot)
+        {
+            //Initialize Unirom
+            string errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Read, 1024);
+
+            //Set current device to Unirom
+            currentDeviceIdentifier = (int)DeviceId.Unirom;
+
+            return setupUniromRead(hostWindow, applicationName, errorString);
+        }
+
             //Write a Memory Card to DexDrive
-            public void writeMemoryCardDexDrive(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
+        public void writeMemoryCardDexDrive(Form hostWindow, string applicationName, string comPort, byte[] memoryCardData, int frameNumber)
         {
             //Initialize DexDrive
             string errorString = dexDevice.StartDexDrive(comPort);
@@ -444,24 +456,9 @@ namespace MemcardRex
             PS3MCA.StopPS3MemCardAdaptor();
         }
 
-        //Write a Memory Card to Unirom
-        public void writeMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, int cardSlot, string remoteAddress, int remotePort, byte[] memoryCardData, int frameNumber)
+        //Set up everything for Unirom write be it serial or TCP
+        private void setupUniromWrite(Form hostWindow, string applicationName, byte[] memoryCardData, int frameNumber, string errorString)
         {
-            string errorString;
-
-            //Store checksum before opening port
-            uniromDevice.LastChecksum = uniromDevice.CalculateChecksum(memoryCardData);
-
-            //Initialize Unirom
-            if (remoteAddress.Length > 0)
-            {
-                errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort);
-            }
-            else
-            {
-                errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Write, frameNumber);
-            }
-
             //Check if there were any errors
             if (errorString != null)
             {
@@ -476,9 +473,6 @@ namespace MemcardRex
 
             //Set scale for progress bar
             mainProgressBar.Maximum = frameNumber / 16;
-
-            //Set current device to Unirom
-            currentDeviceIdentifier = (int)DeviceId.Unirom;
 
             //Set window title and information
             this.Text = "Unirom communication";
@@ -496,6 +490,33 @@ namespace MemcardRex
             uniromDevice.StopUnirom();
         }
 
+        //Write a Memory Card to Unirom via TCP
+        public void writeMemoryCardUniromTCP(Form hostWindow, string applicationName, string remoteAddress, int remotePort, int cardSlot, byte[] memoryCardData, int frameNumber)
+        {
+            //Store checksum before opening port
+            uniromDevice.LastChecksum = uniromDevice.CalculateChecksum(memoryCardData);
+
+            //Set current device to Unirom
+            currentDeviceIdentifier = (int)DeviceId.UniromTCP;
+
+            string errorString = uniromDevice.StartUniromTCP(remoteAddress, remotePort, cardSlot, (int)Unirom.Mode.Write, frameNumber);
+
+            setupUniromWrite(hostWindow, applicationName, memoryCardData, frameNumber, errorString);
+        }
+
+        //Write a Memory Card to Unirom via serial
+        public void writeMemoryCardUnirom(Form hostWindow, string applicationName, string comPort, int cardSlot, byte[] memoryCardData, int frameNumber)
+        {
+            //Store checksum before opening port
+            uniromDevice.LastChecksum = uniromDevice.CalculateChecksum(memoryCardData);
+
+            //Set current device to Unirom
+            currentDeviceIdentifier = (int)DeviceId.Unirom;
+
+            string errorString = uniromDevice.StartUnirom(comPort, cardSlot, (int) Unirom.Mode.Write, frameNumber);
+
+            setupUniromWrite(hostWindow, applicationName, memoryCardData, frameNumber, errorString);
+        }
 
         private void OKbutton_Click(object sender, EventArgs e)
         {
@@ -529,6 +550,7 @@ namespace MemcardRex
                         break;
 
                     case (int) DeviceId.PS1CardLink:
+                    case (int) DeviceId.PS1CardLinkTCP:
                         tempDataBuffer = PS1CLnk.ReadMemoryCardFrame(i);
                         break;
 
@@ -537,6 +559,7 @@ namespace MemcardRex
                         break;
 
                     case (int)DeviceId.Unirom:
+                    case (int)DeviceId.UniromTCP:
                         tempDataBuffer = uniromDevice.ReadMemoryCardFrame(i);
                         break;
                 }
@@ -556,7 +579,7 @@ namespace MemcardRex
 
         private void backgroundReader_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if(currentDeviceIdentifier == (int)DeviceId.Unirom)
+            if(currentDeviceIdentifier == (int)DeviceId.Unirom || currentDeviceIdentifier == (int)DeviceId.UniromTCP)
             {
                 if(!mainProgressBar.Visible && uniromDevice.StoredInRam)
                 {
@@ -581,7 +604,7 @@ namespace MemcardRex
             int frameSize = 128;
 
             //Unirom works with 2048 byte chunks
-            if (currentDeviceIdentifier == (int)DeviceId.Unirom) frameSize = 2048;
+            if (currentDeviceIdentifier == (int)DeviceId.Unirom || currentDeviceIdentifier == (int)DeviceId.UniromTCP) frameSize = 2048;
 
             byte[] tempDataBuffer = new byte[frameSize];
             ushort i = 0;
@@ -611,6 +634,7 @@ namespace MemcardRex
                         break;
 
                     case (int) DeviceId.PS1CardLink:
+                    case (int) DeviceId.PS1CardLinkTCP:
                         lastStatus = PS1CLnk.WriteMemoryCardFrame(i, tempDataBuffer);
                         break;
 
@@ -619,6 +643,7 @@ namespace MemcardRex
                         break;
 
                     case (int)DeviceId.Unirom:
+                    case (int)DeviceId.UniromTCP:
                         lastStatus = uniromDevice.WriteMemoryCardChunk(i, tempDataBuffer);
                         break;
                 }

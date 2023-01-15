@@ -498,6 +498,7 @@
             this.uniromOverTCPToolStripMenuItem.Name = "uniromOverTCPToolStripMenuItem";
             this.uniromOverTCPToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.uniromOverTCPToolStripMenuItem.Text = "Unirom over TCP";
+            this.uniromOverTCPToolStripMenuItem.Click += new System.EventHandler(this.uniromOverTCPToolStripMenuItem_Click);
             // 
             // toolStripMenuItem16
             // 
@@ -584,6 +585,7 @@
             this.uniromOverTCPToolStripMenuItem1.Name = "uniromOverTCPToolStripMenuItem1";
             this.uniromOverTCPToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
             this.uniromOverTCPToolStripMenuItem1.Text = "Unirom over TCP";
+            this.uniromOverTCPToolStripMenuItem1.Click += new System.EventHandler(this.uniromOverTCPToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem22
             // 
@@ -668,6 +670,7 @@
             this.uniromOverTCPToolStripMenuItem2.Name = "uniromOverTCPToolStripMenuItem2";
             this.uniromOverTCPToolStripMenuItem2.Size = new System.Drawing.Size(215, 22);
             this.uniromOverTCPToolStripMenuItem2.Text = "Unirom over TCP";
+            this.uniromOverTCPToolStripMenuItem2.Click += new System.EventHandler(this.uniromOverTCPToolStripMenuItem2_Click);
             // 
             // toolStripMenuItem24
             // 
