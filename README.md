@@ -57,7 +57,11 @@ With it your console becomes a Memory Card reader similar to the DexDrive and Me
 MemcardRex can also talk to the serial port remotely by using a Serial Port Bridge like [esp-link](https://github.com/jeelabs/esp-link).
 <br>It conveniently fits into a PSOne which has otherwise no external hardware ports.
 
-<b>4. PS3 Memory Card Adaptor</b>
+<b>4. Unirom</b>
+<br>[Unirom](https://unirom.github.io) is a shell for the PlayStation and PSOne consoles.
+<br>It requires an official or home made TTL serial cable for communication with PC.
+
+<b>5. PS3 Memory Card Adaptor</b>
 <br>The PS3 Memory Card Adaptor is an official Sony USB adapter that allows reading and writing PS1 Memory Cards on a PlayStation 3.
 <br>To use it on a Windows PC, a custom USB driver needs to be installed.
  
