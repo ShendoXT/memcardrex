@@ -1,11 +1,11 @@
-﻿using AppKit;
+using AppKit;
 using Foundation;
 using System;
 
 namespace MemcardRex
 {
 	[Register ("AppDelegate")]
-	public class AppDelegate : NSApplicationDelegate
+	public partial class AppDelegate : NSApplicationDelegate
 	{
         //Number of open windows/documents/cards in the application
         private int windowCount = 1;
@@ -27,8 +27,6 @@ namespace MemcardRex
             };
 
             alert.RunModal();
-
-            //NewDocument(this);
         }
 
 		public override void WillTerminate (NSNotification notification)
@@ -52,7 +50,7 @@ namespace MemcardRex
 
         //Open file menu item
         [Export("openDocument:")]
-        void OpenDialog(NSObject sender)
+        public void OpenDialog(NSObject sender)
         {
             ps1card memCard = new ps1card();
 

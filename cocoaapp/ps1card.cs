@@ -49,10 +49,14 @@ namespace MemcardRex
         /// </summary>
         public string[] SupportedExtensions { get; } = { "bin", "ddf", "gme", "mc", "mcd", "mci", "mcr", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc" };
 
-        //Memory Card's name
+        /// <summary>
+        /// Memory Card's name
+        /// </summary>
         public string cardName = null;
 
-        //Memory Card's location (path + filename)
+        /// <summary>
+        /// Memory Card's location (path + filename)
+        /// </summary>
         public string cardLocation = null;
 
         //Memory Card's type (0 - unset, 1 - raw, 2 - gme, 3 - vgs, 4 - vmp);
@@ -64,9 +68,6 @@ namespace MemcardRex
         //Complete Memory Card in the raw format (131072 bytes)
         byte[] rawMemoryCard = new byte[131072];
 
-        //Header data for the GME Memory Card
-        //public byte[] gmeHeader = new byte[3904];
-
         //Memory Card header data, 15 slots (128 bytes each)
         public byte[,] headerData = new byte[SlotCount, 128];
 
@@ -76,8 +77,8 @@ namespace MemcardRex
         //Memory Card icon palette data, 15 slots
         public Color[,] iconPalette = new Color[SlotCount, 16];
 
-        //Memory Card icon data, 15 slots, 3 icons per slot, (16*16px icons)
-        public Bitmap[,] iconData = new Bitmap[SlotCount, 3];
+        //Memory Card icon data as 256 pixel Color arrays (required for code portability)
+        public Color[,][] iconColorData = new Color[SlotCount, 3][];
 
         //Number of icon frames
         public int[] iconFrames = new int[SlotCount];
@@ -102,6 +103,9 @@ namespace MemcardRex
 
         //Type of the save slot
         public byte[] slotType = new byte[SlotCount];
+
+        //Next slot pointer (for multilink saves)
+        public ushort[] nextSlotPointer = new ushort[SlotCount];
 
         readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
         readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
@@ -487,13 +491,59 @@ namespace MemcardRex
             return vgsHeader;
         }
 
+        //Fetch next slot pointer for each save
+        private void loadSlotPointers()
+        {
+            nextSlotPointer = new ushort[SlotCount];
+
+            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
+            {
+                nextSlotPointer[slotNumber] = headerData[slotNumber, 8];
+            }
+        }
+
+        //Find broken links and mark them as free/formatted slots
+        private void findBrokenLinks()
+        {
+            //Used for tracking valid linked files
+            bool[] slotTouched = new bool[SlotCount];
+
+            //Mark all found links
+            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
+            {
+                switch (slotType[slotNumber])
+                {
+                    case (int)SlotTypes.initial:
+                    case (int)SlotTypes.deleted_initial:
+                        foreach (int slot in findSaveLinks(slotNumber)) slotTouched[slot] = true;
+                        break;
+
+                }
+            }
+
+            //Free broken ones
+            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
+            {
+                switch (slotType[slotNumber])
+                {
+                    case (int)SlotTypes.middle_link:
+                    case (int)SlotTypes.end_link:
+                    case (int)SlotTypes.deleted_middle_link:
+                    case (int)SlotTypes.deleted_end_link:
+                        if (!slotTouched[slotNumber]) slotType[slotNumber] = (int)SlotTypes.formatted;
+                        break;
+
+                }
+            }
+        }
+
         //Get the type of the save slots
         private void loadSlotTypes()
         {
             //Clear existing data
-            slotType = new byte[15];
+            slotType = new byte[SlotCount];
 
-            for (int slotNumber = 0; slotNumber < 15; slotNumber++)
+            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
             {
                 switch (headerData[slotNumber, 0])
                 {
@@ -545,44 +595,63 @@ namespace MemcardRex
             saveIdentifier = new string[15];
             saveName = new string[15];
 
+            //Cycle through each slot
             for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
             {
-                //Copy Product code
-                tempByteArray = new byte[10];
-                for (int byteCount = 0; byteCount < 10; byteCount++)
-                    tempByteArray[byteCount] = headerData[slotNumber, byteCount + 12];
+                saveProdCode[slotNumber] = "";
+                saveIdentifier[slotNumber] = "";
 
-                //Convert Product Code from currently used codepage to UTF-16
-                saveProdCode[slotNumber] = Encoding.Default.GetString(tempByteArray);
-
-
-                //Copy Identifier
-                tempByteArray = new byte[8];
-                for (int byteCount = 0; byteCount < 8; byteCount++)
-                    tempByteArray[byteCount] = headerData[slotNumber, byteCount + 22];
-
-                //Convert Identifier from currently used codepage to UTF-16
-                saveIdentifier[slotNumber] = Encoding.Default.GetString(tempByteArray);
-
-
-                //Copy bytes from save data to temp array
-                tempByteArray = new byte[64];
-                for (int currentByte = 0; currentByte < 64; currentByte++)
+                switch (slotType[slotNumber])
                 {
-                    byte b = saveData[slotNumber, currentByte + 4];
-                    if (currentByte % 2 == 0 && b == 0)
-                    {
-                        Array.Resize(ref tempByteArray, currentByte);
+                    default:
+                        //Copy Product code
+                        tempByteArray = new byte[10];
+                        for (int byteCount = 0; byteCount < 10; byteCount++)
+                            tempByteArray[byteCount] = headerData[slotNumber, byteCount + 12];
+
+                        //Convert Product Code from currently used codepage to UTF-16
+                        saveProdCode[slotNumber] = Encoding.Default.GetString(tempByteArray);
+
+
+                        //Copy Identifier
+                        tempByteArray = new byte[8];
+                        for (int byteCount = 0; byteCount < 8; byteCount++)
+                            tempByteArray[byteCount] = headerData[slotNumber, byteCount + 22];
+
+                        //Convert Identifier from currently used codepage to UTF-16
+                        saveIdentifier[slotNumber] = Encoding.Default.GetString(tempByteArray);
+
+
+                        //Copy bytes from save data to temp array
+                        tempByteArray = new byte[64];
+                        for (int currentByte = 0; currentByte < 64; currentByte++)
+                        {
+                            byte b = saveData[slotNumber, currentByte + 4];
+                            if (currentByte % 2 == 0 && b == 0)
+                            {
+                                Array.Resize(ref tempByteArray, currentByte);
+                                break;
+                            }
+                            tempByteArray[currentByte] = b;
+                        }
+
+                        //Convert save name from Shift-JIS to UTF-16 and normalize full-width characters
+                        saveName[slotNumber] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
+
+                        //Check if the title converted properly, get ASCII if it didn't
+                        if (saveName[slotNumber] == null) saveName[slotNumber] = Encoding.Default.GetString(tempByteArray, 0, 32);
                         break;
-                    }
-                    tempByteArray[currentByte] = b;
+
+                    case (int) SlotTypes.middle_link:
+                    case (int) SlotTypes.deleted_middle_link:
+                        saveName[slotNumber] = "Linked slot (middle link)";
+                        break;
+
+                    case (int)SlotTypes.end_link:
+                    case (int)SlotTypes.deleted_end_link:
+                        saveName[slotNumber] = "Linked slot (end link)";
+                        break;
                 }
-
-                //Convert save name from Shift-JIS to UTF-16 and normalize full-width characters
-                saveName[slotNumber] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
-
-                //Check if the title converted properly, get ASCII if it didn't
-                if (saveName[slotNumber] == null) saveName[slotNumber] = Encoding.Default.GetString(tempByteArray, 0, 32);
             }
         }
 
@@ -850,8 +919,14 @@ namespace MemcardRex
             //Cycle trough each slot
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
             {
-                //Store save region
-                saveRegion[slotNumber] = (ushort)((headerData[slotNumber, 11] << 8) | headerData[slotNumber, 10]);
+                if (slotType[slotNumber] == (int)SlotTypes.initial || slotType[slotNumber] == (int)SlotTypes.deleted_initial)
+                {
+                    foreach (int saveLinks in findSaveLinks(slotNumber))
+                    {
+                        //Store save region
+                        saveRegion[saveLinks] = (ushort)((headerData[slotNumber, 11] << 8) | headerData[slotNumber, 10]);
+                    }
+                }
             }
         }
 
@@ -894,25 +969,35 @@ namespace MemcardRex
         {
             int byteCount = 0;
 
-            //Clear existing data
-            iconData = new Bitmap[15, 3];
+            //Create clear bitmaps
+            for(int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
+                for(int iconNumber = 0; iconNumber < 3; iconNumber++)
+                    iconColorData[slotNumber, iconNumber] = new Color[256];
 
             //Cycle through each slot
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
             {
+                int[] saveLinks = findSaveLinks(slotNumber);
+
                 //Each save has 3 icons (some are data but those will not be shown)
                 for (int iconNumber = 0; iconNumber < 3; iconNumber++)
                 {
-                    iconData[slotNumber, iconNumber] = new Bitmap(16, 16);
-                    byteCount = 128 + (128 * iconNumber);
-
-                    for (int y = 0; y < 16; y++)
+                    if (slotType[slotNumber] == (int)SlotTypes.initial || slotType[slotNumber] == (int)SlotTypes.deleted_initial)
                     {
-                        for (int x = 0; x < 16; x += 2)
+                        byteCount = 128 + (128 * iconNumber);
+
+                        for (int y = 0; y < 16; y++)
                         {
-                            iconData[slotNumber, iconNumber].SetPixel(x, y, iconPalette[slotNumber, saveData[slotNumber, byteCount] & 0xF]);
-                            iconData[slotNumber, iconNumber].SetPixel(x + 1, y, iconPalette[slotNumber, saveData[slotNumber, byteCount] >> 4]);
-                            byteCount++;
+                            for (int x = 0; x < 16; x += 2)
+                            {
+                                foreach(int selectedSlot in saveLinks)
+                                {
+                                    iconColorData[selectedSlot, iconNumber][x + (y * 16)] = iconPalette[slotNumber, saveData[slotNumber, byteCount] & 0xF];
+                                    iconColorData[selectedSlot, iconNumber][x + (y * 16) + 1] = iconPalette[slotNumber, saveData[slotNumber, byteCount] >> 4];
+                                }
+
+                                byteCount++;
+                            }
                         }
                     }
                 }
@@ -1380,11 +1465,17 @@ namespace MemcardRex
             //Calculate XOR checksum (in case if any of the saveHeaders have corrputed XOR)
             if (FixData) calculateXOR();
 
-            //Convert various Memory Card data to strings
-            loadStringData();
-
             //Load slot descriptions (types)
             loadSlotTypes();
+
+            //Find broken links and mark tham as free slots
+            findBrokenLinks();
+
+            //Load next slot pointers
+            loadSlotPointers();
+
+            //Convert various Memory Card data to strings
+            loadStringData();
 
             //Load region data
             loadRegion();
@@ -1396,7 +1487,7 @@ namespace MemcardRex
             loadPalette();
 
             //Load icon data to bitmaps
-            //loadIcons();
+            loadIcons();
 
             //Load number of frames
             loadIconFrames();

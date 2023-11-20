@@ -12,6 +12,8 @@ namespace MemcardRex
 
         public bool isCardWindow = false;
 
+        private bool firstRun = true;
+
         public ViewController (IntPtr handle) : base (handle)
 		{
 
@@ -38,8 +40,12 @@ namespace MemcardRex
         {
             base.ViewWillAppear();
 
-            //Start with a clean MemoryCard
-            if(memCard.cardLocation == null) SetMemoryCard(null);
+            //Create a blank Memory Card only the first time view is created
+            if (firstRun)
+            {
+                SetMemoryCard(null);
+                firstRun = false;
+            }
         }
 
         public override void ViewDidLoad ()
@@ -54,24 +60,52 @@ namespace MemcardRex
 
             for (int i = 0; i < ps1card.SlotCount; i++)
             {
-                if (memCard.slotType[i] == 1)
+                switch (memCard.slotType[i])
                 {
-                    DataSource.Products.Add(new Product(memCard.saveName[i], memCard.saveProdCode[i], memCard.saveIdentifier[i]));
-                }
-                else
-                {
-                    DataSource.Products.Add(new Product("Free slot", "", ""));
+                    default:
+                        DataSource.Products.Add(new Product(memCard.saveName[i], memCard.saveProdCode[i], memCard.saveIdentifier[i], memCard.iconColorData[i, 0], memCard.saveRegion[i]));
+                        break;
+
+                    /*case (byte)ps1card.SlotTypes.initial:
+                    case (byte)ps1card.SlotTypes.deleted_initial:
+
+                        break;
+
+                    case (byte)ps1card.SlotTypes.middle_link:
+                    case (byte)ps1card.SlotTypes.deleted_middle_link:
+                        DataSource.Products.Add(new Product("Linked slot (middle link)"));
+                        break;
+
+                    case (byte)ps1card.SlotTypes.end_link:
+                    case (byte)ps1card.SlotTypes.deleted_end_link:
+                        DataSource.Products.Add(new Product("Linked slot (end link)"));
+                        break;*/
+
+                    case (byte)ps1card.SlotTypes.formatted:
+                        DataSource.Products.Add(new Product("Free slot"));
+                        break;
+
+                    case (byte)ps1card.SlotTypes.corrupted:
+                        DataSource.Products.Add(new Product("Corrupted slot"));
+                        break;
                 }
             }
 
             // Populate the Product Table
             CardTable.DataSource = DataSource;
             CardTable.Delegate = new ProductTableDelegate(DataSource);
+
+            CardTable.RowHeight = 18;
+
+            CardTable.ToolTip = "";
+            CardTable.RemoveAllToolTips();
+
+            //CardTable.AllowsMultipleSelection = true;
         }
 
         //Save file menu item
         [Export("saveDocument:")]
-        void SaveDialog(NSObject sender)
+        public void SaveDialog(NSObject sender)
         {
             SaveAsDialog(sender);
         }
@@ -118,35 +152,6 @@ namespace MemcardRex
             }
 
         }
-
-        //Open file menu item
-        /*[Export("openDocument:")]
-        void OpenDialog(NSObject sender)
-        {
-            var dlg = NSOpenPanel.OpenPanel;
-            dlg.CanChooseFiles = true;
-            dlg.CanChooseDirectories = false;
-            dlg.AllowedFileTypes = mcSupportedExtensions;
-            //dlg.ExtensionHidden = false;
-
-            if (dlg.RunModal() == 1)
-            {
-                Console.WriteLine(dlg.Urls.Length);
-
-                // Nab the first file
-                var url = dlg.Urls[0];
-
-                if (url != null)
-                {
-                    var path = url.Path;
-                    //Console.WriteLine(path);
-
-                    memCard.OpenMemoryCard(path, false);
-
-                    FillMemcardTable();
-                }
-            }
-        }*/
 
         public override NSObject RepresentedObject {
 			get {

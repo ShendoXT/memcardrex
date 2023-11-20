@@ -89,9 +89,47 @@
     <Compile Include="WindowController.designer.cs">
       <DependentUpon>WindowController.cs</DependentUpon>
     </Compile>
+    <Compile Include="BmpBuilder.cs" />
+    <Compile Include="AppDelegate.designer.cs">
+      <DependentUpon>AppDelegate.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\info_template.png" />
+    <BundleResource Include="Resources\jpflag.bmp" />
+    <BundleResource Include="Resources\linked.bmp" />
+    <BundleResource Include="Resources\savecard.png" />
+    <BundleResource Include="Resources\naflag.bmp" />
+    <BundleResource Include="Resources\linked disabled.bmp" />
+    <BundleResource Include="Resources\formatsave.png" />
+    <BundleResource Include="Resources\headeredit.png" />
+    <BundleResource Include="Resources\closecard.png" />
+    <BundleResource Include="Resources\euflag.bmp" />
+    <BundleResource Include="Resources\amflag.bmp" />
+    <BundleResource Include="Resources\dxdread.png" />
+    <BundleResource Include="Resources\copycard.png" />
+    <BundleResource Include="Resources\comments.png" />
+    <BundleResource Include="Resources\plugin.png" />
+    <BundleResource Include="Resources\dxdwrite.png" />
+    <BundleResource Include="Resources\closeallcards.png" />
+    <BundleResource Include="Resources\savecardas.png" />
+    <BundleResource Include="Resources\comparetemp.png" />
+    <BundleResource Include="Resources\memcardrex.ico" />
+    <BundleResource Include="Resources\newcard.png" />
+    <BundleResource Include="Resources\deletesave.png" />
+    <BundleResource Include="Resources\readicon.png" />
+    <BundleResource Include="Resources\options.png" />
+    <BundleResource Include="Resources\infoicon.png" />
+    <BundleResource Include="Resources\opencard.png" />
+    <BundleResource Include="Resources\importsave.png" />
+    <BundleResource Include="Resources\pastecard.png" />
+    <BundleResource Include="Resources\iconedit.png" />
+    <BundleResource Include="Resources\undeletesave.png" />
+    <BundleResource Include="Resources\quiticon.png" />
+    <BundleResource Include="Resources\exportsave.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

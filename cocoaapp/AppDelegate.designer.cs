@@ -9,21 +9,11 @@ using System.CodeDom.Compiler;
 
 namespace MemcardRex
 {
-	[Register ("WindowController")]
-	partial class WindowController
+	partial class AppDelegate
 	{
-		[Outlet]
-		AppKit.NSView AccessoryViewGoBar { get; set; }
-
-		[Action ("saveDocToolbar:")]
-		partial void saveDocToolbar (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (AccessoryViewGoBar != null) {
-				AccessoryViewGoBar.Dispose ();
-				AccessoryViewGoBar = null;
-			}
 		}
 	}
 }
