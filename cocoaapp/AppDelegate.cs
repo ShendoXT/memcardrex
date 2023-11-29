@@ -26,7 +26,7 @@ namespace MemcardRex
                 MessageText = "Warning",
             };
 
-            alert.RunModal();
+            //alert.RunModal();
         }
 
 		public override void WillTerminate (NSNotification notification)

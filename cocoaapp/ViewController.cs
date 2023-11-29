@@ -48,6 +48,47 @@ namespace MemcardRex
             }
         }
 
+        public override void PrepareForSegue(NSStoryboardSegue segue, NSObject sender)
+        {
+            base.PrepareForSegue(segue, sender);
+            nint selectedSlot = CardTable.SelectedRow;
+
+            Console.WriteLine("In segue");
+
+            // Take action based on the segue name
+            switch (segue.Identifier)
+            {
+                case "EditHeaderSegue":
+                    var dialog = segue.DestinationController as HeaderDialogController;
+                    dialog.DialogTitle = memCard.saveName[selectedSlot];
+
+                    dialog.ProductCode = memCard.saveProdCode[selectedSlot];
+                    dialog.IdentifierString = memCard.saveIdentifier[selectedSlot];
+                    dialog.Region = memCard.saveRegion[selectedSlot];
+
+                    dialog.DialogAccepted += (s, e) => {
+
+                        //Insert data to save header of the selected save slot
+                        memCard.SetHeaderData((int) selectedSlot, dialog.ProductCode, dialog.IdentifierString, dialog.Region);
+
+                        FillMemcardTable();
+
+                        //Restore selected slot
+                        CardTable.SelectRow(selectedSlot, false);
+                    };
+
+                    dialog.Presentor = this;
+                    break;
+                    /*case "SheetSegue":
+                        var sheet = segue.DestinationController as SheetViewController;
+                        sheet.SheetAccepted += (s, e) => {
+                            Console.WriteLine("User Name: {0} Password: {1}", sheet.UserName, sheet.Password);
+                        };
+                        sheet.Presentor = this;
+                        break;*/
+            }
+        }
+
         public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
@@ -101,6 +142,26 @@ namespace MemcardRex
             CardTable.RemoveAllToolTips();
 
             //CardTable.AllowsMultipleSelection = true;
+            //CardTable.SelectedRow;
+            //CardTable.SelectRow(0, false);
+            //CardTable.SelectRow(1, true);
+        }
+
+        //Edit save headwer
+        [Action("editHeader:")]
+        public void EditHeader(NSObject sender)
+        {
+            //If no slot is selected abort
+            if (CardTable.SelectedRow < 0) return;
+
+            int selectedSlot = (int) CardTable.SelectedRow;
+
+            //Only edit valid initial slots
+            if (memCard.slotType[selectedSlot] == (int) ps1card.SlotTypes.initial ||
+                memCard.slotType[selectedSlot] == (int) ps1card.SlotTypes.deleted_initial)
+
+            //Call edit header dialog
+            PerformSegue("EditHeaderSegue", sender);
         }
 
         //Save file menu item

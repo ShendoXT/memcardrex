@@ -56,6 +56,13 @@ namespace MemcardRex
             App.NewDocument(this);
         }
 
+        [Export("editHeaderToolbar:")]
+        void EditHeaderToolbar(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.EditHeader(sender);
+        }
+
         [Export("openDocToolbar:")]
         void OpenDocToolbar(NSObject sender)
         {

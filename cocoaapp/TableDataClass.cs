@@ -16,7 +16,7 @@ namespace MemcardRex
         public string ProductCode { get; set; } = "";
         public string Identifier { get; set; } = "";
         public Color[] IconData { get; set; } = new Color[256];
-        public ushort SaveRegion { get; set; } = 0;
+        public string SaveRegion { get; set; } = "";
         public bool HideIcons { get; set; } = false;
         #endregion
 
@@ -25,7 +25,7 @@ namespace MemcardRex
         {
         }
 
-        public Product(string title, string productCode, string identifier, Color[] iconData, ushort saveRegion)
+        public Product(string title, string productCode, string identifier, Color[] iconData, string saveRegion)
         {
             this.Title = title;
             this.ProductCode = productCode;
@@ -139,18 +139,22 @@ namespace MemcardRex
                     switch (DataSource.Products[(int)row].SaveRegion)
                     {
                         default:        //Formatted save, Corrupted save, Unknown region
-                            flagImage = new NSImage("naflag.bmp");
+                            //Add region string to product code
+                            DataSource.Products[(int)row].ProductCode = DataSource.Products[(int)row].SaveRegion + DataSource.Products[(int)row].ProductCode;
+
+                            //flagImage = new NSImage("naflag.bmp");
+                            flagImage = new NSImage(new CGSize ( 32, 16 ));
                             break;
 
-                        case 0x4142:    //American region
+                        case "America":    //American region
                             flagImage = new NSImage("amflag.bmp");
                             break;
 
-                        case 0x4542:    //European region
+                        case "Europe":    //European region
                             flagImage = new NSImage("euflag.bmp");
                             break;
 
-                        case 0x4942:    //Japanese region
+                        case "Japan":    //Japanese region
                             flagImage = new NSImage("jpflag.bmp");
                             break;
                     }
@@ -182,6 +186,12 @@ namespace MemcardRex
 
             return view;
         }
+
+        /*public override bool ShouldSelectRow(NSTableView tableView, nint row)
+        {
+            Console.WriteLine("tuje");
+            return true;
+        }*/
 
         #endregion
     }

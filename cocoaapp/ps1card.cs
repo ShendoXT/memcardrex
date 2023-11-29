@@ -7,6 +7,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
+using GameController;
 
 namespace MemcardRex
 {
@@ -22,11 +23,11 @@ namespace MemcardRex
         /// </summary>
         public enum CardTypes : int
         {
-            raw = 0,
-            gme = 1,
-            vgs = 2,
-            vmp = 3,
-            mcx = 4
+            raw,
+            gme,
+            vgs,
+            vmp,
+            mcx
         };
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace MemcardRex
         /// </summary>
         public enum SlotTypes : byte
         {
-            formatted = 0,
+            formatted,
             initial,
             middle_link,
             end_link,
@@ -89,8 +90,8 @@ namespace MemcardRex
         //Identifier string of the save
         public string[] saveIdentifier = new string[SlotCount];
 
-        //Region of the save (16 bit value, ASCII representation: BA - America, BE - Europe, BI - Japan)
-        public ushort[] saveRegion = new ushort[SlotCount];
+        //Region of the save ASCII representation: BA - America, BE - Europe, BI - Japan)
+        public string[] saveRegion = new string[SlotCount];
 
         //Size of the save in KBs
         public int[] saveSize = new int[SlotCount];
@@ -584,16 +585,17 @@ namespace MemcardRex
 
         }
 
-        //Load Save name, Product code and Identifier from the header data
+        //Load Save name, Region, Product code and Identifier from the header data
         private void loadStringData()
         {
             //Temp array used for conversion
             byte[] tempByteArray;
 
             //Clear existing data
-            saveProdCode = new string[15];
-            saveIdentifier = new string[15];
-            saveName = new string[15];
+            saveRegion = new string[SlotCount];
+            saveProdCode = new string[SlotCount];
+            saveIdentifier = new string[SlotCount];
+            saveName = new string[SlotCount];
 
             //Cycle through each slot
             for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
@@ -604,6 +606,41 @@ namespace MemcardRex
                 switch (slotType[slotNumber])
                 {
                     default:
+                        //Copy Region
+                        tempByteArray = new byte[2];
+                        for (int byteCount = 0; byteCount < 2; byteCount++)
+                            tempByteArray[byteCount] = headerData[slotNumber, byteCount + 10];
+
+                        //Convert Product Code from currently used codepage to UTF-16
+                        string rawRegion = Encoding.Default.GetString(tempByteArray);
+
+                        //Convert to human readable from
+                        switch (rawRegion)
+                        {
+                            default:
+                                //Show custom region
+                                saveRegion[slotNumber] = rawRegion;
+                                break;
+
+                            case "BA":
+                                saveRegion[slotNumber] = "America";
+                                break;
+
+                            case "BE":
+                                saveRegion[slotNumber] = "Europe";
+                                break;
+
+                            case "BI":
+                                saveRegion[slotNumber] = "Japan";
+                                break;
+                        }
+
+                        //Apply region to all linked slots
+                        foreach (int slot in findSaveLinks(slotNumber))
+                        {
+                            if(slot != slotNumber) saveRegion[slot] = saveRegion[slotNumber];
+                        }
+
                         //Copy Product code
                         tempByteArray = new byte[10];
                         for (int byteCount = 0; byteCount < 10; byteCount++)
@@ -612,6 +649,8 @@ namespace MemcardRex
                         //Convert Product Code from currently used codepage to UTF-16
                         saveProdCode[slotNumber] = Encoding.Default.GetString(tempByteArray);
 
+                        //Remove zero characters
+                        saveProdCode[slotNumber] = saveProdCode[slotNumber].Replace("\0", string.Empty);
 
                         //Copy Identifier
                         tempByteArray = new byte[8];
@@ -621,6 +660,8 @@ namespace MemcardRex
                         //Convert Identifier from currently used codepage to UTF-16
                         saveIdentifier[slotNumber] = Encoding.Default.GetString(tempByteArray);
 
+                        //Remove zero characters
+                        saveIdentifier[slotNumber] = saveIdentifier[slotNumber].Replace("\0", string.Empty);
 
                         //Copy bytes from save data to temp array
                         tempByteArray = new byte[64];
@@ -731,7 +772,6 @@ namespace MemcardRex
             calculateXOR();
             loadStringData();
             loadSlotTypes();
-            loadRegion();
             loadSaveSize();
             loadPalette();
             loadIcons();
@@ -863,7 +903,6 @@ namespace MemcardRex
             calculateXOR();
             loadStringData();
             loadSlotTypes();
-            loadRegion();
             loadSaveSize();
             loadPalette();
             loadIcons();
@@ -875,14 +914,58 @@ namespace MemcardRex
             return true;
         }
 
-        //Set Product code, Identifier and Region in the header of the selected save
-        public void setHeaderData(int slotNumber, string sProdCode, string sIdentifier, ushort sRegion)
+        /// <summary>
+        /// Set Product code, Identifier and Region in the header of the selected save
+        /// </summary>
+        /// <param name="slotNumber">Zero based save slot index</param>
+        /// <param name="sProdCode">Game product codee</param>
+        /// <param name="sIdentifier">Game save identifier</param>
+        /// <param name="sRegion">Save region</param>
+        public void SetHeaderData(int slotNumber, string sProdCode, string sIdentifier, string sRegion)
         {
+            //Sanitize inputs
+            if (sProdCode.Length > 10)
+                sProdCode = sProdCode.Substring(0, 10);
+
+            //Region has to have 10 characters at all times
+            while (sProdCode.Length < 10) sProdCode += " ";
+
+            if (sIdentifier.Length > 8)
+                sIdentifier = sIdentifier.Substring(0, 8);
+
+            //Region has to have 8 characters at all times
+            while (sIdentifier.Length < 8) sIdentifier += "\0";
+
+            //Figure out the region situation
+            switch (sRegion)
+            {
+                default:
+                    if (sRegion.Length > 2)
+                        sRegion = sRegion.Substring(0, 2);
+
+                    //Region has to have 2 characters at all times
+                    while (sRegion.Length < 2) sRegion += " ";
+
+                    break;
+
+                case "America":
+                    sRegion = "BA";
+                    break;
+
+                case "Europe":
+                    sRegion = "BE";
+                    break;
+
+                case "Japan":
+                    sRegion = "BI";
+                    break;
+            }
+            
             //Temp array used for manipulation
             byte[] tempByteArray;
 
             //Merge Product code and Identifier
-            string headerString = sProdCode + sIdentifier;
+            string headerString = sRegion + sProdCode + sIdentifier;
 
             //Convert string from UTF-16 to currently used codepage
             tempByteArray = Encoding.Convert(Encoding.Unicode, Encoding.Default, Encoding.Unicode.GetBytes(headerString));
@@ -893,41 +976,16 @@ namespace MemcardRex
 
             //Inject new data to header
             for (int byteCount = 0; byteCount < headerString.Length; byteCount++)
-                headerData[slotNumber, byteCount + 12] = tempByteArray[byteCount];
-
-            //Add region to header
-            headerData[slotNumber, 10] = (byte)(sRegion & 0xFF);
-            headerData[slotNumber, 11] = (byte)(sRegion >> 8);
+                headerData[slotNumber, byteCount + 10] = tempByteArray[byteCount];
 
             //Reload data
             loadStringData();
-            loadRegion();
 
             //Calculate XOR
             calculateXOR();
 
             //Set changedFlag to edited
             changedFlag = true;
-        }
-
-        //Load region of the saves
-        private void loadRegion()
-        {
-            //Clear existing data
-            saveRegion = new ushort[15];
-
-            //Cycle trough each slot
-            for (int slotNumber = 0; slotNumber < 15; slotNumber++)
-            {
-                if (slotType[slotNumber] == (int)SlotTypes.initial || slotType[slotNumber] == (int)SlotTypes.deleted_initial)
-                {
-                    foreach (int saveLinks in findSaveLinks(slotNumber))
-                    {
-                        //Store save region
-                        saveRegion[saveLinks] = (ushort)((headerData[slotNumber, 11] << 8) | headerData[slotNumber, 10]);
-                    }
-                }
-            }
         }
 
         //Load palette
@@ -1121,7 +1179,6 @@ namespace MemcardRex
             calculateXOR();
             loadStringData();
             loadSlotTypes();
-            loadRegion();
             loadSaveSize();
             loadPalette();
             //loadIcons();
@@ -1316,6 +1373,7 @@ namespace MemcardRex
                 case (int) CardTypes.vmp:         //VMP Memory Card
                     binWriter.Write(MakeVmpCard(rawMemoryCard));
                     break;
+
                 case (int) CardTypes.mcx:         //MCX Memory Card
                     binWriter.Write(MakeMcxCard(rawMemoryCard));
                     break;
@@ -1362,7 +1420,6 @@ namespace MemcardRex
             loadStringData();
             loadGMEComments(rawMemoryCard);
             loadSlotTypes();
-            loadRegion();
             loadSaveSize();
             loadPalette();
             loadIcons();
@@ -1476,9 +1533,6 @@ namespace MemcardRex
 
             //Convert various Memory Card data to strings
             loadStringData();
-
-            //Load region data
-            loadRegion();
 
             //Load size data
             loadSaveSize();
