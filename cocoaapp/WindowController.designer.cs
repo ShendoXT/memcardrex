@@ -15,8 +15,23 @@ namespace MemcardRex
 		[Outlet]
 		AppKit.NSView AccessoryViewGoBar { get; set; }
 
+		[Action ("editCommentToolbar:")]
+		partial void editCommentToolbar (Foundation.NSObject sender);
+
 		[Action ("editHeaderToolbar:")]
 		partial void editHeaderToolbar (Foundation.NSObject sender);
+
+		[Action ("editIconToolbar:")]
+		partial void editIconToolbar (Foundation.NSObject sender);
+
+		[Action ("exportSaveToolbar:")]
+		partial void exportSaveToolbar (Foundation.NSObject sender);
+
+		[Action ("importSaveToolbar:")]
+		partial void importSaveToolbar (Foundation.NSObject sender);
+
+		[Action ("openDocToolbar:")]
+		partial void openDocToolbar (Foundation.NSObject sender);
 
 		[Action ("saveDocToolbar:")]
 		partial void saveDocToolbar (Foundation.NSObject sender);

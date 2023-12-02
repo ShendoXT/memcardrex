@@ -25,6 +25,18 @@ namespace MemcardRex
         }
         #endregion
 
+        void TabChangeCallback(NSNotification notification)
+        {
+            return;
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+
+            if (window == null) return;
+            //if (window.SelectionDidChange == null) return;
+
+            //Update menus and stuff
+            window.SelectionDidChange();
+        }
+
         #region Override Methods
         public override void WindowDidLoad()
         {
@@ -33,6 +45,11 @@ namespace MemcardRex
             // Prefer Tabbed Windows
             Window.TabbingMode = NSWindowTabbingMode.Preferred;
             Window.TabbingIdentifier = "Main";
+
+            //Register Tab change even for menu manipulation
+            NSNotificationCenter.DefaultCenter.AddObserver(NSWindow.DidBecomeMainNotification, TabChangeCallback);
+
+            //Window.DidBecomeMain();
 
             //Window.ToggleTabBar(this);
 
@@ -61,6 +78,13 @@ namespace MemcardRex
         {
             var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
             window.EditHeader(sender);
+        }
+
+        [Export("editCommentToolbar:")]
+        void EditCommentToolbar(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.EditSaveComment(sender);
         }
 
         [Export("openDocToolbar:")]

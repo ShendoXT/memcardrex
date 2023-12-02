@@ -7,7 +7,6 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
-using GameController;
 
 namespace MemcardRex
 {
@@ -107,6 +106,9 @@ namespace MemcardRex
 
         //Next slot pointer (for multilink saves)
         public ushort[] nextSlotPointer = new ushort[SlotCount];
+
+        //Initial master save slot for each slot
+        public int[] masterSlot = new int[SlotCount];
 
         readonly byte[] saveKey = { 0xAB, 0x5A, 0xBC, 0x9F, 0xC1, 0xF4, 0x9D, 0xE6, 0xA0, 0x51, 0xDB, 0xAE, 0xFA, 0x51, 0x88, 0x59 };
         readonly byte[] saveIv = { 0xB3, 0x0F, 0xFE, 0xED, 0xB7, 0xDC, 0x5E, 0xB7, 0x13, 0x3D, 0xA6, 0x0D, 0x1B, 0x6B, 0x2C, 0xDC };
@@ -516,7 +518,7 @@ namespace MemcardRex
                 {
                     case (int)SlotTypes.initial:
                     case (int)SlotTypes.deleted_initial:
-                        foreach (int slot in findSaveLinks(slotNumber)) slotTouched[slot] = true;
+                        foreach (int slot in FindSaveLinks(slotNumber)) slotTouched[slot] = true;
                         break;
 
                 }
@@ -636,9 +638,12 @@ namespace MemcardRex
                         }
 
                         //Apply region to all linked slots
-                        foreach (int slot in findSaveLinks(slotNumber))
+                        foreach (int slot in FindSaveLinks(slotNumber))
                         {
                             if(slot != slotNumber) saveRegion[slot] = saveRegion[slotNumber];
+
+                            //Set master slot for each link
+                            masterSlot[slot] = slotNumber;
                         }
 
                         //Copy Product code
@@ -707,11 +712,14 @@ namespace MemcardRex
                 saveSize[slotNumber] = (headerData[slotNumber, 4] | (headerData[slotNumber, 5] << 8) | (headerData[slotNumber, 6] << 16)) / 1024;
         }
 
-        //Toggle deleted/undeleted status
-        public void toggleDeleteSave(int slotNumber)
+        /// <summary>
+        /// Toggle deleted/undeleted status
+        /// </summary>
+        /// <param name="slotNumber"></param>
+        public void ToggleDeleteSave(int slotNumber)
         {
             //Get all linked saves
-            int[] saveSlots = findSaveLinks(slotNumber);
+            int[] saveSlots = FindSaveLinks(slotNumber);
 
             //Cycle through each slot
             for (int i = 0; i < saveSlots.Length; i++)
@@ -751,16 +759,20 @@ namespace MemcardRex
             //Reload data
             calculateXOR();
             loadSlotTypes();
+            findBrokenLinks();
 
             //Memory Card is changed
             changedFlag = true;
         }
 
-        //Format save
-        public void formatSave(int slotNumber)
+        /// <summary>
+        /// Format a save save file
+        /// </summary>
+        /// <param name="slotNumber"></param>
+        public void FormatSave(int slotNumber)
         {
             //Get all linked saves
-            int[] saveSlots = findSaveLinks(slotNumber);
+            int[] saveSlots = FindSaveLinks(slotNumber);
 
             //Cycle through each slot
             for (int i = 0; i < saveSlots.Length; i++)
@@ -772,6 +784,7 @@ namespace MemcardRex
             calculateXOR();
             loadStringData();
             loadSlotTypes();
+            findBrokenLinks();
             loadSaveSize();
             loadPalette();
             loadIcons();
@@ -781,8 +794,12 @@ namespace MemcardRex
             changedFlag = true;
         }
 
-        //Find and return all save links
-        public int[] findSaveLinks(int initialSlotNumber)
+        /// <summary>
+        /// Find and return all save links
+        /// </summary>
+        /// <param name="initialSlotNumber">Initial slot of the save</param>
+        /// <returns></returns>
+        public int[] FindSaveLinks(int initialSlotNumber)
         {
             List<int> tempSlotList = new List<int>();
             int currentSlot = initialSlotNumber;
@@ -801,7 +818,21 @@ namespace MemcardRex
 
                 //Check if pointer points to the next save
                 if (headerData[currentSlot, 8] == 0xFF) break;
-                else currentSlot = headerData[currentSlot, 8];
+
+                //Check if linked save is of the right type
+                switch(slotType[headerData[currentSlot, 8]])
+                {
+                    default:
+                        return tempSlotList.ToArray();
+
+                    case (int)SlotTypes.middle_link:
+                    case (int)SlotTypes.end_link:
+                    case (int)SlotTypes.deleted_middle_link:
+                    case (int)SlotTypes.deleted_end_link:
+                        //Finally add slot to the list
+                        currentSlot = headerData[currentSlot, 8];
+                        break;
+                }
             }
 
             //Return int array
@@ -831,7 +862,7 @@ namespace MemcardRex
         public byte[] getSaveBytes(int slotNumber)
         {
             //Get all linked saves
-            int[] saveSlots = findSaveLinks(slotNumber);
+            int[] saveSlots = FindSaveLinks(slotNumber);
 
             //Calculate the number of bytes needed to store the save
             byte[] saveBytes = new byte[8320 + ((saveSlots.Length - 1) * 8192)];
@@ -912,6 +943,16 @@ namespace MemcardRex
             changedFlag = true;
 
             return true;
+        }
+
+        /// <summary>
+        /// Return the initial slot of the link
+        /// </summary>
+        /// <param name="sSlot"></param>
+        /// <returns></returns>
+        public int GetMasterLinkForSlot(int sSlot)
+        {
+            return masterSlot[sSlot];
         }
 
         /// <summary>
@@ -1035,7 +1076,7 @@ namespace MemcardRex
             //Cycle through each slot
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
             {
-                int[] saveLinks = findSaveLinks(slotNumber);
+                int[] saveLinks = FindSaveLinks(slotNumber);
 
                 //Each save has 3 icons (some are data but those will not be shown)
                 for (int iconNumber = 0; iconNumber < 3; iconNumber++)
@@ -1166,6 +1207,9 @@ namespace MemcardRex
             headerData[slotNumber, 0] = 0xA0;
             headerData[slotNumber, 8] = 0xFF;
             headerData[slotNumber, 9] = 0xFF;
+
+            //Set master slot to same slot
+            masterSlot[slotNumber] = slotNumber;
         }
 
         //Format a complete Memory Card

@@ -97,6 +97,14 @@
     <Compile Include="HeaderDialogController.designer.cs">
       <DependentUpon>HeaderDialogController.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommentDialogController.cs" />
+    <Compile Include="CommentDialogController.designer.cs">
+      <DependentUpon>CommentDialogController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InfoDialogController.cs" />
+    <Compile Include="InfoDialogController.designer.cs">
+      <DependentUpon>InfoDialogController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

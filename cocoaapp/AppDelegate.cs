@@ -4,19 +4,19 @@ using System;
 
 namespace MemcardRex
 {
-	[Register ("AppDelegate")]
-	public partial class AppDelegate : NSApplicationDelegate
-	{
+    [Register("AppDelegate")]
+    public partial class AppDelegate : NSApplicationDelegate
+    {
         //Number of open windows/documents/cards in the application
         private int windowCount = 1;
 
-        public AppDelegate ()
-		{
+        public AppDelegate()
+        {
 
-		}
+        }
 
-		public override void DidFinishLaunching (NSNotification notification)
-		{
+        public override void DidFinishLaunching(NSNotification notification)
+        {
             //Show experimental software alert
             var alert = new NSAlert()
             {
@@ -29,10 +29,48 @@ namespace MemcardRex
             //alert.RunModal();
         }
 
-		public override void WillTerminate (NSNotification notification)
-		{
-			// Insert code here to tear down your application
-		}
+        public override void WillTerminate(NSNotification notification)
+        {
+            // Insert code here to tear down your application
+        }
+
+        //Specific menu item enables/disableas
+        public void EnableFormatMenuItem()
+        {
+            removeSaveMItem.Enabled = true;
+        }
+
+        public void SetImportMenuItem(bool itemState)
+        {
+            importSaveMItem.Enabled = itemState;
+        }
+
+        public void DisableRestoreItem()
+        {
+            restoreSaveMItem.Enabled = false;
+        }
+
+        public void DisableDeleteItem()
+        {
+            deleteSaveMItem.Enabled = false;
+        }
+
+        //Enable or disable menu items based on the currently selected save
+        public void SetEditItemsState(bool itemStates)
+        {
+            editSaveHeaderMItem.Enabled = itemStates;
+            editSaveCommentMItem.Enabled = itemStates;
+            compareBufferMItem.Enabled = itemStates;
+            editIconMItem.Enabled = itemStates;
+            deleteSaveMItem.Enabled = itemStates;
+            restoreSaveMItem.Enabled = itemStates;
+            removeSaveMItem.Enabled = itemStates;
+            cpySaveTempBufferMItem.Enabled = itemStates;
+            pasteSaveTempBufferMItem.Enabled = itemStates;
+            importSaveMItem.Enabled = itemStates;
+            exportSaveMItem.Enabled = itemStates;
+            exportSaveRawMItem.Enabled = itemStates;
+        }
 
         #region Custom Actions
         [Export("newDocument:")]
@@ -46,6 +84,13 @@ namespace MemcardRex
             controller.ShowWindow(this);
 
             windowCount++;
+        }
+
+        [Export("editSaveComment:")]
+        void EditSaveComment(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.EditSaveComment(sender);
         }
 
         //Open file menu item
@@ -80,6 +125,7 @@ namespace MemcardRex
                         };
 
                         alert.RunModal();
+                        dlg.Dispose();
                         return;
                     }
 
@@ -110,6 +156,8 @@ namespace MemcardRex
                     window.SetMemoryCard(path);
                 }
             }
+
+            dlg.Dispose();
         }
         #endregion
     }

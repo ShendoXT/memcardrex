@@ -9,6 +9,9 @@ using System.Drawing;
 
 namespace MemcardRex
 {
+    // Declarationm of delegate for selection change event
+    public delegate void SelectionChangeCallback();
+
     public class Product
     {
         #region Computed Properties
@@ -18,6 +21,7 @@ namespace MemcardRex
         public Color[] IconData { get; set; } = new Color[256];
         public string SaveRegion { get; set; } = "";
         public bool HideIcons { get; set; } = false;
+        public bool FadedIcons { get; set; } = false;
         #endregion
 
         #region Constructors
@@ -25,7 +29,7 @@ namespace MemcardRex
         {
         }
 
-        public Product(string title, string productCode, string identifier, Color[] iconData, string saveRegion)
+        public Product(string title, string productCode, string identifier, Color[] iconData, string saveRegion, bool fadedIcons)
         {
             this.Title = title;
             this.ProductCode = productCode;
@@ -33,6 +37,7 @@ namespace MemcardRex
             this.IconData = iconData;
             this.SaveRegion = saveRegion;
             this.HideIcons = false;
+            this.FadedIcons = fadedIcons;
         }
 
         public Product(string title)
@@ -41,6 +46,7 @@ namespace MemcardRex
             this.ProductCode = "";
             this.Identifier = "";
             this.HideIcons = true;
+            this.FadedIcons = false;
         }
         #endregion
     }
@@ -89,11 +95,14 @@ namespace MemcardRex
         #endregion
 
         #region Constructors
-        public ProductTableDelegate(ProductTableDataSource datasource)
+        public ProductTableDelegate(ProductTableDataSource datasource, SelectionChangeCallback call)
         {
             this.DataSource = datasource;
+            handle = call;
         }
         #endregion
+
+        public SelectionChangeCallback handle { get; set; }
 
         #region Override Methods
         public override NSView GetViewForItem(NSTableView tableView, NSTableColumn tableColumn, nint row)
@@ -164,35 +173,46 @@ namespace MemcardRex
                     float height = (float)(16);
                     var targetRect = new CoreGraphics.CGRect(0, 0, width, height);
                     var newImage = new NSImage(new CoreGraphics.CGSize(48, height));
+
+                    float blendingVal = 1.0f;
+                    if(DataSource.Products[(int)row].FadedIcons) blendingVal = 0.5f;
+
                     newImage.LockFocus();
-                    image.Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.SourceOver, 1.0f);
+                    image.Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Overlay, blendingVal);
 
                     targetRect = new CoreGraphics.CGRect(17, 0, 30, height);
-                    flagImage.Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.SourceOver, 1.0f);
+                    flagImage.Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Overlay, blendingVal);
                     newImage.UnlockFocus();
 
-                    if (!DataSource.Products[(int)row].HideIcons)view.ImageView.Image = newImage;
+                    if (!DataSource.Products[(int)row].HideIcons) view.ImageView.Image = newImage;
+                    else view.ImageView.Image = new NSImage(new CGSize(48, 16));
+
                     view.TextField.StringValue = DataSource.Products[(int)row].Title;
+
+                    if(DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;
                     break;
 
                 case "Product code":
                     view.TextField.StringValue = DataSource.Products[(int)row].ProductCode;
+                    if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;
                     break;
 
                 case "Identifier":
                     view.TextField.StringValue = DataSource.Products[(int)row].Identifier;
+                    if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;
                     break;
             }
 
             return view;
         }
 
-        /*public override bool ShouldSelectRow(NSTableView tableView, nint row)
+        public override void SelectionDidChange(NSNotification notification)
         {
-            Console.WriteLine("tuje");
-            return true;
-        }*/
-
+            if (handle != null) handle();
+        }
         #endregion
     }
 
