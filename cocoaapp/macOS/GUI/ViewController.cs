@@ -1,6 +1,9 @@
 ﻿using System;
-
+using System.Security.Policy;
+using System.Threading.Tasks;
 using AppKit;
+using CoreGraphics;
+using CoreImage;
 using Foundation;
 
 namespace MemcardRex
@@ -9,9 +12,6 @@ namespace MemcardRex
     {
         //Active Memory Card of the current window
         private ps1card memCard = new ps1card();
-
-        public bool isCardWindow = false;
-
         private bool firstRun = true;
 
         public static AppDelegate App
@@ -52,11 +52,14 @@ namespace MemcardRex
                 firstRun = false;
                 CardTable.SelectRow(0, false);
             }
+        }
 
-            //Refresh app menu for the current view
-            //SelectionDidChange();
+        public override void ViewWillDisappear()
+        {
+            base.ViewWillDisappear();
 
-            //this.ViewDidAppear
+            App.PopControllerFromList(View.Window.WindowController);
+            if (App.CardCount > 0) App.CardCount--;
         }
 
         //Segue for various dialogs
@@ -83,45 +86,51 @@ namespace MemcardRex
 
                         //Refresh table
                         FillMemcardTable();
+
+                        View.Window.DocumentEdited = true;
                     };
 
                     dialog.Presentor = this;
                     break;
 
-                    case "EditCommentSegue":
-                        var sheet = segue.DestinationController as CommentDialogController;
+                case "EditCommentSegue":
+                    var sheet = segue.DestinationController as CommentDialogController;
 
-                        sheet.Comment = memCard.saveComments[selectedSlot];
+                    sheet.Comment = memCard.saveComments[selectedSlot];
 
 
-                        sheet.DialogAccepted += (s, e) => {
-                            memCard.saveComments[selectedSlot] = sheet.Comment;
-                        };
-                        sheet.Presentor = this;
-                        break;
+                    sheet.DialogAccepted += (s, e) => {
+                        memCard.saveComments[selectedSlot] = sheet.Comment;
+                        View.Window.DocumentEdited = true;
+                    };
+                    sheet.Presentor = this;
+                    break;
 
-                    case "GetInfoSegue":
-                        var infoSheet = segue.DestinationController as InfoDialogController;
+                case "GetInfoSegue":
+                    var infoSheet = segue.DestinationController as InfoDialogController;
 
-                        infoSheet.DialogTitle = "Save information";
+                    infoSheet.DialogTitle = "Save information";
 
-                        infoSheet.SaveTitle = memCard.saveName[selectedSlot];
-                        infoSheet.ProductCode = memCard.saveProdCode[selectedSlot];
-                        infoSheet.IdentifierString = memCard.saveIdentifier[selectedSlot];
-                        infoSheet.Region = memCard.saveRegion[selectedSlot];
-                        infoSheet.Size = memCard.saveSize[selectedSlot];
-                        infoSheet.Frames = memCard.iconFrames[selectedSlot];
-                        infoSheet.Slots = memCard.FindSaveLinks((int)selectedSlot);
-                        infoSheet.Icons = memCard.iconColorData;
+                    infoSheet.SaveTitle = memCard.saveName[selectedSlot];
+                    infoSheet.ProductCode = memCard.saveProdCode[selectedSlot];
+                    infoSheet.IdentifierString = memCard.saveIdentifier[selectedSlot];
+                    infoSheet.Region = memCard.saveRegion[selectedSlot];
+                    infoSheet.Size = memCard.saveSize[selectedSlot];
+                    infoSheet.Frames = memCard.iconFrames[selectedSlot];
+                    infoSheet.Slots = memCard.FindSaveLinks((int)selectedSlot);
+                    infoSheet.Icons = memCard.iconColorData;
 
-                        infoSheet.Presentor = this;
-                        break;
+                    infoSheet.Presentor = this;
+                    break;
             }
         }
 
         public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+
+            //Add event listener for double click on the card list
+            CardTable.DoubleClick += CardTable_DoubleClick;
         }
 
         //Enable or disable menu items based on the currently selected save
@@ -149,17 +158,33 @@ namespace MemcardRex
         //User changed selected slot
         public void SelectionDidChange()
         {
+            var window = View.Window.WindowController as WindowController;
+
             //Disable all edit items
             SetEditItemsState(false);
 
+            //Disable undo/redo
+            App.SetUndoItem(false);
+            App.SetRedoItem(false);
+
             //If nothing is selected abort
             if (CardTable.SelectedRow < 0) return;
+
+            //Enable undo/redo based on buffers
+            if (memCard.UndoCount > 0) App.SetUndoItem(true);
+            if (memCard.RedoCount > 0) App.SetRedoItem(true);
 
             //Enable menu items based on the content
             switch (memCard.slotType[memCard.masterSlot[CardTable.SelectedRow]])
             {
                 case (int)ps1card.SlotTypes.formatted:
                     importSaveItem.Enabled = true;
+                    if (App.TempBuffer != null)
+                    {
+                        pasteTempBufferItem.Enabled = true;
+                        App.SetPasteFromBuffer(true);
+                        //window.SetPasteFromBufferToolbar(true);
+                    }
                     App.SetImportMenuItem(true);
                     break;
 
@@ -168,8 +193,10 @@ namespace MemcardRex
 
                     restoreSaveItem.Enabled = false;
                     importSaveItem.Enabled = false;
+                    pasteTempBufferItem.Enabled = false;
                     App.SetImportMenuItem(false);
                     App.DisableRestoreItem();
+                    App.SetPasteFromBuffer(false);
                     break;
 
                 case (int)ps1card.SlotTypes.deleted_initial:
@@ -177,8 +204,10 @@ namespace MemcardRex
 
                     deleteSaveItem.Enabled = false;
                     importSaveItem.Enabled = false;
+                    pasteTempBufferItem.Enabled = false;
                     App.SetImportMenuItem(false);
                     App.DisableDeleteItem();
+                    App.SetPasteFromBuffer(false);
                     break;
 
                 case (int)ps1card.SlotTypes.corrupted:
@@ -207,8 +236,8 @@ namespace MemcardRex
                 switch (memCard.slotType[i])
                 {
                     case (int) ps1card.SlotTypes.deleted_initial:
-                    case (int)ps1card.SlotTypes.deleted_middle_link:
-                    case (int)ps1card.SlotTypes.deleted_end_link:
+                    case (int) ps1card.SlotTypes.deleted_middle_link:
+                    case (int) ps1card.SlotTypes.deleted_end_link:
                         DataSource.Products.Add(new Product(memCard.saveName[i], memCard.saveProdCode[i], memCard.saveIdentifier[i], memCard.iconColorData[i, 0], memCard.saveRegion[i], true));
                         break;
 
@@ -216,11 +245,11 @@ namespace MemcardRex
                         DataSource.Products.Add(new Product(memCard.saveName[i], memCard.saveProdCode[i], memCard.saveIdentifier[i], memCard.iconColorData[i, 0], memCard.saveRegion[i], false));
                         break;
 
-                    case (byte)ps1card.SlotTypes.formatted:
+                    case (byte) ps1card.SlotTypes.formatted:
                         DataSource.Products.Add(new Product("Free slot"));
                         break;
 
-                    case (byte)ps1card.SlotTypes.corrupted:
+                    case (byte) ps1card.SlotTypes.corrupted:
                         DataSource.Products.Add(new Product("Corrupted slot"));
                         break;
                 }
@@ -239,6 +268,12 @@ namespace MemcardRex
             CardTable.SelectRow(selectedSlot, false);
         }
 
+        //List view double click event handler
+        private void CardTable_DoubleClick(object sender, EventArgs e)
+        {
+            GetSaveInfo((NSObject)sender);
+        }
+
         //Check if a valid save slot is selected
         private bool CheckSelectionValidity()
         {
@@ -255,8 +290,85 @@ namespace MemcardRex
         //Run specified dialog using checks
         private void RunDialog(string dialogName, NSObject sender)
         {
-                //Call edit header dialog
-                if(CheckSelectionValidity()) PerformSegue(dialogName, sender);
+            //Call edit header dialog
+            if(CheckSelectionValidity()) PerformSegue(dialogName, sender);
+        }
+
+        public void Undo()
+        {
+            if (memCard.Undo())
+            {
+                View.Window.DocumentEdited = true;
+                FillMemcardTable();
+                SelectionDidChange();
+            }
+        }
+
+        public void Redo()
+        {
+            if (memCard.Redo())
+            {
+                View.Window.DocumentEdited = true;
+                FillMemcardTable();
+                SelectionDidChange();
+            }
+        }
+
+        //Copy save to temp buffer
+        [Action("copyToTempBuffer:")]
+        public void CopyToTempBuffer(NSObject sender)
+        {
+            int selectedSlot = memCard.masterSlot[CardTable.SelectedRow];
+            var window = View.Window.WindowController as WindowController;
+
+            //Build icon for toolbar
+            BmpBuilder builder = new BmpBuilder();
+            NSData iconImage = NSData.FromArray(builder.BuildBmp(memCard.iconColorData[selectedSlot, 0]));
+            NSImage icon = new NSImage(iconImage);
+            icon.Flipped = true;
+
+            App.TempBuffer = memCard.GetSaveBytes(selectedSlot);
+            App.BufferImage = icon;
+
+            try
+            {
+                //Enable toolbar item
+                window.SetPasteFromBufferToolbar(icon, true);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        //Paste save from temp buffer
+        [Action("pasteFromTempBuffer:")]
+        public void PasteFromTempBuffer(NSObject sender)
+        {
+            if (CardTable.SelectedRow < 0) return;
+
+            int selectedSlot = memCard.masterSlot[CardTable.SelectedRow];
+            int requiredSlots = 0;
+
+            if (App.TempBuffer == null || selectedSlot < 0) return;
+            if (memCard.slotType[selectedSlot] != (int)ps1card.SlotTypes.formatted) return;
+
+            if(memCard.SetSaveBytes(selectedSlot, App.TempBuffer, out requiredSlots))
+            {
+                View.Window.DocumentEdited = true;
+                FillMemcardTable();
+            }
+            else
+            {
+                Console.WriteLine("Failed");
+            }
+        }
+
+        //Import save
+        [Action("importSave:")]
+        public void ExportSave(NSObject sender)
+        {
+            this.View.Window.WindowController = null;
+            Console.WriteLine("Important");
         }
 
         //Show save info
@@ -297,6 +409,7 @@ namespace MemcardRex
 
             memCard.ToggleDeleteSave(memCard.GetMasterLinkForSlot((int)CardTable.SelectedRow));
             FillMemcardTable();
+            View.Window.DocumentEdited = true;
         }
 
         [Export("restoreSave:")]
@@ -312,50 +425,105 @@ namespace MemcardRex
             //If no slot is selected abort
             if (CardTable.SelectedRow < 0) return;
 
-            memCard.FormatSave(memCard.GetMasterLinkForSlot((int)CardTable.SelectedRow));
+            int selectedSlot = memCard.GetMasterLinkForSlot((int)CardTable.SelectedRow);
+
+            memCard.FormatSave(selectedSlot);
             FillMemcardTable();
+            View.Window.DocumentEdited = true;
+
+            //Leave slot selected (initial slot in case of multi slot saves)
+            CardTable.SelectRow(selectedSlot, false);
         }
 
         //Save as file menu item
         [Export("saveDocumentAs:")]
         void SaveAsDialog(NSObject sender)
         {
-            var dlg = NSSavePanel.SavePanel;
-            dlg.AllowedFileTypes = dlg.AllowedFileTypes = memCard.SupportedExtensions;
+            var dlg = new NSSavePanel();
+            dlg.AllowedFileTypes = memCard.SupportedExtensions;
+            dlg.Title = "Save Memory Card";
             dlg.NameFieldStringValue = memCard.cardName;
+            dlg.ExtensionHidden = false;
 
+            //Available file types
+            var popupButton = new NSPopUpButton(new CGRect(60, 0, 246, 22), false);
+            popupButton.AddItems(new string[]{ "Standard Memory Card (*.mcr, *.mcd, ...)", "PSP/Vita Memory Card (*.vmp)",
+            "PS Vita \"MCX\" Memory Card (*.bin)", "DexDrive Memory Card (*.gme)",
+            "VGS Memory Card (*.vgs, *.mem)"});
+
+            var popupLabel = new NSTextField(new CGRect(0, -2, 60, 22));
+            popupLabel.StringValue = "File type:";
+            popupLabel.Editable = false;
+            popupLabel.Bordered = false;
+            popupLabel.DrawsBackground = false;
+            popupLabel.Font = NSFont.SystemFontOfSize(11);
+            popupLabel.TextColor = NSColor.SecondaryLabel;
+
+            //Accessory view for file type chooser
+            var accessoryView = new NSView(new CGRect(0, 0, 315, 24));
+            accessoryView.AddSubview(popupLabel);
+            accessoryView.AddSubview(popupButton);
+
+            //On file type change event
+            popupButton.Activated += (object snder, EventArgs e) =>
+            {
+                switch (popupButton.IndexOfSelectedItem)
+                {
+                    default:        //raw
+                        dlg.AllowedFileTypes = new string[] { "mcr", "bin", "ddf", "mc", "mcd", "mci", "ps", "psm", "srm", "vm1", "vmc" };
+                        break;
+
+                    case 1:         //vmp
+                        dlg.AllowedFileTypes = new string[] { "vmp" };
+                        break;
+
+                    case 2:         //mcx
+                        dlg.AllowedFileTypes = new string[] { "bin" };
+                        break;
+
+                    case 3:         //gme
+                        dlg.AllowedFileTypes = new string[] { "gme" };
+                        break;
+
+                    case 4:         //vgs
+                        dlg.AllowedFileTypes = new string[] { "vgs", "mem" };
+                        break;
+                }
+            };
+
+            dlg.AccessoryView = accessoryView;
 
             if (dlg.RunModal() == 1)
             {
                 var url = dlg.Url;
+                int cardType = (int)ps1card.CardTypes.raw;
 
-                Console.WriteLine(url.Path.ToString());
-
-                switch (url.PathExtension.ToLower()) {
-
-                    default:
-                        memCard.SaveMemoryCard(url.Path.ToString(), (int) ps1card.CardTypes.raw , false);
-                        break;
-
+                switch (url.PathExtension.ToLower())
+                {
                     case "gme":
-                        memCard.SaveMemoryCard(url.Path.ToString(), (int)ps1card.CardTypes.gme, false);
+                        cardType = (int)ps1card.CardTypes.gme;
                         break;
 
                     case "vgs":
-                        memCard.SaveMemoryCard(url.Path.ToString(), (int)ps1card.CardTypes.vgs, false);
+                        cardType = (int)ps1card.CardTypes.vgs;
                         break;
 
-                    case "mcx":
-                        memCard.SaveMemoryCard(url.Path.ToString(), (int)ps1card.CardTypes.mcx, false);
+                    case "bin":
+                        if(popupButton.IndexOfSelectedItem == 2) cardType = (int)ps1card.CardTypes.mcx;
                         break;
 
                     case "vmp":
-                        memCard.SaveMemoryCard(url.Path.ToString(), (int)ps1card.CardTypes.vmp, false);
+                        cardType = (int)ps1card.CardTypes.vmp;
                         break;
                 }
 
+                if(memCard.SaveMemoryCard(url.Path.ToString(), cardType, false))
+                {
+                    View.Window.Title = memCard.cardName;
+                    View.Window.DocumentEdited = false;
+                }
             }
-
+            dlg.Dispose();
         }
 
         public override NSObject RepresentedObject {

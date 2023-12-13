@@ -125,54 +125,9 @@ namespace MemcardRex
 				ClickedLabel = null;
 			}
 
-			if (IdentifierColumn != null) {
-				IdentifierColumn.Dispose ();
-				IdentifierColumn = null;
-			}
-
-			if (ProductColumn != null) {
-				ProductColumn.Dispose ();
-				ProductColumn = null;
-			}
-
-			if (TitleColumn != null) {
-				TitleColumn.Dispose ();
-				TitleColumn = null;
-			}
-
-			if (editSaveHeaderItem != null) {
-				editSaveHeaderItem.Dispose ();
-				editSaveHeaderItem = null;
-			}
-
-			if (editSaveCommentItem != null) {
-				editSaveCommentItem.Dispose ();
-				editSaveCommentItem = null;
-			}
-
 			if (compareSaveItem != null) {
 				compareSaveItem.Dispose ();
 				compareSaveItem = null;
-			}
-
-			if (editIconItem != null) {
-				editIconItem.Dispose ();
-				editIconItem = null;
-			}
-
-			if (deleteSaveItem != null) {
-				deleteSaveItem.Dispose ();
-				deleteSaveItem = null;
-			}
-
-			if (restoreSaveItem != null) {
-				restoreSaveItem.Dispose ();
-				restoreSaveItem = null;
-			}
-
-			if (removeSaveItem != null) {
-				removeSaveItem.Dispose ();
-				removeSaveItem = null;
 			}
 
 			if (cpyTempBufferItem != null) {
@@ -180,14 +135,24 @@ namespace MemcardRex
 				cpyTempBufferItem = null;
 			}
 
-			if (pasteTempBufferItem != null) {
-				pasteTempBufferItem.Dispose ();
-				pasteTempBufferItem = null;
+			if (deleteSaveItem != null) {
+				deleteSaveItem.Dispose ();
+				deleteSaveItem = null;
 			}
 
-			if (importSaveItem != null) {
-				importSaveItem.Dispose ();
-				importSaveItem = null;
+			if (editIconItem != null) {
+				editIconItem.Dispose ();
+				editIconItem = null;
+			}
+
+			if (editSaveCommentItem != null) {
+				editSaveCommentItem.Dispose ();
+				editSaveCommentItem = null;
+			}
+
+			if (editSaveHeaderItem != null) {
+				editSaveHeaderItem.Dispose ();
+				editSaveHeaderItem = null;
 			}
 
 			if (exportSaveItem != null) {
@@ -203,6 +168,41 @@ namespace MemcardRex
 			if (getInfoItem != null) {
 				getInfoItem.Dispose ();
 				getInfoItem = null;
+			}
+
+			if (IdentifierColumn != null) {
+				IdentifierColumn.Dispose ();
+				IdentifierColumn = null;
+			}
+
+			if (importSaveItem != null) {
+				importSaveItem.Dispose ();
+				importSaveItem = null;
+			}
+
+			if (pasteTempBufferItem != null) {
+				pasteTempBufferItem.Dispose ();
+				pasteTempBufferItem = null;
+			}
+
+			if (ProductColumn != null) {
+				ProductColumn.Dispose ();
+				ProductColumn = null;
+			}
+
+			if (removeSaveItem != null) {
+				removeSaveItem.Dispose ();
+				removeSaveItem = null;
+			}
+
+			if (restoreSaveItem != null) {
+				restoreSaveItem.Dispose ();
+				restoreSaveItem = null;
+			}
+
+			if (TitleColumn != null) {
+				TitleColumn.Dispose ();
+				TitleColumn = null;
 			}
 		}
 	}

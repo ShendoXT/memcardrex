@@ -71,43 +71,46 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Support\" />
+    <Folder Include="macOS\" />
+    <Folder Include="macOS\GUI\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="macOS\Entitlements.plist" />
     <None Include="Info.plist" />
-    <None Include="Entitlements.plist" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
-    <Compile Include="ViewController.cs" />
-    <Compile Include="ViewController.designer.cs">
-      <DependentUpon>ViewController.cs</DependentUpon>
-    </Compile>
+    <Compile Include="MacMain.cs" />
     <Compile Include="ps1card.cs" />
-    <Compile Include="TableDataClass.cs" />
-    <Compile Include="WindowController.cs" />
-    <Compile Include="WindowController.designer.cs">
-      <DependentUpon>WindowController.cs</DependentUpon>
+    <Compile Include="Support\BmpBuilder.cs" />
+    <Compile Include="macOS\GUI\CommentDialogController.cs" />
+    <Compile Include="macOS\GUI\CommentDialogController.designer.cs">
+      <DependentUpon>..\..\GUI\CommentDialogController.cs</DependentUpon>
     </Compile>
-    <Compile Include="BmpBuilder.cs" />
-    <Compile Include="AppDelegate.designer.cs">
+    <Compile Include="macOS\GUI\HeaderDialogController.cs" />
+    <Compile Include="macOS\GUI\HeaderDialogController.designer.cs">
+      <DependentUpon>..\..\GUI\HeaderDialogController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="macOS\GUI\InfoDialogController.cs" />
+    <Compile Include="macOS\GUI\InfoDialogController.designer.cs">
+      <DependentUpon>..\..\GUI\InfoDialogController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="macOS\GUI\ViewController.cs" />
+    <Compile Include="macOS\GUI\ViewController.designer.cs">
+      <DependentUpon>..\..\GUI\ViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="macOS\GUI\WindowController.cs" />
+    <Compile Include="macOS\GUI\WindowController.designer.cs">
+      <DependentUpon>..\..\GUI\WindowController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="macOS\TableDataClass.cs" />
+    <Compile Include="macOS\AppDelegate.cs" />
+    <Compile Include="macOS\AppDelegate.designer.cs">
       <DependentUpon>AppDelegate.cs</DependentUpon>
     </Compile>
-    <Compile Include="HeaderDialogController.cs" />
-    <Compile Include="HeaderDialogController.designer.cs">
-      <DependentUpon>HeaderDialogController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CommentDialogController.cs" />
-    <Compile Include="CommentDialogController.designer.cs">
-      <DependentUpon>CommentDialogController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InfoDialogController.cs" />
-    <Compile Include="InfoDialogController.designer.cs">
-      <DependentUpon>InfoDialogController.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Main.storyboard" />
+    <InterfaceDefinition Include="macOS\Main.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\info_template.png" />
@@ -142,6 +145,7 @@
     <BundleResource Include="Resources\undeletesave.png" />
     <BundleResource Include="Resources\quiticon.png" />
     <BundleResource Include="Resources\exportsave.png" />
+    <BundleResource Include="Resources\tmpbuffer.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

@@ -1,7 +1,6 @@
 using System;
 using Foundation;
 using AppKit;
-using Darwin;
 
 namespace MemcardRex
 {
@@ -25,52 +24,34 @@ namespace MemcardRex
         }
         #endregion
 
-        void TabChangeCallback(NSNotification notification)
-        {
-            return;
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-
-            if (window == null) return;
-            //if (window.SelectionDidChange == null) return;
-
-            //Update menus and stuff
-            window.SelectionDidChange();
-        }
-
         #region Override Methods
         public override void WindowDidLoad()
         {
             base.WindowDidLoad();
 
-            // Prefer Tabbed Windows
-            Window.TabbingMode = NSWindowTabbingMode.Preferred;
             Window.TabbingIdentifier = "Main";
 
-            //Register Tab change even for menu manipulation
-            NSNotificationCenter.DefaultCenter.AddObserver(NSWindow.DidBecomeMainNotification, TabChangeCallback);
+            //Disable Temp buffer toolbar button if temp buffer is empty
+            if(App.TempBuffer == null) tmpBufferToolbar.Enabled = false;
+        }
 
-            //Window.DidBecomeMain();
-
-            //Window.ToggleTabBar(this);
-
-            // Set window to use Full Size Content View
-            // Window.StyleMask = NSWindowStyle.FullSizeContentView;
-
-            // Create a title bar accessory view controller and attach
-            // the view created in Interface Builder
-            /*var accessoryView = new NSTitlebarAccessoryViewController();
-            accessoryView.View = AccessoryViewGoBar;
-
-            // Set the location and attach the accessory view to the
-            // titlebar to be displayed
-            accessoryView.LayoutAttribute = NSLayoutAttribute.Bottom;
-            Window.AddTitlebarAccessoryViewController(accessoryView);*/
+        public void SetPasteFromBufferToolbar(NSImage icon, bool itemState)
+        {
+            if (icon != null) tmpBufferToolbar.Image = icon; 
+            tmpBufferToolbar.Enabled = itemState;
         }
 
         public override void GetNewWindowForTab(NSObject sender)
         {
             // Ask app to open a new document window
             App.NewDocument(this);
+        }
+
+        [Export("tmpBufferToolbarAction:")]
+        void TmpBufferToolbarAction(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.PasteFromTempBuffer(sender);
         }
 
         [Export("editHeaderToolbar:")]

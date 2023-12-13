@@ -452,6 +452,17 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Edit" showsStateColumn="NO" autoenablesItems="NO" id="W48-6f-4Dl">
                                     <items>
+                                        <menuItem title="Undo" keyEquivalent="z" id="00C-Ip-nhF">
+                                            <connections>
+                                                <action selector="undoOperation:" target="Voe-Tx-rLC" id="XqO-R2-T1N"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Redo" keyEquivalent="Z" id="VFX-tN-smY">
+                                            <connections>
+                                                <action selector="redoOperation:" target="Voe-Tx-rLC" id="36x-fa-2nR"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="H0C-gK-gXW"/>
                                         <menuItem title="Edit save header..." localization="NO" mirroring="NO" id="dRJ-4n-Yzg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -505,7 +516,7 @@ DQ
                                         </menuItem>
                                         <menuItem title="Paste save from temp buffer" keyEquivalent="v" id="gVA-U4-sdL">
                                             <connections>
-                                                <action selector="copyToTempBuffer:" target="Voe-Tx-rLC" id="IXP-Ju-R5P"/>
+                                                <action selector="pasteFromTempBuffer:" target="Voe-Tx-rLC" id="efp-UC-Xcr"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="qxL-pW-f2N"/>
@@ -577,8 +588,10 @@ DQ
                         <outlet property="exportSaveRawMItem" destination="ZbS-wf-t0z" id="IT3-Sd-SvY"/>
                         <outlet property="importSaveMItem" destination="7ls-4R-UYJ" id="aZ3-z6-pmb"/>
                         <outlet property="pasteSaveTempBufferMItem" destination="gVA-U4-sdL" id="kpA-aU-BW6"/>
+                        <outlet property="redoMItem" destination="VFX-tN-smY" id="KW0-Oc-NGT"/>
                         <outlet property="removeSaveMItem" destination="zUT-Vz-qPz" id="DHD-Nt-7f1"/>
                         <outlet property="restoreSaveMItem" destination="9WQ-gL-VJB" id="Goi-mA-ppT"/>
+                        <outlet property="undoMItem" destination="00C-Ip-nhF" id="dOX-Ya-ona"/>
                     </connections>
                 </customObject>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -650,24 +663,24 @@ DQ
                                     <size key="minSize" width="4" height="16"/>
                                     <size key="maxSize" width="142" height="16"/>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="229EA5D6-5BE6-42A7-80F6-E18067382E8A" label="Custom View" paletteLabel="Custom View" tag="-1" title="Title" sizingBehavior="auto" id="v8Q-hO-k2G">
+                                <toolbarItem implicitItemIdentifier="229EA5D6-5BE6-42A7-80F6-E18067382E8A" label="Separator" paletteLabel="Separator" tag="-1" title="Title" sizingBehavior="auto" id="v8Q-hO-k2G">
                                     <nil key="toolTip"/>
                                     <box key="view" horizontalHuggingPriority="750" boxType="separator" id="Jdd-vP-V1J">
-                                        <rect key="frame" x="36" y="14" width="5" height="96"/>
+                                        <rect key="frame" x="27" y="14" width="5" height="96"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </box>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="F719207C-02BF-4581-BFCF-3861975946A0" label="Custom View" paletteLabel="Custom View" tag="-1" title="Title" sizingBehavior="auto" id="dO6-dN-TSz">
+                                <toolbarItem implicitItemIdentifier="F719207C-02BF-4581-BFCF-3861975946A0" label="Separator" paletteLabel="Separator" tag="-1" title="Title" sizingBehavior="auto" id="dO6-dN-TSz">
                                     <nil key="toolTip"/>
                                     <box key="view" horizontalHuggingPriority="750" boxType="separator" id="0lU-wl-nih">
-                                        <rect key="frame" x="36" y="14" width="5" height="96"/>
+                                        <rect key="frame" x="27" y="14" width="5" height="96"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </box>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="4B760340-F2A2-494E-8E8B-06A8D5A231CC" label="Custom View" paletteLabel="Custom View" tag="-1" title="Title" sizingBehavior="auto" id="6AW-ES-i1g">
+                                <toolbarItem implicitItemIdentifier="4B760340-F2A2-494E-8E8B-06A8D5A231CC" label="Separator" paletteLabel="Separator" tag="-1" title="Title" sizingBehavior="auto" id="6AW-ES-i1g">
                                     <nil key="toolTip"/>
                                     <box key="view" horizontalHuggingPriority="750" boxType="separator" id="sd5-Rg-Bkc">
-                                        <rect key="frame" x="36" y="14" width="5" height="96"/>
+                                        <rect key="frame" x="27" y="14" width="5" height="96"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </box>
                                 </toolbarItem>
@@ -679,10 +692,27 @@ DQ
                                         <action selector="openDocToolbar:" target="B8D-0N-5wS" id="vqP-lM-w3U"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="19C4D667-D3D2-4257-AEFD-194CE350D2B9" label="Temp buffer" paletteLabel="Temp buffer" tag="-1" bordered="YES" autovalidates="NO" id="4Sb-r5-h4L">
+                                    <imageReference key="image" image="tmpbuffer" symbolScale="large"/>
+                                    <size key="minSize" width="42" height="25"/>
+                                    <size key="maxSize" width="42" height="25"/>
+                                    <connections>
+                                        <action selector="tmpBufferToolbarAction:" target="B8D-0N-5wS" id="F8e-4R-McA"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="662D5B01-8D16-4CB1-B1A0-AE5766543690" label="Separator" paletteLabel="Separator" tag="-1" title="Title" sizingBehavior="auto" id="AFG-bh-mRl">
+                                    <nil key="toolTip"/>
+                                    <box key="view" horizontalHuggingPriority="750" boxType="separator" id="ujT-Lc-J7n">
+                                        <rect key="frame" x="27" y="14" width="5" height="96"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                    </box>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="6uV-vP-AN5"/>
                                 <toolbarItem reference="eBr-KD-EO8"/>
+                                <toolbarItem reference="4Sb-r5-h4L"/>
+                                <toolbarItem reference="AFG-bh-mRl"/>
                                 <toolbarItem reference="B6l-hM-OTE"/>
                                 <toolbarItem reference="luT-Nq-bM7"/>
                                 <toolbarItem reference="v8Q-hO-k2G"/>
@@ -700,6 +730,8 @@ DQ
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="tempBufferToolbar" destination="4Sb-r5-h4L" id="7Em-14-vbO"/>
+                        <outlet property="tmpBufferToolbar" destination="4Sb-r5-h4L" id="Xsj-5u-bJV"/>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
                     </connections>
                 </windowController>
@@ -836,7 +868,7 @@ DQ
                                     </connections>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Mdl-08-xct">
-                                    <rect key="frame" x="1" y="303" width="508" height="16"/>
+                                    <rect key="frame" x="1" y="304" width="508" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="GqL-C2-tue">
@@ -976,5 +1008,6 @@ DQ
         <image name="folder" catalog="system" width="23" height="18"/>
         <image name="internaldrive" catalog="system" width="24" height="17"/>
         <image name="pencil.line" catalog="system" width="20" height="17"/>
+        <image name="tmpbuffer" width="48" height="48"/>
     </resources>
 </document>

@@ -15,6 +15,9 @@ namespace MemcardRex
 		[Outlet]
 		AppKit.NSView AccessoryViewGoBar { get; set; }
 
+		[Outlet]
+		AppKit.NSToolbarItem tmpBufferToolbar { get; set; }
+
 		[Action ("editCommentToolbar:")]
 		partial void editCommentToolbar (Foundation.NSObject sender);
 
@@ -35,12 +38,20 @@ namespace MemcardRex
 
 		[Action ("saveDocToolbar:")]
 		partial void saveDocToolbar (Foundation.NSObject sender);
+
+		[Action ("tmpBufferToolbarAction:")]
+		partial void tmpBufferToolbarAction (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
 			if (AccessoryViewGoBar != null) {
 				AccessoryViewGoBar.Dispose ();
 				AccessoryViewGoBar = null;
+			}
+
+			if (tmpBufferToolbar != null) {
+				tmpBufferToolbar.Dispose ();
+				tmpBufferToolbar = null;
 			}
 		}
 	}

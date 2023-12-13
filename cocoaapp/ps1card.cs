@@ -47,7 +47,7 @@ namespace MemcardRex
         /// <summary>
         /// All supported Memory Card file extensions
         /// </summary>
-        public string[] SupportedExtensions { get; } = { "bin", "ddf", "gme", "mc", "mcd", "mci", "mcr", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc" };
+        public string[] SupportedExtensions { get; } = { "mcr", "ddf", "gme", "mc", "mcd", "mci", "bin", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc" };
 
         /// <summary>
         /// Memory Card's name
@@ -59,8 +59,8 @@ namespace MemcardRex
         /// </summary>
         public string cardLocation = null;
 
-        //Memory Card's type (0 - unset, 1 - raw, 2 - gme, 3 - vgs, 4 - vmp);
-        //public byte cardType = 0;
+        //Memory Card's type
+        public byte cardType = 0;
 
         //Flag used to determine if the card has been edited since the last saving
         public bool changedFlag = false;
@@ -115,6 +115,27 @@ namespace MemcardRex
 
         readonly byte[] mcxKey = { 0x81, 0xD9, 0xCC, 0xE9, 0x71, 0xA9, 0x49, 0x9B, 0x04, 0xAD, 0xDC, 0x48, 0x30, 0x7F, 0x07, 0x92 };
         readonly byte[] mcxIv = { 0x13, 0xC2, 0xE7, 0x69, 0x4B, 0xEC, 0x69, 0x6D, 0x52, 0xCF, 0x00, 0x09, 0x2A, 0xC1, 0xF2, 0x72 };
+
+        //Undo and Redo operations
+        struct undoItem
+        {
+            public int[] slots;
+            public byte[][] header;
+            public byte[][] data;
+        };
+
+        private List<undoItem> undoList = new List<undoItem>();
+        private List<undoItem> redoList = new List<undoItem>();
+
+        public int UndoCount
+        {
+            get { return undoList.Count; }
+        }
+
+        public int RedoCount
+        {
+            get { return redoList.Count; }
+        }
 
         //Overwrite the contents of one byte array
         private void FillByteArray(byte[] destination, int start, int fill)
@@ -351,7 +372,6 @@ namespace MemcardRex
             }
 
             return gmeHeader;
-
         }
 
         //Gets the HMAC checksum for .psv or .vmp saving
@@ -492,17 +512,6 @@ namespace MemcardRex
             vgsHeader[17] = 0x2;
 
             return vgsHeader;
-        }
-
-        //Fetch next slot pointer for each save
-        private void loadSlotPointers()
-        {
-            nextSlotPointer = new ushort[SlotCount];
-
-            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
-            {
-                nextSlotPointer[slotNumber] = headerData[slotNumber, 8];
-            }
         }
 
         //Find broken links and mark them as free/formatted slots
@@ -721,6 +730,9 @@ namespace MemcardRex
             //Get all linked saves
             int[] saveSlots = FindSaveLinks(slotNumber);
 
+            //Add current state to undo buffer
+            pushToUndoRedoBuffer(saveSlots, ref undoList, true);
+
             //Cycle through each slot
             for (int i = 0; i < saveSlots.Length; i++)
             {
@@ -765,14 +777,50 @@ namespace MemcardRex
             changedFlag = true;
         }
 
+        //Push the save to either an undo or redo buffer
+        private void pushToUndoRedoBuffer(int[] saveSlots, ref List<undoItem> urBuffer, bool clearRedo)
+        {
+            undoItem undoItems = new undoItem();
+
+            //Create buffers
+            undoItems.slots = new int[saveSlots.Length];
+            undoItems.header = new byte[saveSlots.Length][];
+            undoItems.data = new byte[saveSlots.Length][];
+
+            //Cycle through each slot
+            for (int i = 0; i < saveSlots.Length; i++)
+            {
+                undoItems.slots[i] = saveSlots[i];
+                undoItems.header[i] = new byte[128];
+                undoItems.data[i] = new byte[8192];
+
+                //Copy header data
+                for (int j = 0; j < 128; j++)
+                    undoItems.header[i][j] = headerData[saveSlots[i], j];
+
+                //Copy save data
+                for (int j = 0; j < 8192; j++)
+                    undoItems.data[i][j] = saveData[saveSlots[i], j];
+            }
+
+            //Add to undo/redo buffer
+            urBuffer.Add(undoItems);
+
+            //Empty redo buffer in need be
+            if (clearRedo) redoList.Clear();
+        }
+
         /// <summary>
         /// Format a save save file
         /// </summary>
-        /// <param name="slotNumber"></param>
+        /// <param name="slotNumber">Initial slot of a save</param>
         public void FormatSave(int slotNumber)
         {
             //Get all linked saves
             int[] saveSlots = FindSaveLinks(slotNumber);
+
+            //Add save slots to undo buffer before formatting
+            pushToUndoRedoBuffer(saveSlots, ref undoList, true);
 
             //Cycle through each slot
             for (int i = 0; i < saveSlots.Length; i++)
@@ -782,13 +830,7 @@ namespace MemcardRex
 
             //Reload data
             calculateXOR();
-            loadStringData();
-            loadSlotTypes();
-            findBrokenLinks();
-            loadSaveSize();
-            loadPalette();
-            loadIcons();
-            loadIconFrames();
+            loadMemcardData();
 
             //Set changedFlag to edited
             changedFlag = true;
@@ -810,17 +852,17 @@ namespace MemcardRex
                 //Add current slot to the list
                 tempSlotList.Add(currentSlot);
 
-                //Check if next slot pointer overflows
-                if (currentSlot > 15) break;
-
                 //Check if current slot is corrupted
-                if (slotType[currentSlot] == 7) break;
+                if (slotType[currentSlot] == (int)SlotTypes.corrupted) break;
 
                 //Check if pointer points to the next save
                 if (headerData[currentSlot, 8] == 0xFF) break;
 
+                //Check if next slot pointer overflows
+                if (headerData[currentSlot, 8] > 15) break;
+
                 //Check if linked save is of the right type
-                switch(slotType[headerData[currentSlot, 8]])
+                switch (slotType[headerData[currentSlot, 8]])
                 {
                     default:
                         return tempSlotList.ToArray();
@@ -858,8 +900,12 @@ namespace MemcardRex
             return tempSlotList.ToArray();
         }
 
-        //Return all bytes of the specified save
-        public byte[] getSaveBytes(int slotNumber)
+        /// <summary>
+        /// Return all bytes of the specified save
+        /// </summary>
+        /// <param name="slotNumber">First slot of the save</param>
+        /// <returns></returns>
+        public byte[] GetSaveBytes(int slotNumber)
         {
             //Get all linked saves
             int[] saveSlots = FindSaveLinks(slotNumber);
@@ -882,17 +928,26 @@ namespace MemcardRex
             return saveBytes;
         }
 
-        //Input given bytes back to the Memory Card
-        public bool setSaveBytes(int slotNumber, byte[] saveBytes, out int reqSlots)
+        /// <summary>
+        /// Input given bytes back to the Memory Card
+        /// </summary>
+        /// <param name="slotNumber">Block to paste save to</param>
+        /// <param name="saveBytes">Data with header</param>
+        /// <param name="reqSlots">Returns number of required slots</param>
+        /// <returns>Returns status of the operation</returns>
+        public bool SetSaveBytes(int slotNumber, byte[] saveBytes, out int reqSlots)
         {
             //Number of slots to set
             int slotCount = (saveBytes.Length - 128) / 8192;
             int[] freeSlots = findFreeSlots(slotNumber, slotCount);
-            int numberOfBytes = slotCount * 8192; ;
+            int numberOfBytes = slotCount * 8192;
             reqSlots = slotCount;
 
             //Check if there are enough free slots for the operation
             if (freeSlots.Length < slotCount) return false;
+
+            //Add current state of slots to undo buffer
+            pushToUndoRedoBuffer(freeSlots, ref undoList, true);
 
             //Place header data
             for (int i = 0; i < 128; i++)
@@ -932,12 +987,7 @@ namespace MemcardRex
 
             //Reload data
             calculateXOR();
-            loadStringData();
-            loadSlotTypes();
-            loadSaveSize();
-            loadPalette();
-            loadIcons();
-            loadIconFrames();
+            loadMemcardData();
 
             //Set changedFlag to edited
             changedFlag = true;
@@ -1010,6 +1060,9 @@ namespace MemcardRex
 
             //Convert string from UTF-16 to currently used codepage
             tempByteArray = Encoding.Convert(Encoding.Unicode, Encoding.Default, Encoding.Unicode.GetBytes(headerString));
+
+            //Add current save data state to undo buffer
+            pushToUndoRedoBuffer(new int[] { slotNumber }, ref undoList, true);
 
             //Clear existing data from header
             for (int byteCount = 0; byteCount < 20; byteCount++)
@@ -1236,7 +1289,7 @@ namespace MemcardRex
         public bool saveSingleSave(string fileName, int slotNumber, int singleSaveType)
         {
             BinaryWriter binWriter;
-            byte[] outputData = getSaveBytes(slotNumber);
+            byte[] outputData = GetSaveBytes(slotNumber);
 
             //Check if the file is allowed to be opened for writing
             try
@@ -1375,11 +1428,72 @@ namespace MemcardRex
             }
 
             //Import the save to Memory Card
-            if (setSaveBytes(slotNumber, finalData, out requiredSlots)) return true;
+            if (SetSaveBytes(slotNumber, finalData, out requiredSlots)) return true;
             else return false;
         }
 
-        //Save Memory Card to the given filename
+        //Restore slots from the buffer, pop it from buffer and reload data
+        private void restoreSlotsFromUndoRedo(ref List<undoItem> ulBuffer)
+        {
+            //Restore save from the end of the line
+            undoItem undoItems = ulBuffer[ulBuffer.Count - 1];
+
+            for (int i = 0; i < undoItems.slots.Length; i++)
+            {
+                //Copy header data
+                for (int j = 0; j < 128; j++)
+                    headerData[undoItems.slots[i], j] = undoItems.header[i][j];
+
+                //Copy save data
+                for (int j = 0; j < 8192; j++)
+                    saveData[undoItems.slots[i], j] = undoItems.data[i][j];
+            }
+
+            //Pop from undo redo list
+            ulBuffer.Remove(undoItems);
+
+            loadMemcardData();
+        }
+
+        /// <summary>
+        /// Undo the last operation. Will not do anything if the buffer is empty
+        /// </summary>
+        public bool Undo()
+        {
+            if (undoList.Count < 1) return false;
+
+            //Save current state of the slot for the redo operation
+            undoItem lastUndo = undoList[undoList.Count - 1];
+            pushToUndoRedoBuffer(lastUndo.slots, ref redoList, false);
+
+            restoreSlotsFromUndoRedo(ref undoList);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Redo the last operation. Will not do anything if the buffer is empty
+        /// </summary>
+        public bool Redo()
+        {
+            if (redoList.Count < 1) return false;
+
+            //Save current state of the slot for the undo operation
+            undoItem lastRedo = redoList[redoList.Count - 1];
+            pushToUndoRedoBuffer(lastRedo.slots, ref undoList, false);
+
+            restoreSlotsFromUndoRedo(ref redoList);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Save Memory Card to the given filename
+        /// </summary>
+        /// <param name="fileName">Full file name (path+name+extension)</param>
+        /// <param name="memoryCardType">Format of the Memory Card</param>
+        /// <param name="fixData">Should any found corrupted data be fixed. For FreePSXBoot this needs to be false.</param>
+        /// <returns></returns>
         public bool SaveMemoryCard(string fileName, int memoryCardType, bool fixData)
         {
             BinaryWriter binWriter = null;
@@ -1404,21 +1518,21 @@ namespace MemcardRex
                     binWriter.Write(rawMemoryCard);
                     break;
 
-                case (int) CardTypes.gme:   //GME Memory Card
+                case (int) CardTypes.gme:       //GME Memory Card
                     binWriter.Write(getGmeHeader());
                     binWriter.Write(rawMemoryCard);
                     break;
 
-                case (int) CardTypes.vgs:         //VGS Memory Card
+                case (int) CardTypes.vgs:       //VGS Memory Card
                     binWriter.Write(getVGSheader());
                     binWriter.Write(rawMemoryCard);
                     break;
 
-                case (int) CardTypes.vmp:         //VMP Memory Card
+                case (int) CardTypes.vmp:       //VMP Memory Card
                     binWriter.Write(MakeVmpCard(rawMemoryCard));
                     break;
 
-                case (int) CardTypes.mcx:         //MCX Memory Card
+                case (int) CardTypes.mcx:       //MCX Memory Card
                     binWriter.Write(MakeMcxCard(rawMemoryCard));
                     break;
             }
@@ -1448,7 +1562,6 @@ namespace MemcardRex
             return rawMemoryCard;
         }
 
-
         //Open memory card from the given byte stream
         public void openMemoryCardStream(byte[] memCardData, bool fixData)
         {
@@ -1471,6 +1584,31 @@ namespace MemcardRex
 
             //Since the stream is of the unknown origin Memory Card is treated as edited
             changedFlag = true;
+        }
+
+        //Load data from raw byte streams to custom containers
+        private void loadMemcardData()
+        {
+            //Load slot descriptions (types)
+            loadSlotTypes();
+
+            //Find broken links and mark tham as free slots
+            findBrokenLinks();
+
+            //Convert various Memory Card data to strings
+            loadStringData();
+
+            //Load size data
+            loadSaveSize();
+
+            //Load icon palette data as Color values
+            loadPalette();
+
+            //Load icon data to bitmaps
+            loadIcons();
+
+            //Load number of frames
+            loadIconFrames();
         }
 
         /// <summary>
@@ -1523,15 +1661,18 @@ namespace MemcardRex
                         {
                             tempData = DecryptMcxCard(tempData);
                             startOffset = 128;
+                            cardType = (int)CardTypes.mcx;
                             break;
                         }
                         return "'" + cardName + "' is not a supported Memory Card format.";
                     case "MC":              //Standard raw Memory Card
                         startOffset = 0;
+                        cardType = (int)CardTypes.raw;
                         break;
 
                     case "123-456-STD":     //DexDrive GME Memory Card
                         startOffset = 3904;
+                        cardType = (int)CardTypes.gme;
 
                         //Load save comments
                         loadGMEComments(tempData);
@@ -1539,10 +1680,12 @@ namespace MemcardRex
 
                     case "VgsM":            //VGS Memory Card
                         startOffset = 64;
+                        cardType = (int)CardTypes.vgs;
                         break;
 
                     case "PMV":             //PSP virtual Memory Card
                         startOffset = 128;
+                        cardType = (int)CardTypes.vmp;
                         break;
                 }
 
@@ -1566,29 +1709,8 @@ namespace MemcardRex
             //Calculate XOR checksum (in case if any of the saveHeaders have corrputed XOR)
             if (FixData) calculateXOR();
 
-            //Load slot descriptions (types)
-            loadSlotTypes();
-
-            //Find broken links and mark tham as free slots
-            findBrokenLinks();
-
-            //Load next slot pointers
-            loadSlotPointers();
-
-            //Convert various Memory Card data to strings
-            loadStringData();
-
-            //Load size data
-            loadSaveSize();
-
-            //Load icon palette data as Color values
-            loadPalette();
-
-            //Load icon data to bitmaps
-            loadIcons();
-
-            //Load number of frames
-            loadIconFrames();
+            //Load all data to custom containers
+            loadMemcardData();
 
             //Everything went well, no error messages
             return null;

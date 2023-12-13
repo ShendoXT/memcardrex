@@ -42,10 +42,16 @@ namespace MemcardRex
 		AppKit.NSMenuItem pasteSaveTempBufferMItem { get; set; }
 
 		[Outlet]
+		AppKit.NSMenuItem redoMItem { get; set; }
+
+		[Outlet]
 		AppKit.NSMenuItem removeSaveMItem { get; set; }
 
 		[Outlet]
 		AppKit.NSMenuItem restoreSaveMItem { get; set; }
+
+		[Outlet]
+		AppKit.NSMenuItem undoMItem { get; set; }
 
 		[Action ("compareTempBuffer:")]
 		partial void compareTempBuffer (Foundation.NSObject sender);
@@ -71,22 +77,31 @@ namespace MemcardRex
 		[Action ("importSave:")]
 		partial void importSave (Foundation.NSObject sender);
 
+		[Action ("pasteFromTempBuffer:")]
+		partial void pasteFromTempBuffer (Foundation.NSObject sender);
+
+		[Action ("redoOperation:")]
+		partial void redoOperation (Foundation.NSObject sender);
+
 		[Action ("removeSave:")]
 		partial void removeSave (Foundation.NSObject sender);
 
 		[Action ("restoreSave:")]
 		partial void restoreSave (Foundation.NSObject sender);
+
+		[Action ("undoOperation:")]
+		partial void undoOperation (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (editSaveHeaderMItem != null) {
-				editSaveHeaderMItem.Dispose ();
-				editSaveHeaderMItem = null;
+			if (undoMItem != null) {
+				undoMItem.Dispose ();
+				undoMItem = null;
 			}
 
-			if (editSaveCommentMItem != null) {
-				editSaveCommentMItem.Dispose ();
-				editSaveCommentMItem = null;
+			if (redoMItem != null) {
+				redoMItem.Dispose ();
+				redoMItem = null;
 			}
 
 			if (compareBufferMItem != null) {
@@ -94,9 +109,9 @@ namespace MemcardRex
 				compareBufferMItem = null;
 			}
 
-			if (editIconMItem != null) {
-				editIconMItem.Dispose ();
-				editIconMItem = null;
+			if (cpySaveTempBufferMItem != null) {
+				cpySaveTempBufferMItem.Dispose ();
+				cpySaveTempBufferMItem = null;
 			}
 
 			if (deleteSaveMItem != null) {
@@ -104,29 +119,19 @@ namespace MemcardRex
 				deleteSaveMItem = null;
 			}
 
-			if (restoreSaveMItem != null) {
-				restoreSaveMItem.Dispose ();
-				restoreSaveMItem = null;
+			if (editIconMItem != null) {
+				editIconMItem.Dispose ();
+				editIconMItem = null;
 			}
 
-			if (removeSaveMItem != null) {
-				removeSaveMItem.Dispose ();
-				removeSaveMItem = null;
+			if (editSaveCommentMItem != null) {
+				editSaveCommentMItem.Dispose ();
+				editSaveCommentMItem = null;
 			}
 
-			if (cpySaveTempBufferMItem != null) {
-				cpySaveTempBufferMItem.Dispose ();
-				cpySaveTempBufferMItem = null;
-			}
-
-			if (pasteSaveTempBufferMItem != null) {
-				pasteSaveTempBufferMItem.Dispose ();
-				pasteSaveTempBufferMItem = null;
-			}
-
-			if (importSaveMItem != null) {
-				importSaveMItem.Dispose ();
-				importSaveMItem = null;
+			if (editSaveHeaderMItem != null) {
+				editSaveHeaderMItem.Dispose ();
+				editSaveHeaderMItem = null;
 			}
 
 			if (exportSaveMItem != null) {
@@ -137,6 +142,26 @@ namespace MemcardRex
 			if (exportSaveRawMItem != null) {
 				exportSaveRawMItem.Dispose ();
 				exportSaveRawMItem = null;
+			}
+
+			if (importSaveMItem != null) {
+				importSaveMItem.Dispose ();
+				importSaveMItem = null;
+			}
+
+			if (pasteSaveTempBufferMItem != null) {
+				pasteSaveTempBufferMItem.Dispose ();
+				pasteSaveTempBufferMItem = null;
+			}
+
+			if (removeSaveMItem != null) {
+				removeSaveMItem.Dispose ();
+				removeSaveMItem = null;
+			}
+
+			if (restoreSaveMItem != null) {
+				restoreSaveMItem.Dispose ();
+				restoreSaveMItem = null;
 			}
 		}
 	}

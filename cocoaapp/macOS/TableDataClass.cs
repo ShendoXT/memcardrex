@@ -2,9 +2,7 @@
 using AppKit;
 using CoreGraphics;
 using Foundation;
-using System.Collections;
 using System.Collections.Generic;
-using ImageKit;
 using System.Drawing;
 
 namespace MemcardRex
@@ -68,6 +66,8 @@ namespace MemcardRex
         {
             return Products.Count;
         }
+
+        //public override 
 
         /*public override NSDragOperation DraggingEntered(NSDraggingInfo sender)
         {
@@ -189,25 +189,27 @@ namespace MemcardRex
 
                     view.TextField.StringValue = DataSource.Products[(int)row].Title;
 
-                    if(DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
-                    else view.TextField.TextColor = NSColor.Text;
+                    /*if(DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;*/
                     break;
 
                 case "Product code":
                     view.TextField.StringValue = DataSource.Products[(int)row].ProductCode;
-                    if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
-                    else view.TextField.TextColor = NSColor.Text;
+                    /*if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;*/
                     break;
 
                 case "Identifier":
                     view.TextField.StringValue = DataSource.Products[(int)row].Identifier;
-                    if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
-                    else view.TextField.TextColor = NSColor.Text;
+                    /*if (DataSource.Products[(int)row].FadedIcons) view.TextField.TextColor = NSColor.SecondaryLabel;
+                    else view.TextField.TextColor = NSColor.Text;*/
                     break;
             }
 
             return view;
         }
+
+        //public override 
 
         public override void SelectionDidChange(NSNotification notification)
         {
