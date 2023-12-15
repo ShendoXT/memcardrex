@@ -1,6 +1,5 @@
 using AppKit;
 using Foundation;
-using GameController;
 using System;
 using System.Collections.Generic;
 
@@ -93,7 +92,7 @@ namespace MemcardRex
                 MessageText = "Warning",
             };
 
-            //alert.RunModal();
+            alert.RunModal();
 
             //Add initial window controller to the controller list
             winCtrlList.Add(NSApplication.SharedApplication.KeyWindow.WindowController);
@@ -195,7 +194,7 @@ namespace MemcardRex
         void DeleteSave(NSObject sender)
         {
             var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.DeleteSave(sender);
+            window.ToggleDeleteSave(sender);
         }
 
         [Export("restoreSave:")]
@@ -233,12 +232,33 @@ namespace MemcardRex
             window.Redo();
         }
 
+        [Export("exportSave:")]
+        void ExportSave(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.ExportSave(sender);
+        }
+
+        [Export("exportSaveRaw:")]
+        void ExportSaveRaw(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.ExportSaveRaw(sender);
+        }
+
+        [Export("importSave:")]
+        void ImportSave(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.ImportSave(sender);
+        }
+
         //Open Memory Card dialog
         public void OpenDialog(NSObject sender)
         {
             ps1card memCard = new ps1card();
 
-            var dlg = NSOpenPanel.OpenPanel;
+            NSOpenPanel dlg = new NSOpenPanel();
             dlg.CanChooseFiles = true;
             dlg.CanChooseDirectories = false;
             dlg.AllowedFileTypes = memCard.SupportedExtensions;

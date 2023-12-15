@@ -1,10 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Security.Policy;
+using System.Text;
 using System.Threading.Tasks;
 using AppKit;
 using CoreGraphics;
 using CoreImage;
 using Foundation;
+using static MemcardRex.ps1card;
+using static PassKit.PKShareablePassMetadata;
 
 namespace MemcardRex
 {
@@ -347,28 +351,194 @@ namespace MemcardRex
             if (CardTable.SelectedRow < 0) return;
 
             int selectedSlot = memCard.masterSlot[CardTable.SelectedRow];
-            int requiredSlots = 0;
+            //int requiredSlots = 0;
 
             if (App.TempBuffer == null || selectedSlot < 0) return;
             if (memCard.slotType[selectedSlot] != (int)ps1card.SlotTypes.formatted) return;
 
-            if(memCard.SetSaveBytes(selectedSlot, App.TempBuffer, out requiredSlots))
+            if(memCard.SetSaveBytes(selectedSlot, App.TempBuffer, out int requiredSlots))
             {
                 View.Window.DocumentEdited = true;
                 FillMemcardTable();
             }
             else
             {
-                Console.WriteLine("Failed");
+                Console.WriteLine("Failed to paste");
             }
         }
 
         //Import save
         [Action("importSave:")]
+        public void ImportSave(NSObject sender)
+        {
+            if (CardTable.SelectedRow < 0) return;
+
+            int selectedSlot = memCard.masterSlot[CardTable.SelectedRow];
+            //int requiredSlots = 0;
+
+            var dlg = NSOpenPanel.OpenPanel;
+            dlg.CanChooseFiles = true;
+            dlg.Title = "Import save";
+            dlg.CanChooseDirectories = false;
+            dlg.AllowedFileTypes = memCard.SupportedSingleSaveExtensions;
+
+            if(dlg.RunModal() == 1)
+            {
+                var url = dlg.Url;
+
+                if(memCard.OpenSingleSave(url.Path.ToString(), selectedSlot, out int requiredSlots))
+                {
+                    View.Window.DocumentEdited = true;
+                    FillMemcardTable();
+                }
+                else
+                {
+                    Console.WriteLine("Failed to import");
+                }
+            }
+        }
+
+        //Export save
+        [Action("exportSave:")]
         public void ExportSave(NSObject sender)
         {
-            this.View.Window.WindowController = null;
-            Console.WriteLine("Important");
+            ExportSaveDialog();
+        }
+
+        //Export save raw
+        [Action("exporrtSaveRaw:")]
+        public void ExportSaveRaw(NSObject sender)
+        {
+            //If no slot is selected abort
+            if (CardTable.SelectedRow < 0) return;
+
+            int selectedSlot = memCard.GetMasterLinkForSlot((int)CardTable.SelectedRow);
+
+            var dlg = new NSSavePanel();
+            dlg.Title = "Export RAW save";
+
+            string outputFilename = memCard.saveRegionRaw[selectedSlot] +
+                memCard.saveProdCode[selectedSlot] + memCard.saveIdentifier[selectedSlot];
+
+            //This will help us preserve full file title if illegal characters were found in save file name
+            int illegalCharCount = 0;
+            string completeFileName = outputFilename;
+
+            //Filter illegal characters from the name
+            foreach (char illegalChar in "\\/\":*?<>|".ToCharArray())
+            {
+                if (outputFilename.Contains(illegalChar.ToString())) illegalCharCount++;
+                outputFilename = outputFilename.Replace(illegalChar.ToString(), "");
+            }
+
+            dlg.NameFieldStringValue = outputFilename;
+
+            if (dlg.RunModal() == 1)
+            {
+                var url = dlg.Url;
+
+                memCard.SaveSingleSave(url.Path.ToString(), selectedSlot, (int)ps1card.SingleSaveTypes.raw);
+
+                //Create an info file if save filename contains illegal characters
+                if (illegalCharCount > 0)
+                {
+                    StreamWriter sw = File.CreateText(url.Path.ToString() + "_info.txt");
+                    sw.WriteLine(memCard.saveName[selectedSlot]);
+                    sw.WriteLine(completeFileName);
+                    sw.WriteLine("");
+                    sw.WriteLine("Region: \"" + memCard.saveRegion[selectedSlot] + "\"");
+                    sw.WriteLine("Product code: \"" + memCard.saveProdCode[selectedSlot] + "\"");
+                    sw.WriteLine("Identifier: \"" + memCard.saveIdentifier[selectedSlot] + "\"");
+                    sw.WriteLine("");
+                    sw.WriteLine("This text file was created because the exported RAW save file name contains forbidden characters.");
+                    sw.WriteLine("You can use this info when importing for example with uLaunchELF to make your save valid.");
+                    sw.Write("Rename \"" + outputFilename + "\" to \"" + completeFileName + "\" after importing the save.");
+                    sw.Close();
+                }
+            }
+
+            dlg.Dispose();
+        }
+
+        public void ExportSaveDialog()
+        {
+            //If no slot is selected abort
+            if (CardTable.SelectedRow < 0) return;
+
+            int selectedSlot = memCard.GetMasterLinkForSlot((int)CardTable.SelectedRow);
+
+            var dlg = new NSSavePanel();
+            dlg.AllowedFileTypes = memCard.SupportedSingleSaveExtensions;
+            dlg.Title = "Export save";
+            dlg.ExtensionHidden = false;
+
+            //Set output filename to be compatible with PS3
+            byte[] identifierASCII = Encoding.ASCII.GetBytes(memCard.saveIdentifier[selectedSlot]);
+            string outputFilename = memCard.saveRegionRaw[selectedSlot] + memCard.saveProdCode[selectedSlot] +
+                BitConverter.ToString(identifierASCII).Replace("-", "");
+
+            dlg.NameFieldStringValue = outputFilename;
+
+            //Available file types
+            var popupButton = new NSPopUpButton(new CGRect(60, 0, 246, 22), false);
+            popupButton.AddItems(new string[]{ "PSXGameEdit, Memory Juggler (*.mcs, *.ps1)", "PS3 single save (*.psv)",
+            "Smart Link, XP, AR, GS, Caetla, Datel (*.mcb, *.mcx, *.pda, *.psx)" });
+
+            var popupLabel = new NSTextField(new CGRect(0, -2, 60, 22));
+            popupLabel.StringValue = "File type:";
+            popupLabel.Editable = false;
+            popupLabel.Bordered = false;
+            popupLabel.DrawsBackground = false;
+            popupLabel.Font = NSFont.SystemFontOfSize(11);
+            popupLabel.TextColor = NSColor.SecondaryLabel;
+
+            //Accessory view for file type chooser
+            var accessoryView = new NSView(new CGRect(0, 0, 315, 24));
+            accessoryView.AddSubview(popupLabel);
+            accessoryView.AddSubview(popupButton);
+
+            //On file type change event
+            popupButton.Activated += (object snder, EventArgs e) =>
+            {
+                switch (popupButton.IndexOfSelectedItem)
+                {
+                    default:        //PSXGE
+                        dlg.AllowedFileTypes = new string[] { "mcs", "ps1" };
+                        break;
+
+                    case 1:         //PS3
+                        dlg.AllowedFileTypes = new string[] { "psv" };
+                        break;
+
+                    case 2:         //Action Replay
+                        dlg.AllowedFileTypes = new string[] { "mcb", "mcx", "pda", "psx" };
+                        break;
+                }
+            };
+
+            dlg.AccessoryView = accessoryView;
+
+            if (dlg.RunModal() == 1)
+            {
+                var url = dlg.Url;
+                int saveType = (int)ps1card.SingleSaveTypes.psx;
+
+                switch (url.PathExtension.ToLower())
+                {
+                    case "psv":
+                        saveType = (int)ps1card.SingleSaveTypes.psv;
+                        break;
+
+                    case "mcs":
+                    case "ps1":
+                        saveType = (int)ps1card.SingleSaveTypes.mcs;
+                        break;
+                }
+
+                memCard.SaveSingleSave(url.Path.ToString(), selectedSlot, saveType);
+            }
+
+            dlg.Dispose();
         }
 
         //Show save info
@@ -397,12 +567,23 @@ namespace MemcardRex
         [Export("saveDocument:")]
         public void SaveDialog(NSObject sender)
         {
-            SaveAsDialog(sender);
+            if(memCard.cardLocation == null)
+            {
+                SaveAsDialog(sender);
+            }
+            else
+            {
+                if (memCard.SaveMemoryCard(memCard.cardLocation, memCard.cardType, false))
+                {
+                    //View.Window.Title = memCard.cardName;
+                    View.Window.DocumentEdited = false;
+                }
+            }
         }
 
         //Block operations
         [Export("deleteSave:")]
-        public void DeleteSave(NSObject sender)
+        public void ToggleDeleteSave(NSObject sender)
         {
             //If no slot is selected abort
             if (CardTable.SelectedRow < 0) return;
@@ -416,7 +597,7 @@ namespace MemcardRex
         public void RestoreSave(NSObject sender)
         {
             //We are just toggling delete/undelete state
-            DeleteSave(sender);
+            ToggleDeleteSave(sender);
         }
 
         [Export("removeSave:")]
@@ -505,6 +686,7 @@ namespace MemcardRex
                         break;
 
                     case "vgs":
+                    case "mem":
                         cardType = (int)ps1card.CardTypes.vgs;
                         break;
 

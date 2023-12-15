@@ -868,7 +868,7 @@ DQ
                                     </connections>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Mdl-08-xct">
-                                    <rect key="frame" x="1" y="304" width="508" height="15"/>
+                                    <rect key="frame" x="1" y="303" width="508" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="GqL-C2-tue">

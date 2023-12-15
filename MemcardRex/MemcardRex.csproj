@@ -57,17 +57,18 @@
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512%402x.png" />
     <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256.png" />
+    <ImageAsset Include="Assets.xcassets\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -76,8 +77,8 @@
     <Folder Include="macOS\GUI\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="macOS\Entitlements.plist" />
     <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MacMain.cs" />

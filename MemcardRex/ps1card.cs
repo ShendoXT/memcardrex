@@ -30,6 +30,17 @@ namespace MemcardRex
         };
 
         /// <summary>
+        /// Supported unique single save formats
+        /// </summary>
+        public enum SingleSaveTypes: int
+        {
+            raw,
+            mcs,
+            psv,
+            psx
+        }
+
+        /// <summary>
         /// Types of available slots on the Memory Card
         /// </summary>
         public enum SlotTypes : byte
@@ -48,6 +59,11 @@ namespace MemcardRex
         /// All supported Memory Card file extensions
         /// </summary>
         public string[] SupportedExtensions { get; } = { "mcr", "ddf", "gme", "mc", "mcd", "mci", "bin", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc" };
+
+        /// <summary>
+        /// All supported single save file extensions
+        /// </summary>
+        public string[] SupportedSingleSaveExtensions { get; } = { "mcs", "ps1", "psv", "mcb", "mcx", "pda", "psx" };
 
         /// <summary>
         /// Memory Card's name
@@ -89,8 +105,11 @@ namespace MemcardRex
         //Identifier string of the save
         public string[] saveIdentifier = new string[SlotCount];
 
-        //Region of the save ASCII representation: BA - America, BE - Europe, BI - Japan)
+        //Region of the save, ASCII representation: BA - America, BE - Europe, BI - Japan)
         public string[] saveRegion = new string[SlotCount];
+
+        //Save region in raw format, as is
+        public string[] saveRegionRaw = new string[SlotCount];
 
         //Size of the save in KBs
         public int[] saveSize = new int[SlotCount];
@@ -625,6 +644,8 @@ namespace MemcardRex
                         //Convert Product Code from currently used codepage to UTF-16
                         string rawRegion = Encoding.Default.GetString(tempByteArray);
 
+                        saveRegionRaw[slotNumber] = rawRegion;
+
                         //Convert to human readable from
                         switch (rawRegion)
                         {
@@ -1018,13 +1039,13 @@ namespace MemcardRex
             if (sProdCode.Length > 10)
                 sProdCode = sProdCode.Substring(0, 10);
 
-            //Region has to have 10 characters at all times
+            //Product code has to have 10 characters at all times
             while (sProdCode.Length < 10) sProdCode += " ";
 
             if (sIdentifier.Length > 8)
                 sIdentifier = sIdentifier.Substring(0, 8);
 
-            //Region has to have 8 characters at all times
+            //Identifier has to have 8 characters at all times
             while (sIdentifier.Length < 8) sIdentifier += "\0";
 
             //Figure out the region situation
@@ -1285,8 +1306,14 @@ namespace MemcardRex
             changedFlag = true;
         }
 
-        //Save single save to the given filename
-        public bool saveSingleSave(string fileName, int slotNumber, int singleSaveType)
+        /// <summary>
+        /// Save single save to the given filename
+        /// </summary>
+        /// <param name="fileName">Full path with filename and extension</param>
+        /// <param name="slotNumber">Initial slot of the save</param>
+        /// <param name="singleSaveType">Type of the single save file</param>
+        /// <returns>Return success</returns>
+        public bool SaveSingleSave(string fileName, int slotNumber, int singleSaveType)
         {
             BinaryWriter binWriter;
             byte[] outputData = GetSaveBytes(slotNumber);
@@ -1323,14 +1350,15 @@ namespace MemcardRex
                     binWriter.Write(outputData, 128, outputData.Length - 128);
                     break;
 
-                case 2:         //MCS single save
+                case (int)SingleSaveTypes.mcs:         //MCS single save
                     binWriter.Write(outputData);
                     break;
 
-                case 3:         //RAW single save
+                case (int)SingleSaveTypes.raw:         //RAW single save
                     binWriter.Write(outputData, 128, outputData.Length - 128);
                     break;
-                case 4:         //PS3 signed save
+
+                case (int)SingleSaveTypes.psv:         //PS3 signed save
                     binWriter.Write(MakePsvSave(outputData));
                     break;
             }
@@ -1341,8 +1369,14 @@ namespace MemcardRex
             return true;
         }
 
-        //Import single save to the Memory Card
-        public bool openSingleSave(string fileName, int slotNumber, out int requiredSlots)
+        /// <summary>
+        /// Import single save to the Memory Card
+        /// </summary>
+        /// <param name="fileName">Path of the file to import</param>
+        /// <param name="slotNumber">Slot to import to</param>
+        /// <param name="requiredSlots">Returns required number of slots for imported save</param>
+        /// <returns>Returns operation success</returns>
+        public bool OpenSingleSave(string fileName, int slotNumber, out int requiredSlots)
         {
             requiredSlots = 0;
             string tempString = null;

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1704.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex", "cocoaapp\MemcardRex.csproj", "{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex", "MemcardRex\MemcardRex.csproj", "{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
