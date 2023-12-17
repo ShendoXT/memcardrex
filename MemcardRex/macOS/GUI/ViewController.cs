@@ -7,6 +7,7 @@ using AppKit;
 using CoreGraphics;
 using CoreImage;
 using Foundation;
+using MemcardRex.macOS;
 using static MemcardRex.ps1card;
 using static PassKit.PKShareablePassMetadata;
 
@@ -17,6 +18,9 @@ namespace MemcardRex
         //Active Memory Card of the current window
         private ps1card memCard = new ps1card();
         private bool firstRun = true;
+
+        //Hardware interface
+        HardwareInterface hardInterface;
 
         public static AppDelegate App
         {
@@ -125,6 +129,14 @@ namespace MemcardRex
                     infoSheet.Icons = memCard.iconColorData;
 
                     infoSheet.Presentor = this;
+                    break;
+
+                case "HardwareCommSegue":
+                    var hardwareSheet = segue.DestinationController as HardwareDialogController;
+
+                    hardwareSheet.HardInterface = hardInterface;
+
+                    hardwareSheet.Presentor = this;
                     break;
             }
         }
@@ -296,6 +308,27 @@ namespace MemcardRex
         {
             //Call edit header dialog
             if(CheckSelectionValidity()) PerformSegue(dialogName, sender);
+        }
+
+        //Communicate with a physical device
+        public void InitHardwareCommunication(int deviceId, int deviceMode, int commMode)
+        {
+            //Check what type of interface to init
+            switch (deviceId)
+            {
+                default:
+                    hardInterface = null;
+                    break;
+
+                case (int) HardwareInterface.Types.memcarduino:
+                    hardInterface = new MemCARDuino(deviceMode, commMode);
+                    break;
+            }
+
+            Console.WriteLine(hardInterface.Name());
+
+            //Open device window only if the interface is valid
+            if(hardInterface != null) PerformSegue("HardwareCommSegue", this);
         }
 
         public void Undo()

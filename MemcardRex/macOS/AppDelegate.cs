@@ -11,6 +11,8 @@ namespace MemcardRex
         //List of all active window controllers
         List<NSObject> winCtrlList = new List<NSObject>();
 
+        public ProgramSettings appSettings = new ProgramSettings();
+
         #region Private Variables
         private byte[] _tempBuffer;
         private NSImage _bufferImage;
@@ -92,7 +94,7 @@ namespace MemcardRex
                 MessageText = "Warning",
             };
 
-            alert.RunModal();
+            //alert.RunModal();
 
             //Add initial window controller to the controller list
             winCtrlList.Add(NSApplication.SharedApplication.KeyWindow.WindowController);
@@ -160,6 +162,48 @@ namespace MemcardRex
         }
 
         #region Custom Actions
+        [Export("dexdriveRead:")]
+        private void DexdriveRead(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.dexdrive, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
+        }
+
+        [Export("memcarduinoRead:")]
+        private void MemcarduinoRead(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.memcarduino, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
+        }
+
+        [Export("cardlinkRead:")]
+        private void CardlinkRead(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.ps1cardlink, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
+        }
+
+        [Export("cardlinkReadTcp:")]
+        private void CardlinkReadTcp(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.ps1cardlink, (int)HardwareInterface.Modes.tcp, (int)HardwareInterface.CommModes.read);
+        }
+
+        [Export("uniromRead:")]
+        private void UniromRead(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.unirom, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
+        }
+
+        [Export("uniromReadTcp:")]
+        private void UniromReadTcp(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.InitHardwareCommunication((int)HardwareInterface.Types.unirom, (int)HardwareInterface.Modes.tcp, (int)HardwareInterface.CommModes.read);
+        }
+
         [Export("newDocument:")]
         public void NewDocument(NSObject sender)
         {

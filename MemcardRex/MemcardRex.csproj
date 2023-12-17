@@ -9,8 +9,8 @@
     <RootNamespace>MemcardRex</RootNamespace>
     <AssemblyName></AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +45,7 @@
     <UseSGen>true</UseSGen>
     <UseRefCounting>true</UseRefCounting>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <LinkMode>SdkOnly</LinkMode>
+    <LinkMode>None</LinkMode>
     <AOTMode>None</AOTMode>
     <I18n>cjk</I18n>
     <XamMacArch>x86_64</XamMacArch>
@@ -56,29 +56,11 @@
     <Reference Include="Xamarin.Mac" />
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256.png" />
-    <ImageAsset Include="Assets.xcassets\.DS_Store" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="Support\" />
     <Folder Include="macOS\" />
     <Folder Include="macOS\GUI\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Info.plist" />
-    <None Include="Entitlements.plist" />
+    <Folder Include="macOS\Hardware\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MacMain.cs" />
@@ -109,13 +91,25 @@
     <Compile Include="macOS\AppDelegate.designer.cs">
       <DependentUpon>AppDelegate.cs</DependentUpon>
     </Compile>
+    <Compile Include="macOS\GUI\HardwareDialogController.cs" />
+    <Compile Include="macOS\GUI\HardwareDialogController.designer.cs">
+      <DependentUpon>HardwareDialogController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="macOS\Hardware\HardwareInterface.cs" />
+    <Compile Include="macOS\Hardware\MemCARDuino.cs" />
+    <Compile Include="macOS\GUI\PreferencesViewController.cs" />
+    <Compile Include="macOS\GUI\PreferencesViewController.designer.cs">
+      <DependentUpon>PreferencesViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Support\ProgramSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="macOS\Main.storyboard" />
+    <None Include="Entitlements.plist" />
+    <None Include="Info.plist" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\info_template.png" />
     <BundleResource Include="Resources\jpflag.bmp" />
+    <BundleResource Include="Resources\tmpbuffer.png" />
     <BundleResource Include="Resources\linked.bmp" />
     <BundleResource Include="Resources\savecard.png" />
     <BundleResource Include="Resources\naflag.bmp" />
@@ -141,12 +135,29 @@
     <BundleResource Include="Resources\infoicon.png" />
     <BundleResource Include="Resources\opencard.png" />
     <BundleResource Include="Resources\importsave.png" />
+    <BundleResource Include="Resources\info_template.png" />
     <BundleResource Include="Resources\pastecard.png" />
     <BundleResource Include="Resources\iconedit.png" />
     <BundleResource Include="Resources\undeletesave.png" />
     <BundleResource Include="Resources\quiticon.png" />
     <BundleResource Include="Resources\exportsave.png" />
-    <BundleResource Include="Resources\tmpbuffer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Main.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_32x32.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_16x16%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_128x128%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_512x512%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\icon_256x256.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

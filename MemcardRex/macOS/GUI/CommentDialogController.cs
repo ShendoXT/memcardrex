@@ -49,7 +49,6 @@ namespace MemcardRex
 
             CommentTextInput.StringValue = Comment;
 
-
             //Disable resizing of modal dialog
             this.View.Window.StyleMask &= ~NSWindowStyle.Resizable;
         }

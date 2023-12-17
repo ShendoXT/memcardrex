@@ -53,6 +53,12 @@ namespace MemcardRex
 		[Outlet]
 		AppKit.NSMenuItem undoMItem { get; set; }
 
+		[Action ("cardlinkRead:")]
+		partial void cardlinkRead (Foundation.NSObject sender);
+
+		[Action ("cardlinkReadTcp:")]
+		partial void cardlinkReadTcp (Foundation.NSObject sender);
+
 		[Action ("compareTempBuffer:")]
 		partial void compareTempBuffer (Foundation.NSObject sender);
 
@@ -61,6 +67,12 @@ namespace MemcardRex
 
 		[Action ("deleteSave:")]
 		partial void deleteSave (Foundation.NSObject sender);
+
+		[Action ("dexdriveRead:")]
+		partial void dexdriveRead (Foundation.NSObject sender);
+
+		[Action ("dexDriveRead:")]
+		partial void dexDriveRead (Foundation.NSObject sender);
 
 		[Action ("editIcon:")]
 		partial void editIcon (Foundation.NSObject sender);
@@ -77,6 +89,9 @@ namespace MemcardRex
 		[Action ("importSave:")]
 		partial void importSave (Foundation.NSObject sender);
 
+		[Action ("memcarduinoRead:")]
+		partial void memcarduinoRead (Foundation.NSObject sender);
+
 		[Action ("pasteFromTempBuffer:")]
 		partial void pasteFromTempBuffer (Foundation.NSObject sender);
 
@@ -91,19 +106,15 @@ namespace MemcardRex
 
 		[Action ("undoOperation:")]
 		partial void undoOperation (Foundation.NSObject sender);
+
+		[Action ("uniromRead:")]
+		partial void uniromRead (Foundation.NSObject sender);
+
+		[Action ("uniromReadTcp:")]
+		partial void uniromReadTcp (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (undoMItem != null) {
-				undoMItem.Dispose ();
-				undoMItem = null;
-			}
-
-			if (redoMItem != null) {
-				redoMItem.Dispose ();
-				redoMItem = null;
-			}
-
 			if (compareBufferMItem != null) {
 				compareBufferMItem.Dispose ();
 				compareBufferMItem = null;
@@ -154,6 +165,11 @@ namespace MemcardRex
 				pasteSaveTempBufferMItem = null;
 			}
 
+			if (redoMItem != null) {
+				redoMItem.Dispose ();
+				redoMItem = null;
+			}
+
 			if (removeSaveMItem != null) {
 				removeSaveMItem.Dispose ();
 				removeSaveMItem = null;
@@ -162,6 +178,11 @@ namespace MemcardRex
 			if (restoreSaveMItem != null) {
 				restoreSaveMItem.Dispose ();
 				restoreSaveMItem = null;
+			}
+
+			if (undoMItem != null) {
+				undoMItem.Dispose ();
+				undoMItem = null;
 			}
 		}
 	}
