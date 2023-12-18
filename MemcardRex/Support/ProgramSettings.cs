@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+
 namespace MemcardRex
 {
 	public class ProgramSettings
@@ -8,7 +10,7 @@ namespace MemcardRex
         public int RestoreWindowPosition = 0;              //Restore window position
         public int FixCorruptedCards = 0;                  //Try to fix corrupted memory cards
         public int FormatType = 0;                         //Type of formatting for hardware interfaces
-        public string CommunicationPort = "";              //Communication port for Hardware interfaces
+        public string CommunicationPort = "COM1";          //Communication port for Hardware interfaces
         public int CommunicationSpeed = 0;                 //Speed setting for serial port
         public int LastSaveFormat = 0;                     //Last used format to save memory card
         public int LastExportFormat = 0;                   //Last used format to export save
@@ -16,9 +18,89 @@ namespace MemcardRex
         public int RemoteCommPort = 23;                    // Port to open a socket for the remote serial bridge
         public int CardSlot = 0;                           //Active card slot for reading data from PS1CardLink or Unirom
 
+        private const string settingsFilename = "Settings.xml";
+
         public ProgramSettings()
 		{
 		}
+
+        /// <summary>
+        /// Load settings from permanent storage
+        /// </summary>
+        /// <param name="directory">Directory to save settings to</param>
+        public void LoadSettings(string directory)
+        {
+            if (!Directory.Exists(directory)) return;
+
+            string filename = Path.Combine(directory, settingsFilename);
+
+            if (!File.Exists(filename)) return;
+
+            xmlSettingsEditor xmlAppSettings = new xmlSettingsEditor();
+
+            //Open XML file for reading, file is auto-closed
+            xmlAppSettings.openXmlReader(filename);
+
+            CommunicationPort = xmlAppSettings.readXmlEntry("ComPort");
+            CommunicationSpeed = xmlAppSettings.readXmlEntryInt("ComSpeed", 0, 1);
+
+            RemoteCommAddress = xmlAppSettings.readXmlEntry("RemoteComAddress");
+            RemoteCommPort = xmlAppSettings.readXmlEntryInt("RemoteComPort", 0, 65535);
+
+            IconBackgroundColor = xmlAppSettings.readXmlEntryInt("IconBackgroundColor", 0, 4);
+
+            BackupMemcards = xmlAppSettings.readXmlEntryInt("BackupMemoryCards", 0, 1);
+
+            RestoreWindowPosition = xmlAppSettings.readXmlEntryInt("RestoreWindowPosition", 0, 1);
+
+            FormatType = xmlAppSettings.readXmlEntryInt("HardwareFormatType", 0, 1);
+
+            FixCorruptedCards = xmlAppSettings.readXmlEntryInt("FixCorruptedCards", 0, 1);
+
+            LastSaveFormat = xmlAppSettings.readXmlEntryInt("LastSaveFormat", 0, 13);
+
+            LastExportFormat = xmlAppSettings.readXmlEntryInt("LastExportFormat", 0, 7);
+
+            CardSlot = xmlAppSettings.readXmlEntryInt("CardSlot", 0, 1);
+        }
+
+        /// <summary>
+        /// Save settings to permanent storage
+        /// </summary>
+        /// <param name="filename">Full path to settings file</param>
+        public void SaveSettings(string directory, string appName, string appVersion)
+        {
+            //Create directory if it doesn't exist
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+            xmlSettingsEditor xmlAppSettings = new xmlSettingsEditor();
+
+            xmlAppSettings.openXmlWriter(Path.Combine(directory, settingsFilename), appName + " " + appVersion + " settings data");
+
+            xmlAppSettings.writeXmlEntry("ComPort", CommunicationPort);
+            xmlAppSettings.writeXmlEntry("ComSpeed", CommunicationSpeed.ToString());
+
+            xmlAppSettings.writeXmlEntry("RemoteComAddress", RemoteCommAddress);
+            xmlAppSettings.writeXmlEntry("RemoteComPort", RemoteCommPort.ToString());
+
+            xmlAppSettings.writeXmlEntry("IconBackgroundColor", IconBackgroundColor.ToString());
+
+            xmlAppSettings.writeXmlEntry("BackupMemoryCards", BackupMemcards.ToString());
+
+            xmlAppSettings.writeXmlEntry("RestoreWindowPosition", RestoreWindowPosition.ToString());
+
+            xmlAppSettings.writeXmlEntry("HardwareFormatType", FormatType.ToString());
+
+            xmlAppSettings.writeXmlEntry("FixCorruptedCards", FixCorruptedCards.ToString());
+
+            xmlAppSettings.writeXmlEntry("LastSaveFormat", LastSaveFormat.ToString());
+
+            xmlAppSettings.writeXmlEntry("LastExportFormat", LastExportFormat.ToString());
+
+            xmlAppSettings.writeXmlEntry("CardSlot", CardSlot.ToString());
+
+            xmlAppSettings.closeXmlWriter();
+        }
 	}
 }
 

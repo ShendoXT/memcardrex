@@ -8,9 +8,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MemcardRex</RootNamespace>
     <AssemblyName></AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
-    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
+    <UseXamMacFullFramework>true</UseXamMacFullFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,13 +54,18 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.Mac" />
+    <Reference Include="System.Xml.ReaderWriter">
+      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.1\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="Support\" />
     <Folder Include="macOS\" />
     <Folder Include="macOS\GUI\" />
-    <Folder Include="macOS\Hardware\" />
+    <Folder Include="Hardware\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MacMain.cs" />
@@ -95,17 +100,19 @@
     <Compile Include="macOS\GUI\HardwareDialogController.designer.cs">
       <DependentUpon>HardwareDialogController.cs</DependentUpon>
     </Compile>
-    <Compile Include="macOS\Hardware\HardwareInterface.cs" />
-    <Compile Include="macOS\Hardware\MemCARDuino.cs" />
     <Compile Include="macOS\GUI\PreferencesViewController.cs" />
     <Compile Include="macOS\GUI\PreferencesViewController.designer.cs">
       <DependentUpon>PreferencesViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Support\ProgramSettings.cs" />
+    <Compile Include="Hardware\HardwareInterface.cs" />
+    <Compile Include="Hardware\MemCARDuino.cs" />
+    <Compile Include="Support\xmlSettingsEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\jpflag.bmp" />

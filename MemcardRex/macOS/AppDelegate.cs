@@ -2,16 +2,24 @@ using AppKit;
 using Foundation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MemcardRex
 {
     [Register("AppDelegate")]
     public partial class AppDelegate : NSApplicationDelegate
     {
+        const string appName = "MemcardRex";
+        const string appDate = "Unknown";
+        const string appVersion = "2.0 alpha";
+
         //List of all active window controllers
         List<NSObject> winCtrlList = new List<NSObject>();
 
         public ProgramSettings appSettings = new ProgramSettings();
+
+        string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "Library", "Application Support", appName);
 
         #region Private Variables
         private byte[] _tempBuffer;
@@ -94,18 +102,20 @@ namespace MemcardRex
                 MessageText = "Warning",
             };
 
-            //alert.RunModal();
+            alert.RunModal();
 
             //Add initial window controller to the controller list
             winCtrlList.Add(NSApplication.SharedApplication.KeyWindow.WindowController);
 
             //Register Tab change event for menu manipulation
             NSNotificationCenter.DefaultCenter.AddObserver(NSWindow.DidBecomeMainNotification, TabChangeCallback);
+
+            appSettings.LoadSettings(settingsPath);
         }
 
         public override void WillTerminate(NSNotification notification)
         {
-            // Insert code here to tear down your application
+            appSettings.SaveSettings(settingsPath, appName, appVersion);
         }
 
         //Specific menu item enables/disableas

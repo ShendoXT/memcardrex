@@ -68,7 +68,11 @@ namespace MemcardRex
             App.appSettings.CommunicationSpeed = (int)speedPopup.IndexOfSelectedItem;
             App.appSettings.CardSlot = (int)cardPopup.IndexOfSelectedItem;
 
-            App.appSettings.RemoteCommAddress = addressInput.StringValue;
+            if (addressInput.StringValue != "")
+                App.appSettings.RemoteCommAddress = addressInput.StringValue;
+            else
+                App.appSettings.RemoteCommAddress = "192.168.1.4";
+
             App.appSettings.RemoteCommPort = portInput.IntValue;
 
             App.appSettings.BackupMemcards = backupCheckbox.IntValue;

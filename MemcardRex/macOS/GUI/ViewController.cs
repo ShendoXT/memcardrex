@@ -325,10 +325,26 @@ namespace MemcardRex
                     break;
             }
 
-            Console.WriteLine(hardInterface.Name());
+            //Abort if the interface is not valid
+            if (hardInterface == null) return;
 
-            //Open device window only if the interface is valid
-            if(hardInterface != null) PerformSegue("HardwareCommSegue", this);
+            string errMsg = hardInterface.Start(App.appSettings.CommunicationPort,App.appSettings.CommunicationSpeed );
+
+            if(errMsg == null)
+            {
+                PerformSegue("HardwareCommSegue", this);
+            }
+            else
+            {
+                var alert = new NSAlert()
+                {
+                    AlertStyle = NSAlertStyle.Critical,
+                    InformativeText = errMsg + "\n\nMake sure to select proper communication port and speed in preferences dialog",
+                    MessageText = "Unable to start " + hardInterface.Name()
+                };
+
+                alert.RunModal();
+            }
         }
 
         public void Undo()
