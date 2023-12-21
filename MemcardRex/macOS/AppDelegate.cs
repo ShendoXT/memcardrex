@@ -91,24 +91,113 @@ namespace MemcardRex
             }
         }
 
+        //Clone all hardware device menus from read to write and format
+        private void BuildHardwareMenus()
+        {
+            NSMenuItem newReadItem;
+            NSMenuItem newFormatItem;
+
+            foreach (NSMenuItem menuItem in hardReadMenu.Items)
+            {
+                if (menuItem.Title == "")
+                {
+                    newReadItem = NSMenuItem.SeparatorItem;
+                    newFormatItem = NSMenuItem.SeparatorItem;
+                }
+                else
+                {
+                    newReadItem = new NSMenuItem(menuItem.Title);
+                    newFormatItem = new NSMenuItem(menuItem.Title);
+
+                    newReadItem.Activated += HardwareItem_Activated;
+                    newFormatItem.Activated += HardwareItem_Activated;
+                    menuItem.Activated += HardwareItem_Activated;
+                }
+
+                hardWriteMenu.AddItem(newReadItem);
+                hardFormatMenu.AddItem(newFormatItem);
+            }
+        }
+
+        //Event for hardware menus
+        private void HardwareItem_Activated(object sender, EventArgs e)
+        {
+            var menuItem = sender as NSMenuItem;
+
+            int deviceId = -1;
+            int mode = (int) HardwareInterface.Modes.serial;
+            int commMode = (int) HardwareInterface.CommModes.read;
+
+            if (menuItem.ParentItem.Title == "Write save data")
+                commMode = (int)HardwareInterface.CommModes.write;
+
+            else if(menuItem.ParentItem.Title == "Format card")
+                commMode = (int)HardwareInterface.CommModes.format;
+
+            //Set device id based on menu title
+            switch (menuItem.Title)
+            {
+                case "DexDrive":
+                    deviceId = (int)HardwareInterface.Types.dexdrive;
+                    break;
+
+                case "MemCARDuino":
+                    deviceId = (int)HardwareInterface.Types.memcarduino;
+                    break;
+
+                case "PS1CardLink":
+                    deviceId = (int)HardwareInterface.Types.ps1cardlink;
+                    break;
+
+                case "PS1CardLink over TCP":
+                    deviceId = (int)HardwareInterface.Types.ps1cardlink;
+                    mode = (int)HardwareInterface.Modes.tcp;
+                    break;
+
+                case "Unirom":
+                    deviceId = (int)HardwareInterface.Types.unirom;
+                    break;
+
+                case "Unirom over TCP":
+                    deviceId = (int)HardwareInterface.Types.unirom;
+                    mode = (int)HardwareInterface.Modes.tcp;
+                    break;
+
+                case "PS3 Memory Card Adaptor":
+                    deviceId = (int)HardwareInterface.Types.ps3mca;
+                    break;
+            }
+
+            //If there are no windows available create a new document
+            if (winCtrlList.Count < 1) NewDocument((NSObject)sender);
+
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+
+            //Activate interface
+            window.InitHardwareCommunication(deviceId, mode, commMode);
+        }
+
         public override void DidFinishLaunching(NSNotification notification)
         {
             //Show experimental software alert
             var alert = new NSAlert()
             {
                 AlertStyle = NSAlertStyle.Critical,
-                InformativeText = "This build is higly experimental." +
+                InformativeText = "This build is highly experimental." +
                 "\nAll funcionality may not be implemented yet or work as intended.",
                 MessageText = "Warning",
             };
-
+#if DEBUG
+#else
             alert.RunModal();
-
+#endif
             //Add initial window controller to the controller list
             winCtrlList.Add(NSApplication.SharedApplication.KeyWindow.WindowController);
 
             //Register Tab change event for menu manipulation
             NSNotificationCenter.DefaultCenter.AddObserver(NSWindow.DidBecomeMainNotification, TabChangeCallback);
+
+            BuildHardwareMenus();
 
             appSettings.LoadSettings(settingsPath);
         }
@@ -172,50 +261,8 @@ namespace MemcardRex
         }
 
         #region Custom Actions
-        [Export("dexdriveRead:")]
-        private void DexdriveRead(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.dexdrive, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
-        }
-
-        [Export("memcarduinoRead:")]
-        private void MemcarduinoRead(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.memcarduino, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
-        }
-
-        [Export("cardlinkRead:")]
-        private void CardlinkRead(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.ps1cardlink, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
-        }
-
-        [Export("cardlinkReadTcp:")]
-        private void CardlinkReadTcp(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.ps1cardlink, (int)HardwareInterface.Modes.tcp, (int)HardwareInterface.CommModes.read);
-        }
-
-        [Export("uniromRead:")]
-        private void UniromRead(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.unirom, (int)HardwareInterface.Modes.serial, (int)HardwareInterface.CommModes.read);
-        }
-
-        [Export("uniromReadTcp:")]
-        private void UniromReadTcp(NSObject sender)
-        {
-            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
-            window.InitHardwareCommunication((int)HardwareInterface.Types.unirom, (int)HardwareInterface.Modes.tcp, (int)HardwareInterface.CommModes.read);
-        }
-
         [Export("newDocument:")]
-        public void NewDocument(NSObject sender)
+        public NSWindowController NewDocument(NSObject sender)
         {
             // Get new window
             var storyboard = NSStoryboard.FromName("Main", null);
@@ -228,6 +275,8 @@ namespace MemcardRex
             controller.ShowWindow(this);
 
             _cardCount++;
+
+            return controller;
         }
 
         [Export("editSaveComment:")]
@@ -337,7 +386,7 @@ namespace MemcardRex
                     }
 
                     //Open memory card, get message on error
-                    string message = memCard.OpenMemoryCard(path, false);
+                    string message = memCard.OpenMemoryCard(path, appSettings.FixCorruptedCards == 1);
 
                     if (message != null)
                     {

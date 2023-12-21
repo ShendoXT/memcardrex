@@ -1,15 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Security.Policy;
 using System.Text;
-using System.Threading.Tasks;
 using AppKit;
 using CoreGraphics;
-using CoreImage;
 using Foundation;
 using MemcardRex.macOS;
-using static MemcardRex.ps1card;
-using static PassKit.PKShareablePassMetadata;
 
 namespace MemcardRex
 {
@@ -106,7 +101,6 @@ namespace MemcardRex
 
                     sheet.Comment = memCard.saveComments[selectedSlot];
 
-
                     sheet.DialogAccepted += (s, e) => {
                         memCard.saveComments[selectedSlot] = sheet.Comment;
                         View.Window.DocumentEdited = true;
@@ -136,9 +130,38 @@ namespace MemcardRex
 
                     hardwareSheet.HardInterface = hardInterface;
 
+                    //If the data is to be written fetch the current raw Memory Card data
+                    if (hardInterface.CommMode == (int) HardwareInterface.CommModes.write)
+                        hardwareSheet.MemoryCard = memCard.SaveMemoryCardStream(App.appSettings.FixCorruptedCards == 1);
+
+                    //Create a new blank formatted Memory Card and write it to device
+                    else if (hardInterface.CommMode == (int)HardwareInterface.CommModes.format){
+                        ps1card blankCard = new ps1card();
+                        blankCard.OpenMemoryCard(null, true);
+                        hardwareSheet.MemoryCard = blankCard.SaveMemoryCardStream(true);
+                    }
+
+                    hardwareSheet.QuickFormat = App.appSettings.FormatType == 0;
+
+                    hardwareSheet.ReadingComplete += (s, e) =>
+                    {
+                        //Create new document and inject card into it
+                        var newWindow = App.NewDocument(sender).ContentViewController as ViewController;
+                        newWindow.OpenMemoryCardStream(hardwareSheet.MemoryCard);
+                    };
+
                     hardwareSheet.Presentor = this;
                     break;
             }
+        }
+
+        //Open Memory Card from the given byte stream
+        public void OpenMemoryCardStream(byte[] memCardData)
+        {
+            memCard.OpenMemoryCardStream(memCardData, App.appSettings.FixCorruptedCards == 1);
+            FillMemcardTable();
+            View.Window.DocumentEdited = true;
+
         }
 
         public override void ViewDidLoad ()
@@ -320,15 +343,44 @@ namespace MemcardRex
                     hardInterface = null;
                     break;
 
+                case (int)HardwareInterface.Types.dexdrive:
+                    hardInterface = new DexDrive(deviceMode, commMode);
+                    break;
+
                 case (int) HardwareInterface.Types.memcarduino:
                     hardInterface = new MemCARDuino(deviceMode, commMode);
+                    break;
+
+                case (int) HardwareInterface.Types.ps1cardlink:
+                    hardInterface = new PS1CardLink(deviceMode, commMode);
+                    break;
+
+                case (int) HardwareInterface.Types.unirom:
+                    hardInterface = new Unirom(deviceMode, commMode);
+                    break;
+
+                case (int) HardwareInterface.Types.ps3mca:
+                    hardInterface = new PS3MemCardAdaptor(deviceMode, commMode);
                     break;
             }
 
             //Abort if the interface is not valid
             if (hardInterface == null) return;
 
-            string errMsg = hardInterface.Start(App.appSettings.CommunicationPort,App.appSettings.CommunicationSpeed );
+            //Set card slot
+            hardInterface.CardSlot = App.appSettings.CardSlot;
+
+            string errMsg;
+
+            //Send either serial port data or address data from TCP
+            if (deviceMode == (int)HardwareInterface.Modes.serial)
+            {
+                errMsg = hardInterface.Start(App.appSettings.CommunicationPort, App.appSettings.CommunicationSpeed);
+            }
+            else
+            {
+                errMsg = hardInterface.Start(App.appSettings.RemoteCommAddress, App.appSettings.RemoteCommPort);
+            }
 
             if(errMsg == null)
             {
@@ -336,10 +388,15 @@ namespace MemcardRex
             }
             else
             {
+                hardInterface.Stop();
+
+                if (deviceId != (int) HardwareInterface.Types.ps3mca)
+                    errMsg += "\n\nMake sure to select proper communication port and speed in preferences dialog";
+
                 var alert = new NSAlert()
                 {
                     AlertStyle = NSAlertStyle.Critical,
-                    InformativeText = errMsg + "\n\nMake sure to select proper communication port and speed in preferences dialog",
+                    InformativeText = errMsg,
                     MessageText = "Unable to start " + hardInterface.Name()
                 };
 
@@ -622,7 +679,7 @@ namespace MemcardRex
             }
             else
             {
-                if (memCard.SaveMemoryCard(memCard.cardLocation, memCard.cardType, false))
+                if (memCard.SaveMemoryCard(memCard.cardLocation, memCard.cardType, App.appSettings.FixCorruptedCards == 1))
                 {
                     //View.Window.Title = memCard.cardName;
                     View.Window.DocumentEdited = false;
@@ -748,7 +805,7 @@ namespace MemcardRex
                         break;
                 }
 
-                if(memCard.SaveMemoryCard(url.Path.ToString(), cardType, false))
+                if(memCard.SaveMemoryCard(url.Path.ToString(), cardType, App.appSettings.FixCorruptedCards == 1))
                 {
                     View.Window.Title = memCard.cardName;
                     View.Window.DocumentEdited = false;

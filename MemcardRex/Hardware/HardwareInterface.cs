@@ -4,15 +4,18 @@ namespace MemcardRex
 {
 	public class HardwareInterface
 	{
-		//private int _port;
+		private int _type;
 		private int _mode;
 		private int _commMode;
-		//private int _speed;
+		private int _cardSlot;
+		private int _frameCount = 1024;		//Default number of frames on a standard Memory Card
+        private UInt32 _lastChecksum;
+		private bool _storedInRam;
 
-		/// <summary>
-		/// All supported interface types
-		/// </summary>
-		public enum Types : int
+        /// <summary>
+        /// All supported interface types
+        /// </summary>
+        public enum Types : int
 		{
 			dexdrive,
 			memcarduino,
@@ -52,21 +55,62 @@ namespace MemcardRex
             set { _commMode = value; }
         }
 
+		public int CardSlot
+		{
+			get { return _cardSlot; }
+			set { _cardSlot = value; }
+		}
+
+		public int FrameCount
+		{
+			get { return _frameCount; }
+			set { _frameCount = value; }
+		}
+
+        public UInt32 LastChecksum
+        {
+            get { return _lastChecksum; }
+            set { _lastChecksum = value; }
+        }
+
+		public int Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
+
+        public bool StoredInRam
+        {
+            get { return _storedInRam; }
+			set { _storedInRam = value; }
+        }
+
         public HardwareInterface(int mode, int commMode)
 		{
 			_mode = mode;
 			_commMode = commMode;
+			_type = -1;
 		}
 
-		/// <summary>
-		/// Init hardware interface
-		/// </summary>
-		/// <param name="port">Serial or TCP port</param>
-		/// <param name="speed">Link speed</param>
-		/// <returns>Returns error message or null on success</returns>
-		public virtual string Start(string port, int speed)
+        public UInt32 CalculateChecksum(byte[] inBytes)
+        {
+            UInt32 returnVal = 0;
+            for (int i = 0; i < inBytes.Length; i++)
+            {
+                returnVal += (UInt32)inBytes[i];
+            }
+            return returnVal;
+        }
+
+        /// <summary>
+        /// Init hardware interface
+        /// </summary>
+        /// <param name="port">Serial or TCP port</param>
+        /// <param name="speed">Link speed</param>
+        /// <returns>Returns error message or null on success</returns>
+        public virtual string Start(string port, int speed)
 		{
-			return null;
+			return "This interface is yet not supported";
 		}
 
 		/// <summary>
@@ -83,7 +127,7 @@ namespace MemcardRex
 		/// <returns></returns>
 		public virtual string Name()
 		{
-			return "";
+			return "Dummy interface";
 		}
 
 		/// <summary>
@@ -113,7 +157,7 @@ namespace MemcardRex
 		/// <returns>Returns success of the operation</returns>
         public virtual bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
 		{
-			return true;
+			return false;
 		}
     }
 }

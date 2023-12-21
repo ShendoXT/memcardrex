@@ -206,7 +206,7 @@ namespace MemcardRex
 
         public MemCARDuino(int mode, int commMode) : base(mode, commMode)
 		{
-
+            Type = (int)Types.memcarduino;
         }
 	}
 }

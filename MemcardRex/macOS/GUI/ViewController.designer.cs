@@ -69,9 +69,6 @@ namespace MemcardRex
 		[Outlet]
 		AppKit.NSTableColumn TitleColumn { get; set; }
 
-		[Action ("ClickedButton:")]
-		partial void ClickedButton (Foundation.NSObject sender);
-
 		[Action ("compareTempBuffer:")]
 		partial void compareTempBuffer (Foundation.NSObject sender);
 

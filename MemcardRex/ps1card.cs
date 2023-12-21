@@ -1586,8 +1586,12 @@ namespace MemcardRex
             return true;
         }
 
-        //Save (export) Memory Card to a given byte stream
-        public byte[] saveMemoryCardStream(bool fixData)
+        /// <summary>
+        /// Save (export) Memory Card to a given byte stream
+        /// </summary>
+        /// <param name="fixData">Should the data be fixed if it's corrupted</param>
+        /// <returns></returns>
+        public byte[] SaveMemoryCardStream(bool fixData)
         {
             //Prepare data for saving
             loadDataToRawCard(fixData);
@@ -1596,11 +1600,15 @@ namespace MemcardRex
             return rawMemoryCard;
         }
 
-        //Open memory card from the given byte stream
-        public void openMemoryCardStream(byte[] memCardData, bool fixData)
+        /// <summary>
+        /// Open memory card from the given byte stream
+        /// </summary>
+        /// <param name="memCardData">Complete Memory Card data in raw format</param>
+        /// <param name="fixData">Should the data be fixed if it's corrupted</param>
+        public void OpenMemoryCardStream(byte[] memCardData, bool fixData)
         {
-            //Set the reference for the recieved data
-            rawMemoryCard = memCardData;
+            //Copy data to Memory Card buffer
+            Array.Copy(memCardData, rawMemoryCard, memCardData.Length);
 
             //Load Memory Card data from raw card
             loadDataFromRawCard();
@@ -1608,13 +1616,8 @@ namespace MemcardRex
             cardName = "Untitled";
 
             if (fixData) calculateXOR();
-            loadStringData();
             loadGMEComments(rawMemoryCard);
-            loadSlotTypes();
-            loadSaveSize();
-            loadPalette();
-            loadIcons();
-            loadIconFrames();
+            loadMemcardData();
 
             //Since the stream is of the unknown origin Memory Card is treated as edited
             changedFlag = true;

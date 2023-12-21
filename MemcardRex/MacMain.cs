@@ -8,7 +8,6 @@ namespace MemcardRex
 		{
 			NSApplication.Init ();
 			NSApplication.Main (args);
-
 		}
 	}
 }

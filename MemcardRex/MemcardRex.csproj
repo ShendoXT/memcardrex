@@ -59,6 +59,11 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Xml" />
+    <Reference Include="LibUsbDotNet.LibUsbDotNet">
+      <HintPath>..\packages\LibUsbDotNet.2.2.29\lib\net45\LibUsbDotNet.LibUsbDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -108,6 +113,10 @@
     <Compile Include="Hardware\HardwareInterface.cs" />
     <Compile Include="Hardware\MemCARDuino.cs" />
     <Compile Include="Support\xmlSettingsEditor.cs" />
+    <Compile Include="Hardware\PS1CardLink.cs" />
+    <Compile Include="Hardware\DexDrive.cs" />
+    <Compile Include="Hardware\Unirom.cs" />
+    <Compile Include="Hardware\PS3MemCardAdaptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

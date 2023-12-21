@@ -363,7 +363,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4qP-6r-3gO">
-                                <rect key="frame" x="5" y="67" width="377" height="16"/>
+                                <rect key="frame" x="5" y="38" width="377" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="DeviceLabel" id="sJw-iC-NYs">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -828,102 +828,40 @@ Gw
                                                 <items>
                                                     <menuItem title="DexDrive" id="Mtb-uZ-iu6">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="dexdriveRead:" target="Voe-Tx-rLC" id="YhS-Zo-Zue"/>
-                                                        </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="cwj-rS-znI"/>
                                                     <menuItem title="MemCARDuino" id="jJe-yP-vpb">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="memcarduinoRead:" target="Voe-Tx-rLC" id="vXn-NV-lBT"/>
-                                                        </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="yJn-zz-q7f"/>
                                                     <menuItem title="PS1CardLink" id="H9s-JI-s4D">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="cardlinkRead:" target="Voe-Tx-rLC" id="iNz-0P-HZ8"/>
-                                                        </connections>
                                                     </menuItem>
                                                     <menuItem title="PS1CardLink over TCP" id="aAA-l2-H3t">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="cardlinkReadTcp:" target="Voe-Tx-rLC" id="NhL-ii-4Tk"/>
-                                                        </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="Mxd-wI-qCv"/>
                                                     <menuItem title="Unirom" id="BDd-J1-ZwF">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="uniromRead:" target="Voe-Tx-rLC" id="qCz-x3-sbg"/>
-                                                        </connections>
                                                     </menuItem>
                                                     <menuItem title="Unirom over TCP" id="5ip-BR-k29">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="uniromReadTcp:" target="Voe-Tx-rLC" id="pDJ-VR-Vui"/>
-                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="tpw-PL-pjO"/>
+                                                    <menuItem title="PS3 Memory Card Adaptor" id="GEZ-Zi-OhD">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>
                                         <menuItem title="Write save data" id="1oM-MU-2c1">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Write save data" id="imd-sz-Q2x">
-                                                <items>
-                                                    <menuItem title="DexDrive" id="Lsh-ja-Glg">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="EyZ-Xh-f6t"/>
-                                                    <menuItem title="MemCARDuino" id="5Qe-ho-RjF">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="Udk-rx-sZR"/>
-                                                    <menuItem title="PS1CardLink" id="ZhI-bo-4E6">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem title="PS1CardLink over TCP" id="03h-xi-okB">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="fQY-GI-mkI"/>
-                                                    <menuItem title="Unirom" id="v3e-IR-mac">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem title="Unirom over TCP" id="eph-vc-Rpl">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
+                                            <menu key="submenu" title="Write save data" autoenablesItems="NO" id="imd-sz-Q2x"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="a3S-Id-FeK"/>
                                         <menuItem title="Format card" id="oZ6-6B-O5Z">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Format card" id="vF0-9o-YIK">
-                                                <items>
-                                                    <menuItem title="DexDrive" id="kEG-RL-dzz">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="6nU-rS-tc8"/>
-                                                    <menuItem title="MemCARDuino" id="Di5-LU-cjt">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="sey-FH-lId"/>
-                                                    <menuItem title="PS1CardLink" id="nUw-81-2kd">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem title="PS1CardLink over TCP" id="A5r-k9-2E2">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="FUM-d0-Tfr"/>
-                                                    <menuItem title="Unirom" id="vg2-2e-4Ks">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                    <menuItem title="Unirom over TCP" id="Gaj-rA-S7h">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
+                                            <menu key="submenu" title="Format card" autoenablesItems="NO" id="vF0-9o-YIK"/>
                                         </menuItem>
                                     </items>
                                 </menu>
@@ -956,6 +894,9 @@ Gw
                         <outlet property="editSaveHeaderMItem" destination="dRJ-4n-Yzg" id="S6M-Xo-HNh"/>
                         <outlet property="exportSaveMItem" destination="dQI-cb-smB" id="J7l-l6-7p2"/>
                         <outlet property="exportSaveRawMItem" destination="ZbS-wf-t0z" id="IT3-Sd-SvY"/>
+                        <outlet property="hardFormatMenu" destination="vF0-9o-YIK" id="hP7-0y-WSR"/>
+                        <outlet property="hardReadMenu" destination="3dp-Qe-Wee" id="E0y-ok-eNP"/>
+                        <outlet property="hardWriteMenu" destination="imd-sz-Q2x" id="gU3-3s-hfP"/>
                         <outlet property="importSaveMItem" destination="7ls-4R-UYJ" id="aZ3-z6-pmb"/>
                         <outlet property="pasteSaveTempBufferMItem" destination="gVA-U4-sdL" id="kpA-aU-BW6"/>
                         <outlet property="redoMItem" destination="VFX-tN-smY" id="KW0-Oc-NGT"/>

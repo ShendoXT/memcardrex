@@ -36,6 +36,15 @@ namespace MemcardRex
 		AppKit.NSMenuItem exportSaveRawMItem { get; set; }
 
 		[Outlet]
+		AppKit.NSMenu hardFormatMenu { get; set; }
+
+		[Outlet]
+		AppKit.NSMenu hardReadMenu { get; set; }
+
+		[Outlet]
+		AppKit.NSMenu hardWriteMenu { get; set; }
+
+		[Outlet]
 		AppKit.NSMenuItem importSaveMItem { get; set; }
 
 		[Outlet]
@@ -153,6 +162,21 @@ namespace MemcardRex
 			if (exportSaveRawMItem != null) {
 				exportSaveRawMItem.Dispose ();
 				exportSaveRawMItem = null;
+			}
+
+			if (hardFormatMenu != null) {
+				hardFormatMenu.Dispose ();
+				hardFormatMenu = null;
+			}
+
+			if (hardReadMenu != null) {
+				hardReadMenu.Dispose ();
+				hardReadMenu = null;
+			}
+
+			if (hardWriteMenu != null) {
+				hardWriteMenu.Dispose ();
+				hardWriteMenu = null;
 			}
 
 			if (importSaveMItem != null) {
