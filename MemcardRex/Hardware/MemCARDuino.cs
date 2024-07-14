@@ -1,29 +1,41 @@
 ﻿//MemCARDuino communication class
-//Shendo 2013
+//Shendo 2013 - 2023
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
 
-namespace MemCARDuinoCommunication
+namespace MemcardRex
 {
-    class MemCARDuino
-    {
+	public class MemCARDuino : HardwareInterface
+	{
         enum MCinoCommands { GETID = 0xA0, GETVER = 0xA1, MCR = 0xA2, MCW = 0xA3 };
         enum MCinoResponses { ERROR = 0xE0, GOOD = 0x47, BADCHECKSUM = 0x4E, BADSECTOR = 0xFF };
 
         //MCino communication port
         SerialPort OpenedPort = null;
 
+        //Name of the interface
+        string InterfaceName = "MemCARDuino";
+
         //Contains a firmware version of a detected device
         string FirmwareVersion = "0.0";
 
-        public string StartMemCARDuino(string ComPortName, int ComPortSpeed)
+        public override string Name()
+        {
+            return InterfaceName;
+        }
+
+        public override string Firmware()
+        {
+            return FirmwareVersion;
+        }
+
+        public override string Start(string ComPortName, int ComPortSpeed)
         {
             int PortBaudrate = 115200;
-            if(ComPortSpeed == 1) PortBaudrate = 38400;
+            if (ComPortSpeed == 1) PortBaudrate = 38400;
 
             //Define a port to open
             OpenedPort = new SerialPort(ComPortName, PortBaudrate, Parity.None, 8, StopBits.One);
@@ -48,7 +60,7 @@ namespace MemCARDuinoCommunication
             SendDataToPort((byte)MCinoCommands.GETID, 100);
             ReadData = ReadDataFromPort();
 
-            if(!"MCDINO".Equals(Encoding.UTF8.GetString(ReadData, 0, 6)))
+            if (!"MCDINO".Equals(Encoding.UTF8.GetString(ReadData, 0, 6)))
             {
                 //Maybe this is Arduino Leonardo or Micro
                 OpenedPort.DtrEnable = true;
@@ -72,16 +84,11 @@ namespace MemCARDuinoCommunication
             return null;
         }
 
-        //Cleanly stop working with MCino
-        public void StopMemCARDuino()
+        //Cleanly stop working with MemCARDuino
+        public override void Stop()
         {
+            if (OpenedPort == null) return;
             if (OpenedPort.IsOpen == true) OpenedPort.Close();
-        }
-
-        //Get the firmware version of MCino
-        public string GetFirmwareVersion()
-        {
-            return FirmwareVersion;
         }
 
         //Send MCino command on the opened COM port with a delay
@@ -110,7 +117,7 @@ namespace MemCARDuinoCommunication
         }
 
         //Read a specified frame of a Memory Card
-        public byte[] ReadMemoryCardFrame(ushort FrameNumber)
+        public override byte[] ReadMemoryCardFrame(ushort FrameNumber)
         {
             int DelayCounter = 0;
 
@@ -155,7 +162,7 @@ namespace MemCARDuinoCommunication
         }
 
         //Write a specified frame to a Memory Card
-        public bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
+        public override bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
         {
             int DelayCounter = 0;
 
@@ -171,7 +178,7 @@ namespace MemCARDuinoCommunication
             {
                 XorData ^= FrameData[i];
             }
-            
+
             OpenedPort.DiscardInBuffer();
 
             //Write a frame to the Memory Card
@@ -196,5 +203,11 @@ namespace MemCARDuinoCommunication
             //Data was not written sucessfully
             return false;
         }
-    }
+
+        public MemCARDuino(int mode, int commMode) : base(mode, commMode)
+		{
+            Type = (int)Types.memcarduino;
+        }
+	}
 }
+

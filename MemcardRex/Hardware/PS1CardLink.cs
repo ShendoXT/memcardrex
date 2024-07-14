@@ -1,19 +1,17 @@
-﻿//PS1CardLink communication class (based on MemCARDuino)
-//Shendo 2013
+﻿//PS1CardLink communication class
+//Shendo 2013 - 2024
 //lmiori92 2021: added support for TCP communication (e.g. Serial Wifi Bridge)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO.Ports;
 using System.Threading;
 using System.Net.Sockets;
 
-namespace PS1CardLinkCommunication
+namespace MemcardRex
 {
-    class PS1CardLink
-    {
-        enum PS1CLnkCommands { GETID = 0xA0, GETVER = 0xA1, MCR = 0xA2, MCW = 0xA3 };
+	public class PS1CardLink : HardwareInterface
+	{
+        enum PS1CLnkCommands { GETID = 0xA0, GETVER = 0xA1, MCR = 0xA2, MCW = 0xA3, MCPORT = 0xA4 };
         enum PS1CLnkResponses { ERROR = 0xE0, GOOD = 0x47, BADCHECKSUM = 0x4E, BADSECTOR = 0xFF };
 
         //PS1CLnk communication port
@@ -21,15 +19,35 @@ namespace PS1CardLinkCommunication
         TcpClient OpenTcpClient = null;
         NetworkStream TcpStream = null;
 
-        //Contains a software version of a detected device
-        string SoftwareVersion = "0.0";
-
         //Protocol setup
         int MaxTimeout5msTickCount = 18;
 
-        // This constructor is used to setup a Serial Port communication with PS1Link
-        public string StartPS1CardLink(string ComPortName, int ComPortSpeed)
+        //Name of the interface
+        string InterfaceName = "PS1CardLink";
+
+        //Contains a firmware version of a detected device
+        string FirmwareVersion = "0.0";
+
+        public override string Name()
         {
+            return InterfaceName;
+        }
+
+        public override string Firmware()
+        {
+            return FirmwareVersion;
+        }
+
+        public override string Start(string ComPortName, int ComPortSpeed)
+        {
+            //Check if PS1CardLink needs to start in TCP mode
+            if(base.Mode == (int)HardwareInterface.Modes.tcp)
+            {
+                //Comport name used as address
+                //Com port speed used as TCP port
+                return StartPS1CardLinkTCP(ComPortName, ComPortSpeed);
+            }
+
             int PortBaudrate = 115200;
             if (ComPortSpeed == 1) PortBaudrate = 38400;
 
@@ -57,7 +75,7 @@ namespace PS1CardLinkCommunication
             // Try to setup the communication link
             try
             {
-                OpenTcpClient  = new TcpClient(Address, Port);
+                OpenTcpClient = new TcpClient(Address, Port);
                 TcpStream = OpenTcpClient.GetStream();
             }
             catch (Exception e)
@@ -96,14 +114,21 @@ namespace PS1CardLinkCommunication
                 return ErrorString;
             }
 
-            SoftwareVersion = (ReadData[0] >> 4).ToString() + "." + (ReadData[0] & 0xF).ToString();
+            FirmwareVersion = (ReadData[0] >> 4).ToString() + "." + (ReadData[0] & 0xF).ToString();
+
+            //Set card slot if running version 1.1 or higher
+            if (ReadData[0] >= 0x11)
+            {
+                SendDataToPort((byte)PS1CLnkCommands.MCPORT, 0);
+                SendDataToPort((byte)CardSlot, 0);
+            }
 
             //Everything went well, PS1CLnk is ready to be used
             return null;
         }
 
         //Cleanly stop working with PS1CLnk
-        public void StopPS1CardLink()
+        public override void Stop()
         {
             if (OpenedPort != null)
             {
@@ -114,12 +139,6 @@ namespace PS1CardLinkCommunication
                 TcpStream.Close();
                 OpenTcpClient.Close();
             }
-        }
-
-        //Get the software version of PS1CLnk
-        public string GetSoftwareVersion()
-        {
-            return SoftwareVersion;
         }
 
         //Send PS1CLnk command on the opened COM port with a delay
@@ -163,7 +182,7 @@ namespace PS1CardLinkCommunication
             //Read data from PS1CLnk
             if (OpenedPort != null)
             {
-                if (OpenedPort.BytesToRead != 0) BytesRead = OpenedPort.Read(InputStream, 0, 256);                
+                if (OpenedPort.BytesToRead != 0) BytesRead = OpenedPort.Read(InputStream, 0, 256);
             }
             else if (OpenTcpClient != null)
             {
@@ -184,7 +203,7 @@ namespace PS1CardLinkCommunication
         {
             if (OpenedPort != null)
             {
-                return OpenedPort.BytesToRead;                
+                return OpenedPort.BytesToRead;
             }
             else if (OpenTcpClient != null)
             {
@@ -236,7 +255,7 @@ namespace PS1CardLinkCommunication
         }
 
         //Read a specified frame of a Memory Card
-        public byte[] ReadMemoryCardFrame(ushort FrameNumber)
+        public override byte[] ReadMemoryCardFrame(ushort FrameNumber)
         {
             //Buffer for storing read data from PS1CLnk
             byte[] ReadData = null;
@@ -283,7 +302,7 @@ namespace PS1CardLinkCommunication
         }
 
         //Write a specified frame to a Memory Card
-        public bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
+        public override bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
         {
             //Buffer for storing read data from PS1CLnk
             byte[] ReadData = null;
@@ -297,7 +316,7 @@ namespace PS1CardLinkCommunication
             {
                 XorData ^= FrameData[i];
             }
-            
+
             FlushPort();
 
             //Write a frame to the Memory Card
@@ -319,5 +338,10 @@ namespace PS1CardLinkCommunication
             //Data was not written sucessfully
             return false;
         }
-    }
+
+        public PS1CardLink(int mode, int commMode) : base(mode, commMode)
+        {
+            Type = (int)Types.ps1cardlink;
+        }
+	}
 }

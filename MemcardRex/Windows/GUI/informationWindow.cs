@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -12,7 +13,7 @@ namespace MemcardRex
     public partial class informationWindow : Form
     {
         //Save icons
-        Bitmap[] iconData;
+        Bitmap[] iconData = new Bitmap[3];
         int iconIndex = 0;
         int maxCount = 1;
         int iconInterpolationMode = 0;
@@ -30,9 +31,11 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, ushort saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize,  Bitmap[] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
         {
             string ocupiedSlots = null;
+
+            BmpBuilder bmpImage = new BmpBuilder();
 
             iconInterpolationMode = interpolationMode;
             iconSize = iconPropertiesSize;
@@ -42,27 +45,14 @@ namespace MemcardRex
             sizeLabel.Text = saveSize.ToString() + " KB";
             iconFramesLabel.Text = iconFrames.ToString();
             maxCount = iconFrames;
-            iconData = saveIcons;
             iconBackColor = backColor;
+            regionLabel.Text = saveRegion;
 
-            //Show region string
-            switch(saveRegion)
+            //Create icons
+            for(int i=0; i<3; i++)
             {
-                default:        //Region custom, show hex
-                    regionLabel.Text = "0x" + saveRegion.ToString("X4");
-                    break;
-
-                case 0x4142:    //America
-                    regionLabel.Text = "America";
-                    break;
-
-                case 0x4542:    //Europe
-                    regionLabel.Text = "Europe";
-                    break;
-
-                case 0x4942:    //Japan
-                    regionLabel.Text = "Japan";
-                    break;
+                iconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(saveIcons[slotNumbers[0], i])));
+                iconData[i].RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
 
             //Get ocupied slots

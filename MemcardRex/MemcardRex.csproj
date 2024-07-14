@@ -63,7 +63,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>default</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -72,7 +72,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>default</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
@@ -82,78 +82,81 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\aboutWindow.cs">
+    <Compile Include="Support\BmpBuilder.cs" />
+    <Compile Include="Support\ProgramSettings.cs" />
+    <Compile Include="Support\xmlSettingsEditor.cs" />
+    <Compile Include="Windows\GUI\aboutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\aboutWindow.Designer.cs">
+    <Compile Include="Windows\GUI\aboutWindow.Designer.cs">
       <DependentUpon>aboutWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Hardware\CardLink.cs" />
-    <Compile Include="GUI\commentsWindow.cs">
+    <Compile Include="Windows\GUI\commentsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\commentsWindow.Designer.cs">
+    <Compile Include="Windows\GUI\commentsWindow.Designer.cs">
       <DependentUpon>commentsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\compareWindow.cs">
+    <Compile Include="Windows\GUI\compareWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\compareWindow.Designer.cs">
+    <Compile Include="Windows\GUI\compareWindow.Designer.cs">
       <DependentUpon>compareWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Hardware\Unirom.cs" />
-    <Compile Include="Hardware\DexDrive.cs" />
-    <Compile Include="GUI\cardReaderWindow.cs">
+    <Compile Include="Windows\GUI\cardReaderWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\cardReaderWindow.designer.cs">
+    <Compile Include="Windows\GUI\cardReaderWindow.designer.cs">
       <DependentUpon>cardReaderWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\headerWindow.cs">
+    <Compile Include="Windows\GUI\headerWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\headerWindow.Designer.cs">
+    <Compile Include="Windows\GUI\headerWindow.Designer.cs">
       <DependentUpon>headerWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\iconWindow.cs">
+    <Compile Include="Windows\GUI\iconWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\iconWindow.Designer.cs">
+    <Compile Include="Windows\GUI\iconWindow.Designer.cs">
       <DependentUpon>iconWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\informationWindow.cs">
+    <Compile Include="Windows\GUI\informationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\informationWindow.Designer.cs">
+    <Compile Include="Windows\GUI\informationWindow.Designer.cs">
       <DependentUpon>informationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\mainWindow.cs">
+    <Compile Include="Windows\GUI\mainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\mainWindow.Designer.cs">
+    <Compile Include="Windows\GUI\mainWindow.Designer.cs">
       <DependentUpon>mainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Hardware\MemCARDduino.cs" />
-    <Compile Include="GUI\pluginsWindow.cs">
+    <Compile Include="Windows\GUI\mainWindow.Theme.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Windows\GUI\pluginsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\pluginsWindow.Designer.cs">
+    <Compile Include="Windows\GUI\pluginsWindow.Designer.cs">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\preferencesWindow.cs">
+    <Compile Include="Windows\GUI\preferencesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\preferencesWindow.Designer.cs">
+    <Compile Include="Windows\GUI\preferencesWindow.Designer.cs">
       <DependentUpon>preferencesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Hardware\PS3MemCardAdaptor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -161,41 +164,40 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="xmlSettingsEditor.cs" />
-    <EmbeddedResource Include="GUI\aboutWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\aboutWindow.resx">
       <DependentUpon>aboutWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\commentsWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\commentsWindow.resx">
       <DependentUpon>commentsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\compareWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\compareWindow.resx">
       <DependentUpon>compareWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\cardReaderWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\cardReaderWindow.resx">
       <DependentUpon>cardReaderWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\headerWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\headerWindow.resx">
       <DependentUpon>headerWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\iconWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\iconWindow.resx">
       <DependentUpon>iconWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\informationWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\informationWindow.resx">
       <DependentUpon>informationWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\mainWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\mainWindow.resx">
       <DependentUpon>mainWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\pluginsWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\pluginsWindow.resx">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\preferencesWindow.resx">
+    <EmbeddedResource Include="Windows\GUI\preferencesWindow.resx">
       <DependentUpon>preferencesWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -223,6 +225,12 @@
     </Compile>
     <Compile Include="ps1card.cs" />
     <Compile Include="rexPluginSystem.cs" />
+    <Compile Include="Hardware\DexDrive.cs" />
+    <Compile Include="Hardware\HardwareInterface.cs" />
+    <Compile Include="Hardware\MemCARDuino.cs" />
+    <Compile Include="Hardware\PS1CardLink.cs" />
+    <Compile Include="Hardware\PS3MemCardAdaptor.cs" />
+    <Compile Include="Hardware\Unirom.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -320,9 +328,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\formatsave.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Additional\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\memcardrex.ico" />

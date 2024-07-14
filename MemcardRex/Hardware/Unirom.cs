@@ -8,20 +8,10 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Text;
 
-namespace UniromCommunication
+namespace MemcardRex
 {
-    class Unirom
+    class Unirom : HardwareInterface
     {
-        public enum Mode {
-            Read,
-            Write
-        };
-
-        enum ComMode { 
-            Serial,
-            TCP
-        }
-
         //Unirom serial port
         private SerialPort OpenedPort = null;
 
@@ -29,34 +19,25 @@ namespace UniromCommunication
         TcpClient OpenTcpClient = null;
         NetworkStream TcpStream = null;
 
-        //Flag indicating if Unirom finished storing data to RAM on the PS1
-        private bool storedInRam = false;
+        private bool firstRun = true;
 
-        private UInt32 lastChecksum = 0;
+        //Name of the interface
+        string InterfaceName = "Unirom";
 
-        //Serial or TCP
-        private int activeComMode;
-
-        public bool StoredInRam
+        public override string Name()
         {
-            get { return storedInRam; }
-        }
-
-        public UInt32 LastChecksum
-        {
-            get { return lastChecksum;  }
-            set { lastChecksum = value; }
+            return InterfaceName;
         }
 
         //Get 4 byte array from Uint32 value
-        private byte[] byteFromUint32 (UInt32 value)
+        private byte[] byteFromUint32(UInt32 value)
         {
             byte[] arr = new byte[4];
 
-            arr[0] = (byte) value;
-            arr[1] = (byte) (value << 8);
-            arr[2] = (byte) (value << 16);
-            arr[3] = (byte) (value << 24);
+            arr[0] = (byte)value;
+            arr[1] = (byte)(value << 8);
+            arr[2] = (byte)(value << 16);
+            arr[3] = (byte)(value << 24);
 
             return arr;
         }
@@ -72,20 +53,10 @@ namespace UniromCommunication
             return value;
         }
 
-        public UInt32 CalculateChecksum(byte[] inBytes)
-        {
-            UInt32 returnVal = 0;
-            for (int i = 0; i < inBytes.Length; i++)
-            {
-                returnVal += (UInt32)inBytes[i];
-            }
-            return returnVal;
-        }
-
         //Clear input buffer
         private void FlushInput()
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if(base.Mode == (int) Modes.serial)
                 OpenedPort.DiscardInBuffer();
             else
                 PortReadExisting();
@@ -94,15 +65,15 @@ namespace UniromCommunication
         //Write string data to opened port
         private void PortWrite(string message)
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 OpenedPort.Write(message);
             else
             {
                 char[] msgData = message.ToCharArray();
 
-                for(int i = 0; i < msgData.Length; i++)
+                for (int i = 0; i < msgData.Length; i++)
                 {
-                    TcpStream.WriteByte((byte) msgData[i]);
+                    TcpStream.WriteByte((byte)msgData[i]);
                 }
             }
         }
@@ -110,7 +81,7 @@ namespace UniromCommunication
         //Write binary data to opened port
         private void PortWrite(byte[] buffer, int offset, int count)
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 OpenedPort.Write(buffer, offset, count);
             else
                 TcpStream.Write(buffer, offset, count);
@@ -119,7 +90,7 @@ namespace UniromCommunication
         //Read binary data from opened port
         private void PortRead(byte[] buffer, int offset, int count)
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 OpenedPort.Read(buffer, offset, count);
             else
                 TcpStream.Read(buffer, offset, count);
@@ -128,7 +99,7 @@ namespace UniromCommunication
         //Read single byte from the opened port
         private int PortReadByte()
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 return OpenedPort.ReadByte();
             else
                 return TcpStream.ReadByte();
@@ -137,7 +108,7 @@ namespace UniromCommunication
         //Read all available data from the port
         private string PortReadExisting()
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 return OpenedPort.ReadExisting();
             else
             {
@@ -152,7 +123,7 @@ namespace UniromCommunication
         //Return number of bytes waiting in the input buffer
         private int PortBytesToRead()
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 return OpenedPort.BytesToRead;
             else
             {
@@ -163,7 +134,7 @@ namespace UniromCommunication
         //Return number of bytes waiting in the output buffer
         private int PortBytesToWrite()
         {
-            if (activeComMode == (int)ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 return OpenedPort.BytesToWrite;
             else
             {
@@ -172,14 +143,14 @@ namespace UniromCommunication
         }
 
         //Communication init sequence
-        private string InitUnirom(string ComPortName, int cardSlot, int mode, int frameCount)
+        private string InitUnirom(string ComPortName)
         {
             int timeout = 100;
 
             //Start clean
             FlushInput();
 
-            if (mode == (int)Mode.Read)
+            if(base.CommMode == (int) CommModes.read)
             {
                 PortWrite("MCDN");
                 Thread.Sleep(200);
@@ -198,8 +169,6 @@ namespace UniromCommunication
                     return "Unirom was not detected on '" + ComPortName + "' port.";
             }
 
-            Console.WriteLine("Dotud");
-
             //Switch to V2 protocol
             PortWrite("UPV2");
 
@@ -216,49 +185,39 @@ namespace UniromCommunication
             }
 
             //Send slot we want to use
-            PortWrite(byteFromUint32((UInt32)cardSlot), 0, 4);
+            PortWrite(byteFromUint32((UInt32)CardSlot), 0, 4);
 
             //Start transfer
-            if (mode == (int)Mode.Read)
+            if (base.CommMode == (int)CommModes.read)
             {
                 PortWrite("MCRD");
-            }
-            else
-            {
-                //Number of bytes to write
-                PortWrite(BitConverter.GetBytes(frameCount * 128), 0, 4);
-
-                //Checksum
-                PortWrite(BitConverter.GetBytes(lastChecksum), 0, 4);
-
-                lastChecksum = 0;
             }
 
             //Everything went well, Unirom is available to be used
             return null;
         }
 
-        public string StartUnirom(string ComPortName, int cardSlot, int mode, int frameCount)
+        public override string Start(string ComPortName, int tcpPort)
         {
-            //This is serial communication
-            activeComMode = (int) ComMode.Serial;
+            //Start TCP mode if it's active
+            if(base.Mode == (int) Modes.tcp)
+            {
+                return StartUniromTCP(ComPortName, tcpPort);
+            }
 
             //Define a port to open
             OpenedPort = new SerialPort(ComPortName, 115200, Parity.None, 8, StopBits.One);
             OpenedPort.ReadBufferSize = 4096;
 
             //Try to open a selected port (in case of an error return a descriptive string)
-            try{ OpenedPort.Open(); }
+            try { OpenedPort.Open(); }
             catch (Exception e) { return e.Message; }
 
-            return InitUnirom(ComPortName, cardSlot, mode, frameCount);
+            return InitUnirom(ComPortName);
         }
 
-        public string StartUniromTCP(string remoteAddress, int remotePort, int cardSlot, int mode, int frameCount)
+        public string StartUniromTCP(string remoteAddress, int remotePort)
         {
-            //This is TCP communication
-            activeComMode = (int) ComMode.TCP;
-
             //Try to set up comm link
             try
             {
@@ -271,15 +230,15 @@ namespace UniromCommunication
             catch (Exception e)
             { return e.Message; }
 
-            return InitUnirom(remoteAddress + ":" + remotePort.ToString(), cardSlot, mode, frameCount);
+            return InitUnirom(remoteAddress + ":" + remotePort.ToString());
         }
 
-        public byte[] ReadMemoryCardFrame(int frameNumber)
+        public override byte[] ReadMemoryCardFrame(ushort frameNumber)
         {
             byte[] tempData = new byte[16];
             int timeout = 100;
 
-            if (!storedInRam)
+            if (!StoredInRam)
             {
                 //If data is still not being ready wait for the next cycle
                 if (PortBytesToRead() < 12)
@@ -302,7 +261,7 @@ namespace UniromCommunication
                 PortRead(sizeData, 0, 4);
 
                 //Unirom finished storing data to RAM
-                storedInRam = true;
+                StoredInRam = true;
 
                 Thread.Sleep(10);
 
@@ -352,13 +311,31 @@ namespace UniromCommunication
                 while (PortBytesToRead() < 4) ;
                 PortRead(tempData, 0, 4);
 
-                lastChecksum = Uint32FromByte(tempData);
+                LastChecksum = Uint32FromByte(tempData);
             }
 
             return frameData;
         }
 
-        public bool WriteMemoryCardChunk(ushort FrameNumber, byte[] ChunkData)
+        public override bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
+        {
+            if (firstRun)
+            {
+                //Number of bytes to write
+                PortWrite(BitConverter.GetBytes(FrameCount * 2048), 0, 4);
+
+                //Checksum
+                PortWrite(BitConverter.GetBytes(LastChecksum), 0, 4);
+
+                LastChecksum = 0;
+                firstRun = false;
+            }
+
+            //Unirom uses 2048 byte chunks to write data
+            return WriteMemoryCardChunk(FrameData);
+        }
+
+        public bool WriteMemoryCardChunk(byte[] ChunkData)
         {
             ulong chunkChecksum = 0;
 
@@ -417,15 +394,20 @@ namespace UniromCommunication
         }
 
         //Cleanly close Unirom communication
-        public void StopUnirom()
+        public override void Stop()
         {
-            if (activeComMode == (int) ComMode.Serial)
+            if (base.Mode == (int)Modes.serial)
                 OpenedPort.Close();
             else
             {
                 if (TcpStream != null) TcpStream.Close();
-                if (TcpStream !=null) OpenTcpClient.Close();
+                if (TcpStream != null) OpenTcpClient.Close();
             }
+        }
+
+        public Unirom(int mode, int commMode) : base(mode, commMode)
+        {
+            Type = (int)Types.unirom;
         }
     }
 }

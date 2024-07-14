@@ -66,7 +66,7 @@
             // 
             this.appNameLabel.BackColor = System.Drawing.Color.Transparent;
             this.appNameLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.appNameLabel.ForeColor = System.Drawing.Color.White;
+            this.appNameLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.appNameLabel.Location = new System.Drawing.Point(4, 4);
             this.appNameLabel.Margin = new System.Windows.Forms.Padding(0);
             this.appNameLabel.Name = "appNameLabel";
@@ -77,7 +77,7 @@
             // 
             this.appVersionLabel.BackColor = System.Drawing.Color.Transparent;
             this.appVersionLabel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.appVersionLabel.ForeColor = System.Drawing.Color.White;
+            this.appVersionLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.appVersionLabel.Location = new System.Drawing.Point(0, 0);
             this.appVersionLabel.Name = "appVersionLabel";
             this.appVersionLabel.Size = new System.Drawing.Size(115, 18);
@@ -95,7 +95,7 @@
             // 
             this.compileDateLabel.BackColor = System.Drawing.Color.Transparent;
             this.compileDateLabel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.compileDateLabel.ForeColor = System.Drawing.Color.White;
+            this.compileDateLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.compileDateLabel.Location = new System.Drawing.Point(142, 0);
             this.compileDateLabel.Name = "compileDateLabel";
             this.compileDateLabel.Size = new System.Drawing.Size(150, 18);
@@ -104,7 +104,7 @@
             // 
             // topPanel
             // 
-            this.topPanel.BackColor = System.Drawing.Color.DimGray;
+            this.topPanel.BackColor = System.Drawing.SystemColors.Highlight;
             this.topPanel.Controls.Add(this.appNameLabel);
             this.topPanel.Controls.Add(this.panel1);
             this.topPanel.Location = new System.Drawing.Point(0, 0);

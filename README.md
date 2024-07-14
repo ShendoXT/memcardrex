@@ -2,16 +2,13 @@
 ### Advanced PlayStation 1 Memory Card editor
 ![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
 
-<br>**Features:**
-* Tabbed interface - multiple Memory Cards can be opened at the same time.
-* Ability to copy, delete, restore, export, import and edit saves.
-* Plugin support for 3rd party save editors.
-* Hardware interfaces for communication with real Memory Cards.
+<b>Requirements:</b>
+* .NET Framework 4.8 (Thanks Microsoft 😐).
 
-<br>**Requirements:**
-* .NET Framework 4.8.
+<b>Extras:</b>
+* Windows® Vista™ or 7 for the glass status bar.
 
-<br>**Supported Memory Card formats:**
+<b>Supported Memory Card formats:</b>
 * ePSXe/PSEmu Pro Memory Card(*.mcr)
 * DexDrive Memory Card(*.gme)
 * pSX/AdriPSX Memory Card(*.bin)
@@ -28,7 +25,7 @@
 * PS Vita "MCX" PocketStation Memory Card(*.BIN)
 * POPStarter Virtual Memory Card(*.VMC)
 
-<br>**Supported single save formats:**
+<b>Supported single save formats:</b>
 * PSXGame Edit single save(*.mcs)
 * XP, AR, GS, Caetla single save(*.psx)
 * Memory Juggler(*.ps1)
@@ -41,47 +38,31 @@
 MemcardRex supports communication with the real Memory Cards via external devices.
 <br>Make sure to select a proper COM port in Options->Preferences.
 
-<details>
-<summary>1. DexDrive</summary>
-Original way of transferring data from MemoryCard to PC and vice versa albeit a little quirky.
+<b>1. DexDrive</b>
+<br>Original way of transferring data from MemoryCard to PC and vice versa albeit a little quirky.
 <br>If you encounter problems, unplug power from DexDrive, unplug it from COM port and connect it all again.
 
 It is recommended that a power cord is connected to DexDrive, otherwise some cards won't be detected.
 <br>Works with native COM port or USB based adapters.
-</details>
-</summary>
 
-<details>
-<summary>2. MemCARDuino</summary>
-MemCARDuino is an open source Memory Card communication software for various Arduino boards.
-https://github.com/ShendoXT/memcarduino
-</details>
-</summary>
+<b>2. MemCARDuino</b>
+<br>[MemCARDuino](https://github.com/ShendoXT/memcarduino) is an open source Memory Card communication software for various Arduino boards.
 
-<details>
-<summary>3. PS1CardLink</summary>
-PS1CardLink is a software for the actual PlayStation and PSOne consoles.
+<b>3. PS1CardLink</b>
+<br>[PS1CardLink](https://github.com/ShendoXT/ps1cardlink) is a software for the actual PlayStation and PSOne consoles.
 <br>It requires an official or home made TTL serial cable for communication with PC.
 
 With it your console becomes a Memory Card reader similar to the DexDrive and MemCARDuino.
 
 MemcardRex can also talk to the serial port remotely by using a Serial Port Bridge like [esp-link](https://github.com/jeelabs/esp-link).
 <br>It conveniently fits into a PSOne which has otherwise no external hardware ports.
-<br>https://github.com/ShendoXT/ps1cardlink
-</details>
-</summary>
 
-<details>
-<summary>4. Unirom</summary>
-Unirom is a shell for the PlayStation and PSOne consoles.
+<b>4. Unirom</b>
+<br>[Unirom](https://unirom.github.io) is a shell for the PlayStation and PSOne consoles.
 <br>It requires an official or home made TTL serial cable for communication with PC.
-<br>https://unirom.github.io.
-</details>
-</summary>
 
-<details>
-<summary>5. PS3 Memory Card Adaptor</summary>
-The PS3 Memory Card Adaptor is an official Sony USB adapter that allows reading and writing PS1 Memory Cards on a PlayStation 3.
+<b>5. PS3 Memory Card Adaptor</b>
+<br>The PS3 Memory Card Adaptor is an official Sony USB adapter that allows reading and writing PS1 Memory Cards on a PlayStation 3.
 <br>To use it on a Windows PC, a custom USB driver needs to be installed.
  
 This USB driver can be easily created and installed using [Zadig](https://zadig.akeo.ie) by following these steps:
@@ -92,15 +73,13 @@ This USB driver can be easily created and installed using [Zadig](https://zadig.
 * After about 30 seconds Zadig should show a message that the driver was installed successfully.
 
 With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you should now be able to read, write and format PS1 Memory Cards.
-</details>
-</summary>
 
 ### Credits
-**Authors:**
+<b>Authors:</b>
 <br>Alvaro Tanarro, bitrot-alpha, lmiori92, Nico de Poel, KuromeSan, Robxnano, Shendo.
 
-**Beta testers:**
+<b>Beta testers:</b>
 <br>Gamesoul Master, Xtreme2damax and Carmax91.
 
-**Thanks to:**
+<b>Thanks to:</b>
 <br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e and DeadlySystem.

@@ -1,4 +1,7 @@
-﻿namespace MemcardRex
+﻿using System;
+using System.ComponentModel;
+
+namespace MemcardRex
 {
     partial class cardReaderWindow
     {
@@ -29,11 +32,9 @@
         private void InitializeComponent()
         {
             this.abortButton = new System.Windows.Forms.Button();
-            this.mainProgressBar = new System.Windows.Forms.ProgressBar();
-            this.backgroundReader = new System.ComponentModel.BackgroundWorker();
-            this.infoLabel = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.deviceLabel = new System.Windows.Forms.Label();
             this.spacerLabel = new System.Windows.Forms.Label();
-            this.backgroundWriter = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // abortButton
@@ -46,31 +47,23 @@
             this.abortButton.UseVisualStyleBackColor = true;
             this.abortButton.Click += new System.EventHandler(this.OKbutton_Click);
             // 
-            // mainProgressBar
+            // progressBar
             // 
-            this.mainProgressBar.Location = new System.Drawing.Point(4, 24);
-            this.mainProgressBar.Maximum = 1024;
-            this.mainProgressBar.Name = "mainProgressBar";
-            this.mainProgressBar.Size = new System.Drawing.Size(300, 16);
-            this.mainProgressBar.TabIndex = 5;
+            this.progressBar.Location = new System.Drawing.Point(4, 24);
+            this.progressBar.Maximum = 1024;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(300, 16);
+            this.progressBar.TabIndex = 5;
             // 
-            // backgroundReader
+            // deviceLabel
             // 
-            this.backgroundReader.WorkerReportsProgress = true;
-            this.backgroundReader.WorkerSupportsCancellation = true;
-            this.backgroundReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundReader_DoWork);
-            this.backgroundReader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundReader_ProgressChanged);
-            this.backgroundReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundReader_RunWorkerCompleted);
-            // 
-            // infoLabel
-            // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(4, 5);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(106, 13);
-            this.infoLabel.TabIndex = 6;
-            this.infoLabel.Text = "infoLabelPlaceholder";
-            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.deviceLabel.AutoSize = true;
+            this.deviceLabel.Location = new System.Drawing.Point(4, 5);
+            this.deviceLabel.Name = "deviceLabel";
+            this.deviceLabel.Size = new System.Drawing.Size(106, 13);
+            this.deviceLabel.TabIndex = 6;
+            this.deviceLabel.Text = "infoLabelPlaceholder";
+            this.deviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // spacerLabel
             // 
@@ -80,23 +73,14 @@
             this.spacerLabel.Size = new System.Drawing.Size(300, 2);
             this.spacerLabel.TabIndex = 9;
             // 
-            // backgroundWriter
-            // 
-            this.backgroundWriter.WorkerReportsProgress = true;
-            this.backgroundWriter.WorkerSupportsCancellation = true;
-            this.backgroundWriter.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWriter_DoWork);
-            this.backgroundWriter.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWriter_ProgressChanged);
-            this.backgroundWriter.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWriter_RunWorkerCompleted);
-            // 
             // cardReaderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(308, 81);
-            this.ControlBox = false;
             this.Controls.Add(this.spacerLabel);
-            this.Controls.Add(this.infoLabel);
-            this.Controls.Add(this.mainProgressBar);
+            this.Controls.Add(this.deviceLabel);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.abortButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -105,18 +89,16 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "cardReaderWindow";
+            this.Load += new System.EventHandler(this.cardReaderWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
-
         #endregion
 
         private System.Windows.Forms.Button abortButton;
-        private System.Windows.Forms.ProgressBar mainProgressBar;
-        private System.ComponentModel.BackgroundWorker backgroundReader;
-        private System.Windows.Forms.Label infoLabel;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label deviceLabel;
         private System.Windows.Forms.Label spacerLabel;
-        private System.ComponentModel.BackgroundWorker backgroundWriter;
     }
 }

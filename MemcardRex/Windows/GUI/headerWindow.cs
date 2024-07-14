@@ -19,7 +19,7 @@ namespace MemcardRex
         //Save header data
         public string prodCode = null;
         public string saveIdentifier = null;
-        public ushort saveRegion = 0;
+        public string saveRegion = null;
 
         //Custom save region (If the save uses nonstandard region)
         private ushort customSaveRegion = 0;
@@ -35,34 +35,13 @@ namespace MemcardRex
         }
 
         //Initialize dialog by loading provided values
-        public void initializeDialog(string applicationName, string dialogTitle, string prodCode, string identifier, ushort region)
+        public void initializeDialog(string applicationName, string dialogTitle, string prodCode, string identifier, string region)
         {
             appName = applicationName;
             this.Text = dialogTitle;
             prodCodeTextbox.Text = prodCode;
             identifierTextbox.Text = identifier;
-
-            //Check what region is selected
-            switch (region)
-            {
-                default:        //Region custom, show hex
-                    customSaveRegion = region;
-                    regionCombobox.Items.Add("0x" + region.ToString("X4"));
-                    regionCombobox.SelectedIndex = 3;
-                    break;
-
-                case 0x4142:    //America
-                    regionCombobox.SelectedIndex = 0;
-                    break;
-
-                case 0x4542:    //Europe
-                    regionCombobox.SelectedIndex = 1;
-                    break;
-
-                case 0x4942:    //Japan
-                    regionCombobox.SelectedIndex = 2;
-                    break;
-            }
+            regionCombobox.Text = region;
 
             //A fix for selected all behaviour
             prodCodeTextbox.Select(prodCodeTextbox.Text.Length, 0);
@@ -87,26 +66,7 @@ namespace MemcardRex
                 //String is valid
                 prodCode = prodCodeTextbox.Text;
                 saveIdentifier = identifierTextbox.Text;
-
-                //Set the save region
-                switch (regionCombobox.SelectedIndex)
-                {
-                    default:        //Custom region
-                        saveRegion = customSaveRegion;
-                        break;
-
-                    case 0:    //America
-                        saveRegion = 0x4142;
-                        break;
-
-                    case 1:    //Europe
-                        saveRegion = 0x4542;
-                        break;
-
-                    case 2:    //Japan
-                        saveRegion = 0x4942;
-                        break;
-                }
+                saveRegion = regionCombobox.Text;
 
                 //OK is pressed
                 okPressed = true;

@@ -1,16 +1,14 @@
 ﻿//DexDrive communication class
 //Based on the various sources around the internet
-//Shendo 2012 - 2013
+//Shendo 2012 - 2023
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO.Ports;
 using System.Threading;
 
-namespace DexDriveCommunication
+namespace MemcardRex
 {
-    class DexDrive
+    class DexDrive : HardwareInterface
     {
         enum DexCommands { INIT = 0x00, STATUS = 0x01, READ = 0x02, WRITE = 0x04, LIGHT = 0x07, MAGIC_HANDSHAKE = 0x27 };
         enum DexResponses { POUT = 0x20, ERROR = 0x21, NOCARD = 0x22, CARD = 0x23, WRITE_OK = 0x28, WRITE_SAME = 0x29, WAIT = 0x2A, ID = 0x40, DATA = 0x41 };
@@ -18,11 +16,14 @@ namespace DexDriveCommunication
         //DexDrive communication port
         SerialPort OpenedPort = null;
 
+        //Name of the interface
+        string InterfaceName = "DexDrive";
+
         //Contains a firmware version of a detected device
-        string FirmwareVersion = null;
+        string FirmwareVersion = "0.0";
 
         //Init DexDrive (string returned if an error happened)
-        public string StartDexDrive(string ComPortName)
+        public override string Start(string ComPortName, int dummy)
         {
             //Define a port to open
             OpenedPort = new SerialPort(ComPortName, 38400, Parity.None, 8, StopBits.One);
@@ -80,13 +81,17 @@ namespace DexDriveCommunication
         }
 
         //Cleanly stop working with DexDrive
-        public void StopDexDrive()
+        public override void Stop()
         {
             if (OpenedPort.IsOpen == true) OpenedPort.Close();
         }
 
-        //Get the firmware version of a DexDrive
-        public string GetFirmwareVersion()
+        public override string Name()
+        {
+            return InterfaceName;
+        }
+
+        public override string Firmware()
         {
             return FirmwareVersion;
         }
@@ -112,13 +117,13 @@ namespace DexDriveCommunication
             byte[] InputStream = new byte[256];
 
             //Read data from DexDrive
-            if(OpenedPort.BytesToRead != 0)OpenedPort.Read(InputStream, 0, 256);
+            if (OpenedPort.BytesToRead != 0) OpenedPort.Read(InputStream, 0, 256);
 
             return InputStream;
         }
 
         //Read a specified frame of a Memory Card
-        public byte[] ReadMemoryCardFrame(ushort FrameNumber)
+        public override byte[] ReadMemoryCardFrame(ushort FrameNumber)
         {
             //Buffer for storing read data from the DexDrive
             byte[] ReadData = null;
@@ -162,7 +167,7 @@ namespace DexDriveCommunication
         }
 
         //Write a specified frame to a Memory Card
-        public bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
+        public override bool WriteMemoryCardFrame(ushort FrameNumber, byte[] FrameData)
         {
             //Buffer for storing read data from the DexDrive
             byte[] ReadData = null;
@@ -213,7 +218,7 @@ namespace DexDriveCommunication
 
             while (i < 8)
             {
-                if((InputByte & (1 << i)) > 0) ReturnByte |= (byte)(1 << j);
+                if ((InputByte & (1 << i)) > 0) ReturnByte |= (byte)(1 << j);
 
                 i++;
                 j--;
@@ -221,6 +226,11 @@ namespace DexDriveCommunication
 
             //Return reversed byte
             return ReturnByte;
+        }
+
+        public DexDrive(int mode, int commMode) : base(mode, commMode)
+        {
+            Type = (int) Types.dexdrive;
         }
     }
 }

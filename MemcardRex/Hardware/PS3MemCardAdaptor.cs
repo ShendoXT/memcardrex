@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 
-namespace PS3MemCardAdaptorCommunication
+namespace MemcardRex 
 {
     /// <summary>
     /// Implementation of the PS3 Memory Card Adaptor USB device, based on the LibUsbDotNet library.
@@ -15,7 +12,7 @@ namespace PS3MemCardAdaptorCommunication
     /// 
     /// Based on the PS3mca-PS1mc tool by Orion_: http://onorisoft.free.fr/psx/psx.htm#Tools
     /// </summary>
-    class PS3MemCardAdaptor
+    class PS3MemCardAdaptor : HardwareInterface
     {
         private const int ReadCommandLength = 144;
         private const int WriteCommandLength = 142;
@@ -27,7 +24,7 @@ namespace PS3MemCardAdaptorCommunication
         private static readonly byte[] HdrWritePS1Frame = new byte[] { 0xAA, 0x42, WriteCommandLength - 4, 0x00, 0x81, 0x57 };
 
         private static readonly UsbDeviceFinder DeviceFinder = new UsbDeviceFinder(0x054C, 0x02EA);
-        
+
         private UsbDevice _usbDevice;
         private UsbEndpointReader _reader;
         private UsbEndpointWriter _writer;
@@ -38,8 +35,18 @@ namespace PS3MemCardAdaptorCommunication
 
         public ErrorCode LastErrorCode { get; private set; }
 
-        public PS3MemCardAdaptor()
+        //Name of the interface
+        string InterfaceName = "PS3 Memory Card Adaptor";
+
+        public override string Name()
         {
+            return InterfaceName;
+        }
+
+        public PS3MemCardAdaptor(int mode, int commMode) : base(mode, commMode)
+        {
+            Type = (int)Types.ps3mca;
+
             // Initialize command buffers by zeroing them out and copying the command headers
             Array.Clear(_readFrameCommand, 0, _readFrameCommand.Length);
             Array.Copy(HdrReadPS1Frame, _readFrameCommand, HdrReadPS1Frame.Length);
@@ -48,13 +55,20 @@ namespace PS3MemCardAdaptorCommunication
             Array.Copy(HdrWritePS1Frame, _writeFrameCommand, HdrWritePS1Frame.Length);
         }
 
-        public string OpenUsbDevice()
+        public override string Start(string dummy, int dummy2)
         {
-            // Detect and open the PS3 Memory Card Adaptor USB device
-            _usbDevice = UsbDevice.OpenUsbDevice(DeviceFinder);
-            if (_usbDevice == null)
+            try
             {
-                return "Could not find the PS3 Memory Card Adaptor.\nPlease make sure it is connected to a USB port and that the WinUSB driver is installed.";
+                // Detect and open the PS3 Memory Card Adaptor USB device
+                _usbDevice = UsbDevice.OpenUsbDevice(DeviceFinder);
+                if (_usbDevice == null)
+                {
+                    return "Could not find the PS3 Memory Card Adaptor.\nPlease make sure it is connected to a USB port and that the WinUSB driver is installed.";
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
             }
 
             // Prepare the device for reading
@@ -90,7 +104,7 @@ namespace PS3MemCardAdaptorCommunication
             return null;
         }
 
-        public void StopPS3MemCardAdaptor()
+        public override void Stop()
         {
             if (_usbDevice != null && _usbDevice.IsOpen)
             {
@@ -99,7 +113,7 @@ namespace PS3MemCardAdaptorCommunication
             }
         }
 
-        public byte[] ReadMemoryCardFrame(ushort frameNumber)
+        public override byte[] ReadMemoryCardFrame(ushort frameNumber)
         {
             // Split the 16-bit frame number into two bytes
             _readFrameCommand[8] = (byte)(frameNumber >> 8);
@@ -127,7 +141,7 @@ namespace PS3MemCardAdaptorCommunication
             return frame;
         }
 
-        public bool WriteMemoryCardFrame(ushort frameNumber, byte[] frameData)
+        public override bool WriteMemoryCardFrame(ushort frameNumber, byte[] frameData)
         {
             // Split the 16-bit frame number into two bytes
             _writeFrameCommand[8] = (byte)(frameNumber >> 8);

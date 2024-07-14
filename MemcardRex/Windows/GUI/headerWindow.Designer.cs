@@ -42,7 +42,7 @@
             // productLabel
             // 
             this.productLabel.AutoSize = true;
-            this.productLabel.Location = new System.Drawing.Point(4, 4);
+            this.productLabel.Location = new System.Drawing.Point(120, 4);
             this.productLabel.Name = "productLabel";
             this.productLabel.Size = new System.Drawing.Size(71, 13);
             this.productLabel.TabIndex = 0;
@@ -50,16 +50,16 @@
             // 
             // prodCodeTextbox
             // 
-            this.prodCodeTextbox.Location = new System.Drawing.Point(4, 20);
+            this.prodCodeTextbox.Location = new System.Drawing.Point(120, 20);
             this.prodCodeTextbox.MaxLength = 10;
             this.prodCodeTextbox.Name = "prodCodeTextbox";
             this.prodCodeTextbox.Size = new System.Drawing.Size(104, 20);
-            this.prodCodeTextbox.TabIndex = 0;
+            this.prodCodeTextbox.TabIndex = 1;
             // 
             // identifierLabel
             // 
             this.identifierLabel.AutoSize = true;
-            this.identifierLabel.Location = new System.Drawing.Point(112, 4);
+            this.identifierLabel.Location = new System.Drawing.Point(228, 4);
             this.identifierLabel.Name = "identifierLabel";
             this.identifierLabel.Size = new System.Drawing.Size(47, 13);
             this.identifierLabel.TabIndex = 2;
@@ -67,29 +67,28 @@
             // 
             // identifierTextbox
             // 
-            this.identifierTextbox.Location = new System.Drawing.Point(112, 20);
+            this.identifierTextbox.Location = new System.Drawing.Point(228, 20);
             this.identifierTextbox.MaxLength = 8;
             this.identifierTextbox.Name = "identifierTextbox";
             this.identifierTextbox.Size = new System.Drawing.Size(104, 20);
-            this.identifierTextbox.TabIndex = 1;
+            this.identifierTextbox.TabIndex = 2;
             // 
             // regionCombobox
             // 
-            this.regionCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.regionCombobox.FormattingEnabled = true;
             this.regionCombobox.Items.AddRange(new object[] {
             "America",
             "Europe",
             "Japan"});
-            this.regionCombobox.Location = new System.Drawing.Point(220, 20);
+            this.regionCombobox.Location = new System.Drawing.Point(4, 20);
             this.regionCombobox.Name = "regionCombobox";
             this.regionCombobox.Size = new System.Drawing.Size(111, 21);
-            this.regionCombobox.TabIndex = 2;
+            this.regionCombobox.TabIndex = 0;
             // 
             // regionLabel
             // 
             this.regionLabel.AutoSize = true;
-            this.regionLabel.Location = new System.Drawing.Point(220, 4);
+            this.regionLabel.Location = new System.Drawing.Point(4, 4);
             this.regionLabel.Name = "regionLabel";
             this.regionLabel.Size = new System.Drawing.Size(41, 13);
             this.regionLabel.TabIndex = 5;
