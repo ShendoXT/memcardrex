@@ -2,7 +2,7 @@
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 
-namespace MemcardRex 
+namespace MemcardRex.Core
 {
     /// <summary>
     /// Implementation of the PS3 Memory Card Adaptor USB device, based on the LibUsbDotNet library.
@@ -12,7 +12,7 @@ namespace MemcardRex
     /// 
     /// Based on the PS3mca-PS1mc tool by Orion_: http://onorisoft.free.fr/psx/psx.htm#Tools
     /// </summary>
-    class PS3MemCardAdaptor : HardwareInterface
+    public class PS3MemCardAdaptor : HardwareInterface
     {
         private const int ReadCommandLength = 144;
         private const int WriteCommandLength = 142;

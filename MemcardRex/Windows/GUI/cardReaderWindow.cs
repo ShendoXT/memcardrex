@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using static MemcardRex.mainWindow;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+using MemcardRex.Core;
+
 namespace MemcardRex
 {
     public partial class cardReaderWindow : Form

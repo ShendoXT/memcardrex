@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.IO;
 
+using MemcardRex.Core;
+
 namespace MemcardRex
 {
 	public class ProgramSettings

@@ -80,5 +80,8 @@
     <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MemcardRex.Core\MemcardRex.Core.csproj" />
+  </ItemGroup>
   <PropertyGroup />
 </Project>

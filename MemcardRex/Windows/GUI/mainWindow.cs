@@ -14,6 +14,8 @@ using System.Drawing.Drawing2D;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using MemcardRex.Windows.GUI;
 
+using MemcardRex.Core;
+
 namespace MemcardRex
 {
     public partial class mainWindow : Form
