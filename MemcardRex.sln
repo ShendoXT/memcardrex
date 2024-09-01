@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex", "MemcardRex\MemcardRex.csproj", "{39B94E8A-7BD1-4072-8A60-D90464326B18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex.Core", "MemcardRex.Core\MemcardRex.Core.csproj", "{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.Core", "MemcardRex.Core\MemcardRex.Core.csproj", "{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
