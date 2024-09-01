@@ -14,4 +14,36 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
     <ErrorReportUrlHistory />
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Windows\GUI\aboutWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\cardReaderWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\commentsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\compareWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\headerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\iconWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\informationWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\mainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\pluginsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Windows\GUI\preferencesWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
