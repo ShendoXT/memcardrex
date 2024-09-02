@@ -84,6 +84,7 @@ namespace MemcardRex.Core
         public void openXmlWriter(string fileName, string applicationComment)
         {
             xmlWriter = new XmlTextWriter(fileName, Encoding.UTF8);
+            xmlWriter.Formatting = Formatting.Indented;
 
             xmlWriter.WriteStartDocument();
             xmlWriter.WriteComment(applicationComment);
