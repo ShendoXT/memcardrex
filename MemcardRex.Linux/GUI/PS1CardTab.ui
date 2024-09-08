@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkBox" id="card_tab">
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkColumnView" id="saveList">
+        <property name="reorderable">False</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <property name="css-classes">
+view
+data-table</property>
+      </object>
+    </child>
+  </object>
+</interface>

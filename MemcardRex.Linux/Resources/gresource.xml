@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/io/gitlab/robxnano/memcardrex">
+    <file alias="/icons/scalable/actions/document-modified-symbolic.svg">document-modified-symbolic.svg</file>
+    <file alias="/icons/scalable/apps/io.gitlab.robxnano.memcardrex.svg">io.gitlab.robxnano.memcardrex.svg</file>
+  </gresource>
+</gresources>
