@@ -53,7 +53,7 @@
             this.remoteAddressLabel = new System.Windows.Forms.Label();
             this.remoteAddressBox = new System.Windows.Forms.TextBox();
             this.remotePortUpDown = new System.Windows.Forms.NumericUpDown();
-            this.hardwareSpeedCombo = new System.Windows.Forms.ComboBox();
+            this.hardwareInterfacesCombo = new System.Windows.Forms.ComboBox();
             this.hardwareSpeedLabel = new System.Windows.Forms.Label();
             this.cardSlotLabel = new System.Windows.Forms.Label();
             this.cardSlotCombo = new System.Windows.Forms.ComboBox();
@@ -63,10 +63,9 @@
             // okButton
             // 
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(504, 438);
-            this.okButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.okButton.Location = new System.Drawing.Point(252, 228);
             this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(152, 46);
+            this.okButton.Size = new System.Drawing.Size(76, 24);
             this.okButton.TabIndex = 99;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
@@ -75,10 +74,9 @@
             // cancelButton
             // 
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(664, 438);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cancelButton.Location = new System.Drawing.Point(332, 228);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(152, 46);
+            this.cancelButton.Size = new System.Drawing.Size(76, 24);
             this.cancelButton.TabIndex = 0;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -87,10 +85,9 @@
             // applyButton
             // 
             this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.applyButton.Location = new System.Drawing.Point(824, 438);
-            this.applyButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.applyButton.Location = new System.Drawing.Point(412, 228);
             this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(152, 46);
+            this.applyButton.Size = new System.Drawing.Size(76, 24);
             this.applyButton.TabIndex = 1;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = true;
@@ -100,29 +97,26 @@
             // 
             this.fontCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fontCombo.FormattingEnabled = true;
-            this.fontCombo.Location = new System.Drawing.Point(8, 38);
-            this.fontCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.fontCombo.Location = new System.Drawing.Point(4, 20);
             this.fontCombo.Name = "fontCombo";
-            this.fontCombo.Size = new System.Drawing.Size(468, 33);
+            this.fontCombo.Size = new System.Drawing.Size(236, 21);
             this.fontCombo.TabIndex = 3;
             // 
             // fontLabel
             // 
             this.fontLabel.AutoSize = true;
-            this.fontLabel.Location = new System.Drawing.Point(8, 8);
-            this.fontLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.fontLabel.Location = new System.Drawing.Point(4, 4);
             this.fontLabel.Name = "fontLabel";
-            this.fontLabel.Size = new System.Drawing.Size(149, 25);
+            this.fontLabel.Size = new System.Drawing.Size(75, 13);
             this.fontLabel.TabIndex = 3;
             this.fontLabel.Text = "Save title font:";
             // 
             // gridCheckbox
             // 
             this.gridCheckbox.AutoSize = true;
-            this.gridCheckbox.Location = new System.Drawing.Point(496, 23);
-            this.gridCheckbox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gridCheckbox.Location = new System.Drawing.Point(248, 12);
             this.gridCheckbox.Name = "gridCheckbox";
-            this.gridCheckbox.Size = new System.Drawing.Size(248, 29);
+            this.gridCheckbox.Size = new System.Drawing.Size(125, 17);
             this.gridCheckbox.TabIndex = 9;
             this.gridCheckbox.Text = "Show grid on slot list.";
             this.gridCheckbox.UseVisualStyleBackColor = true;
@@ -130,10 +124,9 @@
             // iconSizeLabel
             // 
             this.iconSizeLabel.AutoSize = true;
-            this.iconSizeLabel.Location = new System.Drawing.Point(248, 92);
-            this.iconSizeLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.iconSizeLabel.Location = new System.Drawing.Point(124, 48);
             this.iconSizeLabel.Name = "iconSizeLabel";
-            this.iconSizeLabel.Size = new System.Drawing.Size(103, 25);
+            this.iconSizeLabel.Size = new System.Drawing.Size(52, 13);
             this.iconSizeLabel.TabIndex = 5;
             this.iconSizeLabel.Text = "Icon size:";
             // 
@@ -144,10 +137,9 @@
             this.iconSizeCombo.Items.AddRange(new object[] {
             "Medium",
             "Large"});
-            this.iconSizeCombo.Location = new System.Drawing.Point(248, 123);
-            this.iconSizeCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.iconSizeCombo.Location = new System.Drawing.Point(124, 64);
             this.iconSizeCombo.Name = "iconSizeCombo";
-            this.iconSizeCombo.Size = new System.Drawing.Size(228, 33);
+            this.iconSizeCombo.Size = new System.Drawing.Size(116, 21);
             this.iconSizeCombo.TabIndex = 5;
             // 
             // interpolationCombo
@@ -157,29 +149,26 @@
             this.interpolationCombo.Items.AddRange(new object[] {
             "Nearest Neighbor",
             "Bilinear"});
-            this.interpolationCombo.Location = new System.Drawing.Point(8, 123);
-            this.interpolationCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.interpolationCombo.Location = new System.Drawing.Point(4, 64);
             this.interpolationCombo.Name = "interpolationCombo";
-            this.interpolationCombo.Size = new System.Drawing.Size(228, 33);
+            this.interpolationCombo.Size = new System.Drawing.Size(116, 21);
             this.interpolationCombo.TabIndex = 4;
             // 
             // interpolationLabel
             // 
             this.interpolationLabel.AutoSize = true;
-            this.interpolationLabel.Location = new System.Drawing.Point(8, 92);
-            this.interpolationLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.interpolationLabel.Location = new System.Drawing.Point(4, 48);
             this.interpolationLabel.Name = "interpolationLabel";
-            this.interpolationLabel.Size = new System.Drawing.Size(105, 25);
+            this.interpolationLabel.Size = new System.Drawing.Size(53, 13);
             this.interpolationLabel.TabIndex = 0;
             this.interpolationLabel.Text = "Icon filter:";
             // 
             // backupWarningCheckBox
             // 
             this.backupWarningCheckBox.AutoSize = true;
-            this.backupWarningCheckBox.Location = new System.Drawing.Point(496, 115);
-            this.backupWarningCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.backupWarningCheckBox.Location = new System.Drawing.Point(248, 60);
             this.backupWarningCheckBox.Name = "backupWarningCheckBox";
-            this.backupWarningCheckBox.Size = new System.Drawing.Size(424, 29);
+            this.backupWarningCheckBox.Size = new System.Drawing.Size(212, 17);
             this.backupWarningCheckBox.TabIndex = 11;
             this.backupWarningCheckBox.Text = "Show warning messages (save editing).";
             this.backupWarningCheckBox.UseVisualStyleBackColor = true;
@@ -187,10 +176,9 @@
             // backupCheckbox
             // 
             this.backupCheckbox.AutoSize = true;
-            this.backupCheckbox.Location = new System.Drawing.Point(496, 69);
-            this.backupCheckbox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.backupCheckbox.Location = new System.Drawing.Point(248, 36);
             this.backupCheckbox.Name = "backupCheckbox";
-            this.backupCheckbox.Size = new System.Drawing.Size(405, 29);
+            this.backupCheckbox.Size = new System.Drawing.Size(204, 17);
             this.backupCheckbox.TabIndex = 10;
             this.backupCheckbox.Text = "Backup Memory Cards upon opening.";
             this.backupCheckbox.UseVisualStyleBackColor = true;
@@ -199,39 +187,35 @@
             // 
             this.dexDriveCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dexDriveCombo.FormattingEnabled = true;
-            this.dexDriveCombo.Location = new System.Drawing.Point(8, 377);
-            this.dexDriveCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dexDriveCombo.Location = new System.Drawing.Point(4, 196);
             this.dexDriveCombo.Name = "dexDriveCombo";
-            this.dexDriveCombo.Size = new System.Drawing.Size(228, 33);
+            this.dexDriveCombo.Size = new System.Drawing.Size(68, 21);
             this.dexDriveCombo.TabIndex = 7;
             this.dexDriveCombo.SelectedIndexChanged += new System.EventHandler(this.dexDriveCombo_SelectedIndexChanged);
             // 
             // hardwarePortLabel
             // 
             this.hardwarePortLabel.AutoSize = true;
-            this.hardwarePortLabel.Location = new System.Drawing.Point(8, 346);
-            this.hardwarePortLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.hardwarePortLabel.Location = new System.Drawing.Point(4, 180);
             this.hardwarePortLabel.Name = "hardwarePortLabel";
-            this.hardwarePortLabel.Size = new System.Drawing.Size(209, 25);
+            this.hardwarePortLabel.Size = new System.Drawing.Size(49, 13);
             this.hardwarePortLabel.TabIndex = 6;
-            this.hardwarePortLabel.Text = "Communication port:";
+            this.hardwarePortLabel.Text = "Comport:";
             // 
             // spacerLabel
             // 
             this.spacerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.spacerLabel.Location = new System.Drawing.Point(8, 429);
-            this.spacerLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.spacerLabel.Location = new System.Drawing.Point(4, 223);
             this.spacerLabel.Name = "spacerLabel";
-            this.spacerLabel.Size = new System.Drawing.Size(968, 4);
+            this.spacerLabel.Size = new System.Drawing.Size(484, 2);
             this.spacerLabel.TabIndex = 8;
             // 
             // restorePositionCheckbox
             // 
             this.restorePositionCheckbox.AutoSize = true;
-            this.restorePositionCheckbox.Location = new System.Drawing.Point(496, 162);
-            this.restorePositionCheckbox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.restorePositionCheckbox.Location = new System.Drawing.Point(248, 84);
             this.restorePositionCheckbox.Name = "restorePositionCheckbox";
-            this.restorePositionCheckbox.Size = new System.Drawing.Size(379, 29);
+            this.restorePositionCheckbox.Size = new System.Drawing.Size(191, 17);
             this.restorePositionCheckbox.TabIndex = 13;
             this.restorePositionCheckbox.Text = "Restore window position on startup";
             this.restorePositionCheckbox.UseVisualStyleBackColor = true;
@@ -243,19 +227,17 @@
             this.formatCombo.Items.AddRange(new object[] {
             "Quick format",
             "Full format"});
-            this.formatCombo.Location = new System.Drawing.Point(8, 292);
-            this.formatCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.formatCombo.Location = new System.Drawing.Point(4, 152);
             this.formatCombo.Name = "formatCombo";
-            this.formatCombo.Size = new System.Drawing.Size(468, 33);
+            this.formatCombo.Size = new System.Drawing.Size(236, 21);
             this.formatCombo.TabIndex = 8;
             // 
             // formatLabel
             // 
             this.formatLabel.AutoSize = true;
-            this.formatLabel.Location = new System.Drawing.Point(8, 262);
-            this.formatLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.formatLabel.Location = new System.Drawing.Point(4, 136);
             this.formatLabel.Name = "formatLabel";
-            this.formatLabel.Size = new System.Drawing.Size(223, 25);
+            this.formatLabel.Size = new System.Drawing.Size(111, 13);
             this.formatLabel.TabIndex = 101;
             this.formatLabel.Text = "Hardware format type:";
             // 
@@ -268,29 +250,26 @@
             "Black (Slim PS1 models)",
             "Gray (Older european PS1 models)",
             "Blue (Standard BIOS color)"});
-            this.backgroundCombo.Location = new System.Drawing.Point(8, 208);
-            this.backgroundCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.backgroundCombo.Location = new System.Drawing.Point(4, 108);
             this.backgroundCombo.Name = "backgroundCombo";
-            this.backgroundCombo.Size = new System.Drawing.Size(468, 33);
+            this.backgroundCombo.Size = new System.Drawing.Size(236, 21);
             this.backgroundCombo.TabIndex = 6;
             // 
             // backgroundLabel
             // 
             this.backgroundLabel.AutoSize = true;
-            this.backgroundLabel.Location = new System.Drawing.Point(8, 177);
-            this.backgroundLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.backgroundLabel.Location = new System.Drawing.Point(4, 92);
             this.backgroundLabel.Name = "backgroundLabel";
-            this.backgroundLabel.Size = new System.Drawing.Size(230, 25);
+            this.backgroundLabel.Size = new System.Drawing.Size(117, 13);
             this.backgroundLabel.TabIndex = 102;
             this.backgroundLabel.Text = "Icon background color:";
             // 
             // fixCorruptedCardsCheckbox
             // 
             this.fixCorruptedCardsCheckbox.AutoSize = true;
-            this.fixCorruptedCardsCheckbox.Location = new System.Drawing.Point(496, 208);
-            this.fixCorruptedCardsCheckbox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.fixCorruptedCardsCheckbox.Location = new System.Drawing.Point(248, 108);
             this.fixCorruptedCardsCheckbox.Name = "fixCorruptedCardsCheckbox";
-            this.fixCorruptedCardsCheckbox.Size = new System.Drawing.Size(370, 29);
+            this.fixCorruptedCardsCheckbox.Size = new System.Drawing.Size(184, 17);
             this.fixCorruptedCardsCheckbox.TabIndex = 103;
             this.fixCorruptedCardsCheckbox.Text = "Try to fix corrupted Memory Cards";
             this.fixCorruptedCardsCheckbox.UseVisualStyleBackColor = true;
@@ -298,69 +277,59 @@
             // remotePortLabel
             // 
             this.remotePortLabel.AutoSize = true;
-            this.remotePortLabel.Location = new System.Drawing.Point(730, 344);
-            this.remotePortLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.remotePortLabel.Location = new System.Drawing.Point(365, 179);
             this.remotePortLabel.Name = "remotePortLabel";
-            this.remotePortLabel.Size = new System.Drawing.Size(137, 25);
+            this.remotePortLabel.Size = new System.Drawing.Size(69, 13);
             this.remotePortLabel.TabIndex = 105;
             this.remotePortLabel.Text = "Remote Port:";
             // 
             // remoteAddressLabel
             // 
             this.remoteAddressLabel.AutoSize = true;
-            this.remoteAddressLabel.Location = new System.Drawing.Point(490, 344);
-            this.remoteAddressLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.remoteAddressLabel.Location = new System.Drawing.Point(245, 179);
             this.remoteAddressLabel.Name = "remoteAddressLabel";
-            this.remoteAddressLabel.Size = new System.Drawing.Size(177, 25);
+            this.remoteAddressLabel.Size = new System.Drawing.Size(88, 13);
             this.remoteAddressLabel.TabIndex = 104;
             this.remoteAddressLabel.Text = "Remote Address:";
             // 
             // remoteAddressBox
             // 
-            this.remoteAddressBox.Location = new System.Drawing.Point(496, 377);
-            this.remoteAddressBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.remoteAddressBox.Location = new System.Drawing.Point(248, 196);
             this.remoteAddressBox.Name = "remoteAddressBox";
-            this.remoteAddressBox.Size = new System.Drawing.Size(222, 31);
+            this.remoteAddressBox.Size = new System.Drawing.Size(113, 20);
             this.remoteAddressBox.TabIndex = 106;
             // 
             // remotePortUpDown
             // 
-            this.remotePortUpDown.Location = new System.Drawing.Point(730, 377);
-            this.remotePortUpDown.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.remotePortUpDown.Location = new System.Drawing.Point(365, 196);
             this.remotePortUpDown.Name = "remotePortUpDown";
-            this.remotePortUpDown.Size = new System.Drawing.Size(240, 31);
+            this.remotePortUpDown.Size = new System.Drawing.Size(120, 20);
             this.remotePortUpDown.TabIndex = 107;
             // 
-            // hardwareSpeedCombo
+            // hardwareInterfacesCombo
             // 
-            this.hardwareSpeedCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.hardwareSpeedCombo.FormattingEnabled = true;
-            this.hardwareSpeedCombo.Items.AddRange(new object[] {
-            "115200 bps",
-            "38400 bps (legacy)"});
-            this.hardwareSpeedCombo.Location = new System.Drawing.Point(248, 377);
-            this.hardwareSpeedCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.hardwareSpeedCombo.Name = "hardwareSpeedCombo";
-            this.hardwareSpeedCombo.Size = new System.Drawing.Size(228, 33);
-            this.hardwareSpeedCombo.TabIndex = 109;
+            this.hardwareInterfacesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.hardwareInterfacesCombo.FormattingEnabled = true;
+            this.hardwareInterfacesCombo.Location = new System.Drawing.Point(76, 196);
+            this.hardwareInterfacesCombo.Name = "hardwareInterfacesCombo";
+            this.hardwareInterfacesCombo.Size = new System.Drawing.Size(164, 21);
+            this.hardwareInterfacesCombo.TabIndex = 109;
             // 
             // hardwareSpeedLabel
             // 
             this.hardwareSpeedLabel.AutoSize = true;
-            this.hardwareSpeedLabel.Location = new System.Drawing.Point(248, 346);
-            this.hardwareSpeedLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.hardwareSpeedLabel.Location = new System.Drawing.Point(76, 180);
             this.hardwareSpeedLabel.Name = "hardwareSpeedLabel";
-            this.hardwareSpeedLabel.Size = new System.Drawing.Size(231, 25);
+            this.hardwareSpeedLabel.Size = new System.Drawing.Size(131, 13);
             this.hardwareSpeedLabel.TabIndex = 108;
-            this.hardwareSpeedLabel.Text = "Communication speed:";
+            this.hardwareSpeedLabel.Text = "Active hardware interface:";
             // 
             // cardSlotLabel
             // 
             this.cardSlotLabel.AutoSize = true;
-            this.cardSlotLabel.Location = new System.Drawing.Point(496, 262);
-            this.cardSlotLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.cardSlotLabel.Location = new System.Drawing.Point(248, 136);
             this.cardSlotLabel.Name = "cardSlotLabel";
-            this.cardSlotLabel.Size = new System.Drawing.Size(318, 25);
+            this.cardSlotLabel.Size = new System.Drawing.Size(159, 13);
             this.cardSlotLabel.TabIndex = 111;
             this.cardSlotLabel.Text = "Unirom / PS1CardLink card slot:";
             // 
@@ -371,20 +340,19 @@
             this.cardSlotCombo.Items.AddRange(new object[] {
             "Slot 1",
             "Slot 2"});
-            this.cardSlotCombo.Location = new System.Drawing.Point(496, 292);
-            this.cardSlotCombo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.cardSlotCombo.Location = new System.Drawing.Point(248, 152);
             this.cardSlotCombo.Name = "cardSlotCombo";
-            this.cardSlotCombo.Size = new System.Drawing.Size(468, 33);
+            this.cardSlotCombo.Size = new System.Drawing.Size(236, 21);
             this.cardSlotCombo.TabIndex = 110;
             // 
             // preferencesWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(980, 494);
+            this.ClientSize = new System.Drawing.Size(490, 257);
             this.Controls.Add(this.cardSlotLabel);
             this.Controls.Add(this.cardSlotCombo);
-            this.Controls.Add(this.hardwareSpeedCombo);
+            this.Controls.Add(this.hardwareInterfacesCombo);
             this.Controls.Add(this.hardwareSpeedLabel);
             this.Controls.Add(this.remotePortUpDown);
             this.Controls.Add(this.remoteAddressBox);
@@ -412,7 +380,6 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "preferencesWindow";
@@ -452,7 +419,7 @@
         private System.Windows.Forms.Label remoteAddressLabel;
         private System.Windows.Forms.TextBox remoteAddressBox;
         private System.Windows.Forms.NumericUpDown remotePortUpDown;
-        private System.Windows.Forms.ComboBox hardwareSpeedCombo;
+        private System.Windows.Forms.ComboBox hardwareInterfacesCombo;
         private System.Windows.Forms.Label hardwareSpeedLabel;
         private System.Windows.Forms.Label cardSlotLabel;
         private System.Windows.Forms.ComboBox cardSlotCombo;

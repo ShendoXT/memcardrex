@@ -16,12 +16,18 @@ namespace MemcardRex
     {
         private const int ReadCommandLength = 144;
         private const int WriteCommandLength = 142;
+        private const int PocketInfoLength = 25;
+        private const int PocketBIOSLength = 142;
+        private const int PocketTimeLength = 18;
         private const int Timeout = 5000;
         private const int MaxRetries = 5;
 
         private static readonly byte[] CmdGetCardType = new byte[] { 0xAA, 0x40 };
         private static readonly byte[] HdrReadPS1Frame = new byte[] { 0xAA, 0x42, ReadCommandLength - 4, 0x00, 0x81, 0x52 };
         private static readonly byte[] HdrWritePS1Frame = new byte[] { 0xAA, 0x42, WriteCommandLength - 4, 0x00, 0x81, 0x57 };
+        private static readonly byte[] HdrPocketInfo = new byte[] { 0xAA, 0x42, PocketInfoLength - 4, 0x00, 0x81, 0x5A };
+        private static readonly byte[] HdrPocketBIOS = new byte[] { 0xAA, 0x42, PocketBIOSLength - 4, 0x00, 0x81, 0x5B };
+        private static readonly byte[] HdrPocketTime = new byte[] { 0xAA, 0x42, PocketTimeLength - 4, 0x00, 0x81, 0x5C };
 
         private static readonly UsbDeviceFinder DeviceFinder = new UsbDeviceFinder(0x054C, 0x02EA);
 
@@ -32,20 +38,28 @@ namespace MemcardRex
         private byte[] _buffer = new byte[256];
         private byte[] _readFrameCommand = new byte[ReadCommandLength];
         private byte[] _writeFrameCommand = new byte[WriteCommandLength];
+        private byte[] _pocketInfoCommand = new byte[PocketInfoLength];
+        private byte[] _pocketBIOSCommand = new byte[PocketBIOSLength];
+        private byte[] _pocketTimeCommand = new byte[PocketTimeLength];
 
         public ErrorCode LastErrorCode { get; private set; }
 
         //Name of the interface
-        string InterfaceName = "PS3 Memory Card Adaptor";
+        private const string InterfaceName = "PS3 MC Adaptor";
 
         public override string Name()
         {
             return InterfaceName;
         }
 
-        public PS3MemCardAdaptor(int mode, int commMode) : base(mode, commMode)
+        public override SupportedFeatures Features()
         {
-            Type = (int)Types.ps3mca;
+            return SupportedFeatures.RealtimeMode | SupportedFeatures.PocketStation;
+        }
+
+        public PS3MemCardAdaptor() : base()
+        {
+            Type = Types.ps3mca;
 
             // Initialize command buffers by zeroing them out and copying the command headers
             Array.Clear(_readFrameCommand, 0, _readFrameCommand.Length);
@@ -53,6 +67,15 @@ namespace MemcardRex
 
             Array.Clear(_writeFrameCommand, 0, _writeFrameCommand.Length);
             Array.Copy(HdrWritePS1Frame, _writeFrameCommand, HdrWritePS1Frame.Length);
+
+            Array.Clear(_pocketInfoCommand, 0, _pocketInfoCommand.Length);
+            Array.Copy(HdrPocketInfo, _pocketInfoCommand, HdrPocketInfo.Length);
+
+            Array.Clear(_pocketBIOSCommand, 0, _pocketBIOSCommand.Length);
+            Array.Copy(HdrPocketBIOS, _pocketBIOSCommand, HdrPocketBIOS.Length);
+
+            Array.Clear(_pocketTimeCommand, 0, _pocketTimeCommand.Length);
+            Array.Copy(HdrPocketTime, _pocketTimeCommand, HdrPocketTime.Length);
         }
 
         public override string Start(string dummy, int dummy2)
@@ -111,6 +134,113 @@ namespace MemcardRex
                 _usbDevice.Close();
                 _usbDevice = null;
             }
+        }
+
+        //Dump 128 byte chunks of BIOS from PocketStation
+        public override byte[] DumpPocketStationBIOS(int part)
+        {
+            part *= 128;
+
+            //Get memory block function
+            _pocketBIOSCommand[6] = 0x1;
+
+            //Address
+            _pocketBIOSCommand[8] = (byte) (part & 0xFF);
+            _pocketBIOSCommand[9] = (byte) (part >> 8);
+            _pocketBIOSCommand[10] = 0x0;
+            _pocketBIOSCommand[11] = 0x4;
+
+            //Data length
+            _pocketBIOSCommand[12] = 0x80;
+
+            int bytesWritten;
+            LastErrorCode = _writer.Write(_pocketBIOSCommand, Timeout, out bytesWritten);
+            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketBIOSLength)
+            {
+                return null;
+            }
+
+            // Read response from PocketStation
+            int bytesRead;
+            LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
+            if (LastErrorCode != ErrorCode.None || bytesRead != PocketBIOSLength /*|| _buffer[6] != 0x12*/)
+            {
+                return null;
+            }
+
+            // Strip the header data and return the requested frame
+            byte[] frame = new byte[128];
+            Array.Copy(_buffer, 14, frame, 0, 128);
+            return frame;
+        }
+
+        public override UInt32 ReadPocketStationSerial(out string errorMsg)
+        {
+            int bytesWritten;
+            LastErrorCode = _writer.Write(_pocketInfoCommand, Timeout, out bytesWritten);
+            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketInfoLength)
+            {
+                errorMsg = "USB comm error.";
+                return 0;
+            }
+
+            // Read response from PocketStation
+            int bytesRead;
+            LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
+            if (LastErrorCode != ErrorCode.None || bytesRead != PocketInfoLength || _buffer[6] != 0x12)
+            {
+                errorMsg = "PocketStation not detected.";
+                return 0;
+            }
+
+            //All good, return data
+            errorMsg = null;
+            return (UInt32)(_buffer[13] | _buffer[14] << 8 | _buffer[15] << 16 | _buffer[16] << 24);
+        }
+
+        //Get a 2 digit BCD value from an int
+        private byte getBCD(int value)
+        {
+            int tens = value / 10;
+            int single = value - (tens * 10);
+
+            return (byte)((tens << 4) | single);
+        }
+
+        public override bool SetPocketStationTime(out string errorMsg)
+        {
+            //Set time data
+            _pocketTimeCommand[9] = getBCD(DateTime.Now.Day);         //Day
+            _pocketTimeCommand[10] = getBCD(DateTime.Now.Month);      //Month
+            _pocketTimeCommand[11] = getBCD(DateTime.Now.Year % 100); //Year
+            _pocketTimeCommand[12] = getBCD(DateTime.Now.Year / 100); //Century
+
+            _pocketTimeCommand[13] = getBCD(DateTime.Now.Second);     //Second
+            _pocketTimeCommand[14] = getBCD(DateTime.Now.Minute);     //Minute
+            _pocketTimeCommand[15] = getBCD(DateTime.Now.Hour);       //Hour
+            _pocketTimeCommand[16] = getBCD(((int)DateTime.Now.DayOfWeek) + 1);     //Day of week
+
+            // Output a command to request the desired frame
+            int bytesWritten;
+            LastErrorCode = _writer.Write(_pocketTimeCommand, Timeout, out bytesWritten);
+            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketTimeLength)
+            {
+                errorMsg = "USB comm error";
+                return false;
+            }
+
+            // Read response from PocketStation
+            int bytesRead;
+            LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
+            if (LastErrorCode != ErrorCode.None || bytesRead != PocketTimeLength)
+            {
+                errorMsg = "PocketStation not detected.";
+                return false;
+            }
+
+            //All good, time was set
+            errorMsg = null;
+            return true;
         }
 
         public override byte[] ReadMemoryCardFrame(ushort frameNumber)

@@ -151,6 +151,12 @@
     <Compile Include="Windows\GUI\pluginsWindow.Designer.cs">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\GUI\pocketStationInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\GUI\pocketStationInfo.Designer.cs">
+      <DependentUpon>pocketStationInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\GUI\preferencesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -196,6 +202,9 @@
     <EmbeddedResource Include="Windows\GUI\pluginsWindow.resx">
       <DependentUpon>pluginsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\GUI\pocketStationInfo.resx">
+      <DependentUpon>pocketStationInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\GUI\preferencesWindow.resx">
       <DependentUpon>preferencesWindow.cs</DependentUpon>

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Collections.Generic;
 
 namespace MemcardRex
 {
@@ -19,7 +20,7 @@ namespace MemcardRex
         }
 
         //Load default values
-        public void initializeDialog(mainWindow window)
+        public void initializeDialog(mainWindow window, List<mainWindow.HardInterfaces> registeredInterfaces)
         {
             hostWindow = window;
 
@@ -34,7 +35,6 @@ namespace MemcardRex
             if (hostWindow.appSettings.FixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
             remoteAddressBox.Text = hostWindow.appSettings.RemoteCommAddress;
             remotePortUpDown.Value = hostWindow.appSettings.RemoteCommPort;
-            hardwareSpeedCombo.SelectedIndex = hostWindow.appSettings.CommunicationSpeed;
             cardSlotCombo.SelectedIndex = hostWindow.appSettings.CardSlot;
 
             //Load all COM ports found on the system
@@ -42,6 +42,14 @@ namespace MemcardRex
             {
                 dexDriveCombo.Items.Add(port);
             }
+
+            //Load all available hardware interfaces
+            foreach(mainWindow.HardInterfaces iface in registeredInterfaces)
+            {
+                hardwareInterfacesCombo.Items.Add(iface.displayName);
+            }
+
+            hardwareInterfacesCombo.SelectedIndex = hostWindow.appSettings.ActiveInterface;
 
             //If there are no ports disable combobox
             if(dexDriveCombo.Items.Count < 1) dexDriveCombo.Enabled = false;
@@ -58,6 +66,8 @@ namespace MemcardRex
 
             //Find font used in the save list
             fontCombo.SelectedItem = hostWindow.appSettings.ListFont;
+
+            this.ShowDialog(hostWindow);
         }
 
         //Apply configured settings
@@ -70,7 +80,7 @@ namespace MemcardRex
             hostWindow.appSettings.CommunicationPort = SavedComPort;
             hostWindow.appSettings.RemoteCommAddress = remoteAddressBox.Text;
             hostWindow.appSettings.RemoteCommPort = Convert.ToUInt16(remotePortUpDown.Value);
-            hostWindow.appSettings.CommunicationSpeed = hardwareSpeedCombo.SelectedIndex;
+            hostWindow.appSettings.ActiveInterface = hardwareInterfacesCombo.SelectedIndex;
             hostWindow.appSettings.CardSlot = cardSlotCombo.SelectedIndex;
 
             if (gridCheckbox.Checked == true) hostWindow.appSettings.ShowListGrid = 1; else hostWindow.appSettings.ShowListGrid = 0;

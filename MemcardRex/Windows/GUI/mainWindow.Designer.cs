@@ -42,8 +42,8 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.editSaveHeaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editSaveCommentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,20 +65,16 @@
             this.exportRAWSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hardwareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readFromToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DexDriveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripSeparator();
-            this.MemCARDuinoMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
-            this.PS1CardLinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PS1CardLinkTCPMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem25 = new System.Windows.Forms.ToolStripSeparator();
-            this.UniromMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.UniromTCPMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
-            this.PS3MCAMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
             this.formatMemoryCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
+            this.realtimeConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+            this.pocketStationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readSerialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dumpBIOSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setDateTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -237,8 +233,8 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem12,
-            this.toolStripMenuItem19,
+            this.undoToolStripMenuItem,
+            this.redoToolStripMenuItem,
             this.toolStripSeparator5,
             this.editSaveHeaderToolStripMenuItem,
             this.editSaveCommentToolStripMenuItem,
@@ -262,20 +258,22 @@
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
-            // toolStripMenuItem12
+            // undoToolStripMenuItem
             // 
-            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(264, 22);
-            this.toolStripMenuItem12.Text = "Undo";
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem19
+            // redoToolStripMenuItem
             // 
-            this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-            this.toolStripMenuItem19.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.Z)));
-            this.toolStripMenuItem19.Size = new System.Drawing.Size(264, 22);
-            this.toolStripMenuItem19.Text = "Redo";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -417,107 +415,88 @@
             this.readFromToolStripMenuItem,
             this.writeToToolStripMenuItem,
             this.toolStripMenuItem21,
-            this.formatMemoryCardToolStripMenuItem});
+            this.formatMemoryCardToolStripMenuItem,
+            this.toolStripMenuItem12,
+            this.realtimeConnectionToolStripMenuItem,
+            this.toolStripMenuItem16,
+            this.pocketStationToolStripMenuItem});
             this.hardwareToolStripMenuItem.Name = "hardwareToolStripMenuItem";
             this.hardwareToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
             this.hardwareToolStripMenuItem.Text = "Hardware";
             // 
             // readFromToolStripMenuItem
             // 
-            this.readFromToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DexDriveMenuItem,
-            this.toolStripMenuItem17,
-            this.MemCARDuinoMenuItem,
-            this.toolStripMenuItem18,
-            this.PS1CardLinkMenuItem,
-            this.PS1CardLinkTCPMenuItem,
-            this.toolStripMenuItem25,
-            this.UniromMenuItem,
-            this.UniromTCPMenuItem,
-            this.toolStripMenuItem16,
-            this.PS3MCAMenuItem});
             this.readFromToolStripMenuItem.Name = "readFromToolStripMenuItem";
-            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.readFromToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.readFromToolStripMenuItem.Text = "Read save data";
-            // 
-            // DexDriveMenuItem
-            // 
-            this.DexDriveMenuItem.Name = "DexDriveMenuItem";
-            this.DexDriveMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.DexDriveMenuItem.Text = "DexDrive";
-            // 
-            // toolStripMenuItem17
-            // 
-            this.toolStripMenuItem17.Name = "toolStripMenuItem17";
-            this.toolStripMenuItem17.Size = new System.Drawing.Size(212, 6);
-            // 
-            // MemCARDuinoMenuItem
-            // 
-            this.MemCARDuinoMenuItem.Name = "MemCARDuinoMenuItem";
-            this.MemCARDuinoMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.MemCARDuinoMenuItem.Text = "MemCARDuino";
-            // 
-            // toolStripMenuItem18
-            // 
-            this.toolStripMenuItem18.Name = "toolStripMenuItem18";
-            this.toolStripMenuItem18.Size = new System.Drawing.Size(212, 6);
-            // 
-            // PS1CardLinkMenuItem
-            // 
-            this.PS1CardLinkMenuItem.Name = "PS1CardLinkMenuItem";
-            this.PS1CardLinkMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.PS1CardLinkMenuItem.Text = "PS1CardLink";
-            // 
-            // PS1CardLinkTCPMenuItem
-            // 
-            this.PS1CardLinkTCPMenuItem.Name = "PS1CardLinkTCPMenuItem";
-            this.PS1CardLinkTCPMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.PS1CardLinkTCPMenuItem.Text = "PS1CardLink over TCP";
-            // 
-            // toolStripMenuItem25
-            // 
-            this.toolStripMenuItem25.Name = "toolStripMenuItem25";
-            this.toolStripMenuItem25.Size = new System.Drawing.Size(212, 6);
-            // 
-            // UniromMenuItem
-            // 
-            this.UniromMenuItem.Name = "UniromMenuItem";
-            this.UniromMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.UniromMenuItem.Text = "Unirom";
-            // 
-            // UniromTCPMenuItem
-            // 
-            this.UniromTCPMenuItem.Name = "UniromTCPMenuItem";
-            this.UniromTCPMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.UniromTCPMenuItem.Text = "Unirom over TCP";
-            // 
-            // toolStripMenuItem16
-            // 
-            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(212, 6);
-            // 
-            // PS3MCAMenuItem
-            // 
-            this.PS3MCAMenuItem.Name = "PS3MCAMenuItem";
-            this.PS3MCAMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.PS3MCAMenuItem.Text = "PS3 Memory Card Adaptor";
+            this.readFromToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
             // 
             // writeToToolStripMenuItem
             // 
             this.writeToToolStripMenuItem.Name = "writeToToolStripMenuItem";
-            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.writeToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.writeToToolStripMenuItem.Text = "Write save data";
+            this.writeToToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
             // 
             // toolStripMenuItem21
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
-            this.toolStripMenuItem21.Size = new System.Drawing.Size(151, 6);
+            this.toolStripMenuItem21.Size = new System.Drawing.Size(177, 6);
             // 
             // formatMemoryCardToolStripMenuItem
             // 
             this.formatMemoryCardToolStripMenuItem.Name = "formatMemoryCardToolStripMenuItem";
-            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.formatMemoryCardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.formatMemoryCardToolStripMenuItem.Text = "Format card";
+            this.formatMemoryCardToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
+            // 
+            // toolStripMenuItem12
+            // 
+            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(177, 6);
+            // 
+            // realtimeConnectionToolStripMenuItem
+            // 
+            this.realtimeConnectionToolStripMenuItem.Name = "realtimeConnectionToolStripMenuItem";
+            this.realtimeConnectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.realtimeConnectionToolStripMenuItem.Text = "Realtime link";
+            this.realtimeConnectionToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(177, 6);
+            // 
+            // pocketStationToolStripMenuItem
+            // 
+            this.pocketStationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.readSerialToolStripMenuItem,
+            this.dumpBIOSToolStripMenuItem,
+            this.setDateTimeToolStripMenuItem});
+            this.pocketStationToolStripMenuItem.Name = "pocketStationToolStripMenuItem";
+            this.pocketStationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pocketStationToolStripMenuItem.Text = "PocketStation";
+            // 
+            // readSerialToolStripMenuItem
+            // 
+            this.readSerialToolStripMenuItem.Name = "readSerialToolStripMenuItem";
+            this.readSerialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.readSerialToolStripMenuItem.Text = "Read serial";
+            this.readSerialToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
+            // 
+            // dumpBIOSToolStripMenuItem
+            // 
+            this.dumpBIOSToolStripMenuItem.Name = "dumpBIOSToolStripMenuItem";
+            this.dumpBIOSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dumpBIOSToolStripMenuItem.Text = "Dump BIOS";
+            this.dumpBIOSToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
+            // 
+            // setDateTimeToolStripMenuItem
+            // 
+            this.setDateTimeToolStripMenuItem.Name = "setDateTimeToolStripMenuItem";
+            this.setDateTimeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setDateTimeToolStripMenuItem.Text = "Set date / time";
+            this.setDateTimeToolStripMenuItem.Click += new System.EventHandler(this.HardwareItem_Activated);
             // 
             // optionsToolStripMenuItem
             // 
@@ -1035,25 +1014,21 @@
         private System.Windows.Forms.ToolStripMenuItem hardwareToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem readFromToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem writeToToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem DexDriveMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem MemCARDuinoMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem17;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem18;
-        private System.Windows.Forms.ToolStripMenuItem PS1CardLinkMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem21;
         private System.Windows.Forms.ToolStripMenuItem formatMemoryCardToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem16;
-        private System.Windows.Forms.ToolStripMenuItem PS3MCAMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem PS1CardLinkTCPMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportRAWSaveToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem25;
-        private System.Windows.Forms.ToolStripMenuItem UniromMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem UniromTCPMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem12;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem19;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private CardTabControl mainTabControl;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem12;
+        private System.Windows.Forms.ToolStripMenuItem pocketStationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem readSerialToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dumpBIOSToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setDateTimeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem realtimeConnectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem16;
     }
 }
 

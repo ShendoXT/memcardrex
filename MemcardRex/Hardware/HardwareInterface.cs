@@ -4,18 +4,19 @@ namespace MemcardRex
 {
 	public class HardwareInterface
 	{
-		private int _type;
-		private int _mode;
-		private int _commMode;
+		private Types _type;
+		private Modes _mode;
+		private CommModes _commMode;
 		private int _cardSlot;
 		private int _frameCount = 1024;		//Default number of frames on a standard Memory Card
         private UInt32 _lastChecksum;
 		private bool _storedInRam;
+		private const string pocketstationError = "PocketStation commands are not supported by this interface";
 
-        /// <summary>
-        /// All supported interface types
-        /// </summary>
-        public enum Types : int
+		/// <summary>
+		/// All supported interface types
+		/// </summary>
+		public enum Types : int
 		{
 			dexdrive,
 			memcarduino,
@@ -40,16 +41,30 @@ namespace MemcardRex
 		{
 			read,
 			write,
-			format
+			format,
+			realtime,
+			psinfo,
+			psbios,
+			pstime
 		}
 
-        public int Mode
+		/// <summary>
+		/// Features supported by the 
+		/// </summary>
+		public enum SupportedFeatures : int
+		{
+			TcpMode = 1,				//Interface supports TCP protocol
+			RealtimeMode = 1 << 1,		//Fast reading of directories, updating in realtime
+			PocketStation = 1 << 2		//Interface supports custom pocketstation commands
+		}
+
+        public Modes Mode
         {
             get { return _mode; }
             set { _mode = value; }
         }
 
-        public int CommMode
+        public CommModes CommMode
         {
             get { return _commMode; }
             set { _commMode = value; }
@@ -73,7 +88,7 @@ namespace MemcardRex
             set { _lastChecksum = value; }
         }
 
-		public int Type
+		public Types Type
 		{
 			get { return _type; }
 			set { _type = value; }
@@ -85,11 +100,11 @@ namespace MemcardRex
 			set { _storedInRam = value; }
         }
 
-        public HardwareInterface(int mode, int commMode)
+        public HardwareInterface()
 		{
-			_mode = mode;
-			_commMode = commMode;
-			_type = -1;
+			//Set default values
+			_mode = Modes.serial;
+			_commMode = CommModes.read;
 		}
 
         public UInt32 CalculateChecksum(byte[] inBytes)
@@ -140,6 +155,15 @@ namespace MemcardRex
 		}
 
 		/// <summary>
+		/// Return all supported features of this interface
+		/// </summary>
+		/// <returns></returns>
+		public virtual SupportedFeatures Features()
+		{
+			return 0;
+		}
+
+		/// <summary>
 		/// Read a single 128 byte frame from a device
 		/// </summary>
 		/// <param name="FrameNumber">Frame to read</param>
@@ -159,6 +183,37 @@ namespace MemcardRex
 		{
 			return false;
 		}
+
+        /// <summary>
+        /// Read serial from PocketStation
+        /// </summary>
+        /// <param name="errorMsg">Descriptive error message</param>
+        /// <returns>Serial as BCD</returns>
+        public virtual UInt32 ReadPocketStationSerial(out string errorMsg)
+		{
+			errorMsg = pocketstationError;
+			return 0;
+		}
+
+        /// <summary>
+        /// Dump 16KB BIOS from PocketStation
+        /// </summary>
+        /// <param name="part">Part of the BIOS to dump</param>
+        /// <returns>16KB BIOS data</returns>
+        public virtual byte[] DumpPocketStationBIOS(int part)
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Push current date and time from a PC to PocketStation
+		/// </summary>
+		/// <param name="errorMsg">Descriptive error message</param>
+		/// <returns>Operation success</returns>
+		public virtual bool SetPocketStationTime(out string errorMsg)
+		{
+			errorMsg = pocketstationError;
+			return false;
+		}
     }
 }
-

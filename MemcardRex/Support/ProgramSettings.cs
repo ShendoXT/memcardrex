@@ -22,6 +22,7 @@ namespace MemcardRex
         public string RemoteCommAddress = "192.168.4.1";   // Address / hostname of the remote serial bridge host
         public int RemoteCommPort = 23;                    // Port to open a socket for the remote serial bridge
         public int CardSlot = 0;                           //Active card slot for reading data from PS1CardLink or Unirom
+        public int ActiveInterface = 0;                    //Currently active hardware interface
 
         private const string settingsFilename = "Settings.xml";
 
@@ -72,6 +73,8 @@ namespace MemcardRex
             LastExportFormat = xmlAppSettings.readXmlEntryInt("LastExportFormat", 0, 7);
 
             CardSlot = xmlAppSettings.readXmlEntryInt("CardSlot", 0, 1);
+
+            ActiveInterface = xmlAppSettings.readXmlEntryInt("ActiveInterface", 0, 10);
         }
 
         /// <summary>
@@ -113,6 +116,8 @@ namespace MemcardRex
             xmlAppSettings.writeXmlEntry("LastExportFormat", LastExportFormat.ToString());
 
             xmlAppSettings.writeXmlEntry("CardSlot", CardSlot.ToString());
+
+            xmlAppSettings.writeXmlEntry("ActiveInterface", ActiveInterface.ToString());
 
             xmlAppSettings.closeXmlWriter();
         }

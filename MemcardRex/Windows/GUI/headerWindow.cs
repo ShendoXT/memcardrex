@@ -21,9 +21,6 @@ namespace MemcardRex
         public string saveIdentifier = null;
         public string saveRegion = null;
 
-        //Custom save region (If the save uses nonstandard region)
-        private ushort customSaveRegion = 0;
-
         public headerWindow()
         {
             InitializeComponent();

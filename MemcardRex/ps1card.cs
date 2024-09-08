@@ -141,6 +141,7 @@ namespace MemcardRex
             public int[] slots;
             public byte[][] header;
             public byte[][] data;
+            public string saveComment;
         };
 
         private List<undoItem> undoList = new List<undoItem>();
@@ -808,6 +809,9 @@ namespace MemcardRex
             undoItems.header = new byte[saveSlots.Length][];
             undoItems.data = new byte[saveSlots.Length][];
 
+            //Grab comments from initial save slot
+            undoItems.saveComment = saveComments[saveSlots[0]];
+
             //Cycle through each slot
             for (int i = 0; i < saveSlots.Length; i++)
             {
@@ -827,7 +831,7 @@ namespace MemcardRex
             //Add to undo/redo buffer
             urBuffer.Add(undoItems);
 
-            //Empty redo buffer in need be
+            //Empty redo buffer if need be
             if (clearRedo) redoList.Clear();
         }
 
@@ -1200,6 +1204,12 @@ namespace MemcardRex
         /// <param name="iconBytes">Complete icon data along with palette</param>
         public void SetIconBytes(int slotNumber, byte[] iconBytes)
         {
+            //Get all linked saves
+            int[] saveSlots = FindSaveLinks(slotNumber);
+
+            //Add current state to undo buffer
+            pushToUndoRedoBuffer(saveSlots, ref undoList, true);
+
             //Set bytes from the given slot
             for (int i = 0; i < 416; i++)
                 saveData[slotNumber, i + 96] = iconBytes[i];
@@ -1496,6 +1506,9 @@ namespace MemcardRex
                 for (int j = 0; j < 8192; j++)
                     saveData[undoItems.slots[i], j] = undoItems.data[i][j];
             }
+
+            //Restore comments
+            saveComments[undoItems.slots[0]] = undoItems.saveComment;
 
             //Pop from undo redo list
             ulBuffer.Remove(undoItems);

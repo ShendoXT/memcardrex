@@ -358,6 +358,14 @@ namespace MemcardRex
     public class MyRender : ToolStripProfessionalRenderer
     {
         public MyRender() : base(new MyColorTable()) { }
+
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+        {
+            var tsMenuItem = e.Item as ToolStripMenuItem;
+            if (tsMenuItem != null)
+                e.ArrowColor = Color.White;
+            base.OnRenderArrow(e);
+        }
     }
 
     public class MyColorTable : ProfessionalColorTable
@@ -481,8 +489,8 @@ namespace MemcardRex
                     }
                 }
 
-                //Color hardware menus
-                foreach (ToolStripItem toolItem in readFromToolStripMenuItem.DropDownItems)
+                //Color PocketStation menus
+                foreach (ToolStripItem toolItem in pocketStationToolStripMenuItem.DropDownItems)
                 {
                     toolItem.ForeColor = darkColors.foreColor;
                 }

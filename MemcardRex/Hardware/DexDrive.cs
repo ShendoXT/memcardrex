@@ -96,6 +96,11 @@ namespace MemcardRex
             return FirmwareVersion;
         }
 
+        public override SupportedFeatures Features()
+        {
+            return SupportedFeatures.RealtimeMode;
+        }
+
         //Send DexDrive command on the opened COM port with a delay
         private void SendDataToPort(byte Command, byte[] Data, int Delay)
         {
@@ -228,9 +233,9 @@ namespace MemcardRex
             return ReturnByte;
         }
 
-        public DexDrive(int mode, int commMode) : base(mode, commMode)
+        public DexDrive() : base()
         {
-            Type = (int) Types.dexdrive;
+            Type = Types.dexdrive;
         }
     }
 }

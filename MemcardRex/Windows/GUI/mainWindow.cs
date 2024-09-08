@@ -12,6 +12,7 @@ using System.Resources;
 using MemcardRex.Properties;
 using System.Drawing.Drawing2D;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using MemcardRex.Windows.GUI;
 
 namespace MemcardRex
 {
@@ -56,6 +57,25 @@ namespace MemcardRex
         //List of icons for the saves
         List<ImageList> iconList = new List<ImageList>();
 
+        public struct HardInterfaces
+        {
+            public HardwareInterface hardwareInterface;
+            public HardwareInterface.Modes mode;
+            public string displayName;
+        }
+
+        //Registered hardware interfaces
+        List<HardInterfaces> registeredInterfaces = new List<HardInterfaces>();
+
+        //Currently active interface
+        private HardInterfaces activeInterface
+        {
+            get
+            {
+                return registeredInterfaces[appSettings.ActiveInterface];
+            }
+        }
+
         //Currently active Memory Card
         private ps1card memCard
         {
@@ -87,178 +107,164 @@ namespace MemcardRex
 
             BuildToolbarIcons();
 
-            //Beginning of Dark Theme implementation
-            ApplyTheme(Theme.Dark);
-
             //Create hardware menus
             BuildHardwareMenus();
+
+            //Beginning of Dark Theme implementation
+            ApplyTheme(Theme.Dark);
         }
 
-        //Clone all hardware device menus from read to write and format
+        //Register hardware interfaces
+        private void RegisterInterface(HardwareInterface hardInterface, HardwareInterface.Modes mode)
+        {
+            HardInterfaces regInterface = new HardInterfaces();
+            regInterface.hardwareInterface = hardInterface;
+            regInterface.mode = mode;
+            regInterface.displayName = hardInterface.Name();
+
+            //Append via TCP if interface mode is tcp
+            if(mode == HardwareInterface.Modes.tcp) regInterface.displayName += " via TCP";
+
+            registeredInterfaces.Add(regInterface);
+        }
+        
+        private void AttachInterface(HardwareInterface hardInterface)
+        {
+            //Serial always available
+            RegisterInterface(hardInterface, HardwareInterface.Modes.serial);
+
+            //Check if interface supports TCP mode
+            if((hardInterface.Features() & HardwareInterface.SupportedFeatures.TcpMode) > 0)
+                RegisterInterface(hardInterface, HardwareInterface.Modes.tcp);
+        }
+
+        //Add all available hardware interfaces
         private void BuildHardwareMenus()
         {
-            ToolStripItem newWriteItem;
-            ToolStripItem newFormatItem;
+            AttachInterface(new DexDrive());
+            AttachInterface(new MemCARDuino());
+            AttachInterface(new PS1CardLink());
+            AttachInterface(new Unirom());
+            AttachInterface(new PS3MemCardAdaptor());
 
-            foreach (ToolStripItem menuItem in readFromToolStripMenuItem.DropDownItems)
-            {
-                if (menuItem.Text == "")
-                {
-                    newWriteItem = new ToolStripSeparator();
-                    newFormatItem = new ToolStripSeparator();
-                }
-                else
-                {
-                    newWriteItem = new ToolStripMenuItem(menuItem.Text);
-                    newWriteItem.ForeColor = menuItem.ForeColor;
-
-                    newFormatItem = new ToolStripMenuItem(menuItem.Text);
-                    newFormatItem.ForeColor = menuItem.ForeColor;
-
-                    newWriteItem.Click += HardwareItem_Activated;
-                    newFormatItem.Click += HardwareItem_Activated;
-                    menuItem.Click += HardwareItem_Activated;
-                }
-
-                writeToToolStripMenuItem.DropDownItems.Add(newWriteItem);
-                formatMemoryCardToolStripMenuItem.DropDownItems.Add(newFormatItem);
-            }
+            EnableDisableHardwareMenus();
         }
 
-        //Event for hardware read/write/format items
+        private void EnableDisableHardwareMenus()
+        {
+            //Set currently active interface to hardware menu
+            hardwareToolStripMenuItem.Text = activeInterface.hardwareInterface.Name();
+
+            //Add TCP if TCP interface
+            if (activeInterface.mode == HardwareInterface.Modes.tcp) hardwareToolStripMenuItem.Text += " (TCP)";
+
+            //Enable or disable realtime and PocketStation menus
+            realtimeConnectionToolStripMenuItem.Enabled = ((activeInterface.hardwareInterface.Features() & HardwareInterface.SupportedFeatures.RealtimeMode) > 0);
+            pocketStationToolStripMenuItem.Enabled = ((activeInterface.hardwareInterface.Features() & HardwareInterface.SupportedFeatures.PocketStation) > 0);
+        }
+
         private void HardwareItem_Activated(object sender, EventArgs e)
         {
-            var menuItem = sender as ToolStripItem;
+            ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+            if (menuItem == null) return;
 
-            int deviceId = -1;
-            int mode = (int)HardwareInterface.Modes.serial;
-            int commMode = (int)HardwareInterface.CommModes.read;
+            //Read data
+            if(menuItem == readFromToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.read;
 
-            if (menuItem.OwnerItem == writeToToolStripMenuItem)
-                commMode = (int)HardwareInterface.CommModes.write;
+            //Write data
+            if (menuItem == writeToToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.write;
 
-            else if (menuItem.OwnerItem == formatMemoryCardToolStripMenuItem)
-                commMode = (int)HardwareInterface.CommModes.format;
+            //Format
+            if (menuItem == formatMemoryCardToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.format;
 
-            //Set device id based on menu title
-            switch (menuItem.Text)
-            {
-                case "DexDrive":
-                    deviceId = (int)HardwareInterface.Types.dexdrive;
-                    break;
+            //Realtime link
+            if (menuItem == realtimeConnectionToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.realtime;
 
-                case "MemCARDuino":
-                    deviceId = (int)HardwareInterface.Types.memcarduino;
-                    break;
+            //Read PocketStation serial
+            if (menuItem == readSerialToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.psinfo;
 
-                case "PS1CardLink":
-                    deviceId = (int)HardwareInterface.Types.ps1cardlink;
-                    break;
+            //Dump PocketSTation BIOS
+            if (menuItem == dumpBIOSToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.psbios;
 
-                case "PS1CardLink over TCP":
-                    deviceId = (int)HardwareInterface.Types.ps1cardlink;
-                    mode = (int)HardwareInterface.Modes.tcp;
-                    break;
+            //Set PocketStation time
+            if (menuItem == setDateTimeToolStripMenuItem)
+                activeInterface.hardwareInterface.CommMode = HardwareInterface.CommModes.pstime;
 
-                case "Unirom":
-                    deviceId = (int)HardwareInterface.Types.unirom;
-                    break;
-
-                case "Unirom over TCP":
-                    deviceId = (int)HardwareInterface.Types.unirom;
-                    mode = (int)HardwareInterface.Modes.tcp;
-                    break;
-
-                case "PS3 Memory Card Adaptor":
-                    deviceId = (int)HardwareInterface.Types.ps3mca;
-                    break;
-            }
+            //Set serial or TCP mode
+            activeInterface.hardwareInterface.Mode = activeInterface.mode;
 
             //Activate interface
-            InitHardwareCommunication(deviceId, mode, commMode);
+            InitHardwareCommunication(activeInterface.hardwareInterface);
         }
 
         //Communication with real device
-        public void InitHardwareCommunication(int deviceId, int deviceMode, int commMode)
+        public void InitHardwareCommunication(HardwareInterface hardInterface)
         {
-            HardwareInterface hardInterface = null;
-
-            //Check what type of interface to init
-            switch (deviceId)
-            {
-                case (int)HardwareInterface.Types.dexdrive:
-                    hardInterface = new DexDrive(deviceMode, commMode);
-                    break;
-
-                case (int)HardwareInterface.Types.memcarduino:
-                    hardInterface = new MemCARDuino(deviceMode, commMode);
-                    break;
-
-                case (int)HardwareInterface.Types.ps1cardlink:
-                    hardInterface = new PS1CardLink(deviceMode, commMode);
-                    break;
-
-                case (int)HardwareInterface.Types.unirom:
-                    hardInterface = new Unirom(deviceMode, commMode);
-                    break;
-
-                case (int)HardwareInterface.Types.ps3mca:
-                    hardInterface = new PS3MemCardAdaptor(deviceMode, commMode);
-                    break;
-            }
-
             //Abort if the interface is not valid
             if (hardInterface == null) return;
 
             //Set card slot
             hardInterface.CardSlot = appSettings.CardSlot;
 
-            string errMsg;
+            cardReaderWindow cardReader = new cardReaderWindow(hardInterface);
 
-            //Send either serial port data or address data from TCP
-            if (deviceMode == (int)HardwareInterface.Modes.serial)
+            //Update setings
+            cardReader.ComPort = appSettings.CommunicationPort;
+            cardReader.RemoteCommAddress = appSettings.RemoteCommAddress;
+            cardReader.RemoteCommPort = appSettings.RemoteCommPort;
+
+            //If the data is to be written fetch the current raw Memory Card data
+            if (hardInterface.CommMode == HardwareInterface.CommModes.write)
+                cardReader.MemoryCard = memCard.SaveMemoryCardStream(appSettings.FixCorruptedCards == 1);
+
+            //Create a new blank formatted Memory Card and write it to device
+            else if (hardInterface.CommMode == HardwareInterface.CommModes.format)
             {
-                errMsg = hardInterface.Start(appSettings.CommunicationPort, appSettings.CommunicationSpeed);
+                ps1card blankCard = new ps1card();
+                blankCard.OpenMemoryCard(null, true);
+                cardReader.MemoryCard = blankCard.SaveMemoryCardStream(true);
             }
-            else
+
+            cardReader.QuickFormat = appSettings.FormatType == 0;
+
+            //Read complete event
+            cardReader.ReadingComplete += (s, e) =>
             {
-                errMsg = hardInterface.Start(appSettings.RemoteCommAddress, appSettings.RemoteCommPort);
+                if (hardInterface.CommMode == HardwareInterface.CommModes.read)
+                    cardReaderRead(cardReader.MemoryCard, hardInterface.Name());
+            };
+
+            cardReader.ShowDialog();
+
+            //Check if any errors occured and display them
+            if(cardReader.ErrorMessage != null)
+            {
+                MessageBox.Show(cardReader.ErrorMessage, "Unable to start " + hardInterface.Name(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
-            if (errMsg == null)
+            //If this was a serial read display result
+            if(hardInterface.CommMode == HardwareInterface.CommModes.psinfo)
             {
-                cardReaderWindow cardReader = new cardReaderWindow(hardInterface);
-
-                //If the data is to be written fetch the current raw Memory Card data
-                if (hardInterface.CommMode == (int)HardwareInterface.CommModes.write)
-                    cardReader.MemoryCard = memCard.SaveMemoryCardStream(appSettings.FixCorruptedCards == 1);
-
-                //Create a new blank formatted Memory Card and write it to device
-                else if (hardInterface.CommMode == (int)HardwareInterface.CommModes.format)
-                {
-                    ps1card blankCard = new ps1card();
-                    blankCard.OpenMemoryCard(null, true);
-                    cardReader.MemoryCard = blankCard.SaveMemoryCardStream(true);
-                }
-
-                cardReader.QuickFormat = appSettings.FormatType == 0;
-
-                //Read complete event
-                cardReader.ReadingComplete += (s, e) =>
-                {
-                    cardReaderRead(cardReader.MemoryCard);
-                };
-
-                cardReader.ShowDialog();
+                new pocketStationInfo().ShowSerial(cardReader.PocketSerial);
             }
-            else
+
+            //If this was a BIOS read display it in dialog
+            if(hardInterface.CommMode == HardwareInterface.CommModes.psbios && cardReader.OperationCompleted)
             {
-                hardInterface.Stop();
+                new pocketStationInfo().ShowBios(cardReader.PocketSerial, cardReader.PocketBIOS);
+            }
 
-                if (deviceId != (int)HardwareInterface.Types.ps3mca)
-                    errMsg += "\n\nMake sure to select proper communication port and speed in preferences dialog";
-
-                MessageBox.Show(errMsg, "Unable to start " + hardInterface.Name(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //If this was time command display confirmation dialog
+            if (hardInterface.CommMode == HardwareInterface.CommModes.pstime)
+            {
+                MessageBox.Show("Time set successfully", "PocketStation", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -354,6 +360,10 @@ namespace MemcardRex
 
                 //Make a new tab for the opened card
                 createTabPage();
+
+                //Show event in the history tab
+                if(fileName != null) pushHistory("Card opened", historyList.Count - 1);
+                else pushHistory("Card created", historyList.Count - 1);
             }
             else
             {
@@ -403,12 +413,6 @@ namespace MemcardRex
 
             //Select first save in the list
             cardList[cardList.Count - 1].Items[0].Selected = true;
-        }
-
-        private void TabPage_Paint(object sender, PaintEventArgs e)
-        {
-            SolidBrush fillBrush = new SolidBrush(Color.Red);
-            e.Graphics.FillRectangle(fillBrush, e.ClipRectangle);
         }
 
         //Save a Memory Card with SaveFileDialog
@@ -507,6 +511,7 @@ namespace MemcardRex
 
                 PScard.RemoveAt(listIndex);
                 cardList.RemoveAt(listIndex);
+                historyList.RemoveAt(listIndex);
                 iconList.RemoveAt(listIndex);
                 mainTabControl.RemoveTabPrepare();
                 mainTabControl.TabPages.RemoveAt(listIndex);
@@ -571,6 +576,7 @@ namespace MemcardRex
             {
                 //Insert edited comments back in the card
                 memCard.saveComments[slotNum] = commentsDlg.saveComment;
+                pushHistory("Comment edited", mainTabControl.SelectedIndex);
             }
             commentsDlg.Dispose();
         }
@@ -586,7 +592,6 @@ namespace MemcardRex
             //Only show info for valid saves
             if (!(memCard.slotType[masterSlot] == (int)ps1card.SlotTypes.initial || 
                 memCard.slotType[masterSlot] == (int)ps1card.SlotTypes.deleted_initial)) return;
-
 
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
@@ -622,9 +627,16 @@ namespace MemcardRex
         {
             if (!validityCheck(out int listIndex, out int slotNumber)) return;
 
-            memCard.ToggleDeleteSave(memCard.GetMasterLinkForSlot(slotNumber));
+            int masterSlot = memCard.GetMasterLinkForSlot(slotNumber);
+
+            memCard.ToggleDeleteSave(masterSlot);
 
             refreshListView(listIndex, slotNumber);
+
+            if (memCard.slotType[masterSlot] == (int) ps1card.SlotTypes.deleted_initial)
+                pushHistory("Save deleted", mainTabControl.SelectedIndex);
+            else
+                pushHistory("Save restored", mainTabControl.SelectedIndex);
         }
 
         //Format selected save
@@ -635,6 +647,8 @@ namespace MemcardRex
             memCard.FormatSave(memCard.GetMasterLinkForSlot(slotNumber));
 
             refreshListView(listIndex, slotNumber);
+
+            pushHistory("Save removed", mainTabControl.SelectedIndex);
         }
 
         //Copy save selected save from Memory Card
@@ -671,6 +685,7 @@ namespace MemcardRex
             if (PScard[listIndex].SetSaveBytes(slotNumber, tempBuffer, out requiredSlots))
             {
                 refreshListView(listIndex, slotNumber);
+                pushHistory("Save pasted", mainTabControl.SelectedIndex);
             }
             else
             {
@@ -793,6 +808,7 @@ namespace MemcardRex
                     if (PScard[listIndex].OpenSingleSave(openFileDlg.FileName, slotNumber, out int requiredSlots))
                     {
                         refreshListView(listIndex, slotNumber);
+                        pushHistory("Save imported", mainTabControl.SelectedIndex);
                     }
                     else if (requiredSlots > 0)
                     {
@@ -810,29 +826,11 @@ namespace MemcardRex
             }
         }
 
-        //Get region string from region data
-        private string getRegionString(ushort regionUshort)
-        {
-            byte[] tempRegion = new byte[2];
-
-            //Convert region to byte array
-            tempRegion[0] = (byte)(regionUshort & 0xFF);
-            tempRegion[1] = (byte)(regionUshort >> 8);
-
-            //Get UTF-16 string
-            return Encoding.Default.GetString(tempRegion);
-        }
-
         //Open preferences window
         private void editPreferences()
         {
-            preferencesWindow prefDlg = new preferencesWindow();
-
-            prefDlg.initializeDialog(this);
-
-            prefDlg.ShowDialog(this);
-
-            prefDlg.Dispose();
+            new preferencesWindow().initializeDialog(this, registeredInterfaces);
+            EnableDisableHardwareMenus();
         }
 
         //Open edit icon dialog
@@ -851,6 +849,7 @@ namespace MemcardRex
             {
                 PScard[listIndex].SetIconBytes(masterSlot, iconDlg.iconData);
                 refreshListView(listIndex, slotNumber);
+                pushHistory("Icon edited", mainTabControl.SelectedIndex);
             }
 
             iconDlg.Dispose();
@@ -871,9 +870,18 @@ namespace MemcardRex
         {
             new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2023", 
                 "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\n" + 
-                "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\n" + 
-                "Thanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem.\n\n" +
+                "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\n" +
+                "Thanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem, \nPadraig Flood.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
+        }
+
+        //Bring a new item to the history list
+        private void pushHistory(string description, int listIndex)
+        {
+            historyList[listIndex].Items.Add(description);
+
+            //Select the added item
+            historyList[listIndex].Items[historyList[listIndex].Items.Count - 1].Selected = true;
         }
 
         //Make a new ListView control
@@ -898,14 +906,7 @@ namespace MemcardRex
             historyList[historyList.Count - 1].Columns.Add("History");
             historyList[historyList.Count - 1].Columns[0].Width = (int)(xScale * 160);
             historyList[historyList.Count - 1].View = View.Details;
-
-            //Zero index
-            historyList[historyList.Count - 1].Items.Add("Card loaded");
-            historyList[historyList.Count - 1].Items[0].Selected = true;
-
-            //historyList[historyList.Count - 1].Items.Add("Deleted");
-            //historyList[historyList.Count - 1].Items.Add("Deleted");
-            //historyList[historyList.Count - 1].Items.Add("Edited header");
+            historyList[historyList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.historyList_IndexChanged);
 
             cardList.Add(new CardListView());
             //cardList[cardList.Count - 1].Visible = false;
@@ -923,8 +924,8 @@ namespace MemcardRex
             cardList[cardList.Count - 1].Columns.Add("Icon, region and title");
             cardList[cardList.Count - 1].Columns.Add("Product code");
             cardList[cardList.Count - 1].Columns.Add("Identifier");
-            cardList[cardList.Count - 1].Columns[0].Width = (int)(xScale * 322);
-            cardList[cardList.Count - 1].Columns[1].Width = (int)(xScale * 88);
+            cardList[cardList.Count - 1].Columns[0].Width = (int)(xScale * 312);
+            cardList[cardList.Count - 1].Columns[1].Width = (int)(xScale * 98);
             cardList[cardList.Count - 1].Columns[2].Width = (int)(xScale * 102);
             cardList[cardList.Count - 1].View = View.Details;
             //cardList[cardList.Count - 1].Click += new System.EventHandler(this.cardList_Click);
@@ -956,7 +957,20 @@ namespace MemcardRex
                     default:
                         iconList[listIndex].Images.Add(prepareIcons(listIndex, i));
                         cardList[listIndex].Items.Add(PScard[listIndex].saveName[i]);
-                        cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveProdCode[i]);
+
+                        //Check if save is using non standard region and append it to product code if not
+                        //this fixes info for FreePSXBoot, soundscope, codelist and bunch of other nonstandard save names
+                        if (PScard[listIndex].saveRegion[i] == "America" ||
+                            PScard[listIndex].saveRegion[i] == "Europe" ||
+                            PScard[listIndex].saveRegion[i] == "Japan")
+                        {
+                            cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveProdCode[i]);
+                        }
+                        else
+                        {
+                            cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveRegion[i] + PScard[listIndex].saveProdCode[i]);
+                        }
+
                         cardList[listIndex].Items[i].SubItems.Add(PScard[listIndex].saveIdentifier[i]);
                         cardList[listIndex].Items[i].ImageIndex = i;
                         break;
@@ -1003,6 +1017,9 @@ namespace MemcardRex
 
             //Enable certain list items
             enableSelectiveEditItems();
+
+            //Enable or disable undo/redo menu items
+            enableDisableUndoRedo();
         }
 
         //Prepare icons for drawing (add flags and make them transparent if save is deleted)
@@ -1062,6 +1079,13 @@ namespace MemcardRex
                     break;
             }
 
+            //Draw comment icon if save contains a comment
+            if(PScard[listIndex].saveComments[slotNumber].Length > 0)
+            {
+                if(PScard[listIndex].saveComments[slotNumber][0] != '\0')
+                iconGraphics.DrawImage(Properties.Resources.comments, 38, 6, 8, 8);
+            }
+
             iconGraphics.Dispose();
 
             return iconBitmap;
@@ -1107,6 +1131,7 @@ namespace MemcardRex
                 //Insert data to save header of the selected card and slot
                 memCard.SetHeaderData(masterSlot, headerDlg.prodCode, headerDlg.saveIdentifier, headerDlg.saveRegion);
                 refreshListView(listIndex, slotNumber);
+                pushHistory("Header edited", mainTabControl.SelectedIndex);
             }
             headerDlg.Dispose();
         }
@@ -1129,6 +1154,9 @@ namespace MemcardRex
 
             //Load settings from settings file
             appSettings.LoadSettings(appPath);
+
+            //Set active interface after loaded settings
+            EnableDisableHardwareMenus();
 
             //Load available plugins
             pluginSystem.fetchPlugins(appPath + "/Plugins");
@@ -1165,11 +1193,19 @@ namespace MemcardRex
                 editWithPluginToolStripMenuItem.Enabled = true;
                 editWithPluginToolStripMenuItem1.Enabled = true;
 
+                int count = 0;
+
                 foreach (int currentAssembly in supportedPlugins)
                 {
                     //Add item to the plugin menu
                     editWithPluginToolStripMenuItem.DropDownItems.Add(pluginSystem.assembliesMetadata[currentAssembly].pluginName);
                     editWithPluginToolStripMenuItem1.DropDownItems.Add(pluginSystem.assembliesMetadata[currentAssembly].pluginName);
+
+                    count++;
+
+                    //Color it with the parent decorations
+                    editWithPluginToolStripMenuItem.DropDownItems[count - 1].ForeColor = editWithPluginToolStripMenuItem.ForeColor;
+                    editWithPluginToolStripMenuItem1.DropDownItems[count - 1].ForeColor = editWithPluginToolStripMenuItem1.ForeColor;
                 }
             }
         }
@@ -1197,6 +1233,8 @@ namespace MemcardRex
 
                     //Set the edited flag of the card
                     PScard[listIndex].changedFlag = true;
+
+                    pushHistory("Edited by plugin", mainTabControl.SelectedIndex);
                 }
             }
         }
@@ -1206,6 +1244,13 @@ namespace MemcardRex
             //Check if Readme.txt exists
             if (File.Exists(appPath + "/Readme.txt")) System.Diagnostics.Process.Start(appPath + "/Readme.txt");
             else MessageBox.Show("'ReadMe.txt' was not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        //Enable or disable undo and redo items
+        private void enableDisableUndoRedo()
+        {
+            undoToolStripMenuItem.Enabled = (memCard.UndoCount > 0);
+            redoToolStripMenuItem.Enabled = (memCard.RedoCount > 0);
         }
 
         //Enable only supported edit operations
@@ -1234,6 +1279,7 @@ namespace MemcardRex
                     if (tempBuffer != null)
                     {
                         pasteSaveFromTemporaryBufferToolStripMenuItem.Enabled = true;
+                        paseToolStripMenuItem.Enabled = true;
                     }
                     break;
 
@@ -1302,7 +1348,7 @@ namespace MemcardRex
         }
 
         //Read a Memory Card from the physical device
-        private void cardReaderRead(byte[] readData)
+        private void cardReaderRead(byte[] readData, string deviceName)
         {
             //Create a new card
             PScard.Add(new ps1card());
@@ -1318,6 +1364,9 @@ namespace MemcardRex
 
             //Restore null location since DexDrive Memory Card is not a file present on the Hard Disk
             PScard[PScard.Count - 1].cardLocation = null;
+
+            //Set the info to history list
+            pushHistory("Card read (" + deviceName + ")", historyList.Count - 1);
         }
 
         private void mainTabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -1330,6 +1379,9 @@ namespace MemcardRex
 
             //Enable certain list items
             enableSelectiveEditItems();
+
+            //Enable undo/redo menu items
+            enableDisableUndoRedo();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1483,6 +1535,23 @@ namespace MemcardRex
             exportSaveToolStripMenuItem1.Enabled = itemStates;
             exportRAWSaveToolStripMenuItem1.Enabled = itemStates;
             saveInformationToolStripMenuItem.Enabled = itemStates;
+        }
+
+        private void historyList_IndexChanged(object sender, EventArgs e)
+        {
+            var selectedList = sender as ListView;
+
+            //If nothing is selected abort
+            if (selectedList.SelectedIndices.Count < 1) return;
+
+            //Set item colors
+            for (int i = 0; i < selectedList.Items.Count; i++)
+            {
+                if (selectedList.Items[i].Selected)
+                colorListItem(selectedList, i, Color.FromArgb(220, Color.FromKnownColor(KnownColor.MenuHighlight)), SystemColors.HighlightText);
+                else
+                colorListItem(selectedList, i, selectedList.BackColor, selectedList.ForeColor);
+            }
         }
 
         private void cardList_IndexChanged(object sender, EventArgs e)
@@ -1691,6 +1760,26 @@ namespace MemcardRex
         {
             //Export RAW save
             exportSaveDialog(true);
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (memCard.UndoCount > 0)
+            {
+                validityCheck(out int listIndex, out int slotNumber);
+                memCard.Undo();
+                refreshListView(listIndex, slotNumber);
+            }
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (memCard.RedoCount > 0)
+            {
+                validityCheck(out int listIndex, out int slotNumber);
+                memCard.Redo();
+                refreshListView(listIndex, slotNumber);
+            }
         }
     }
 }

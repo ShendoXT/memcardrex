@@ -29,6 +29,11 @@ namespace MemcardRex
             return InterfaceName;
         }
 
+        public override SupportedFeatures Features()
+        {
+            return SupportedFeatures.TcpMode;
+        }
+
         //Get 4 byte array from Uint32 value
         private byte[] byteFromUint32(UInt32 value)
         {
@@ -200,7 +205,7 @@ namespace MemcardRex
         public override string Start(string ComPortName, int tcpPort)
         {
             //Start TCP mode if it's active
-            if(base.Mode == (int) Modes.tcp)
+            if(base.Mode == Modes.tcp)
             {
                 return StartUniromTCP(ComPortName, tcpPort);
             }
@@ -405,9 +410,9 @@ namespace MemcardRex
             }
         }
 
-        public Unirom(int mode, int commMode) : base(mode, commMode)
+        public Unirom() : base()
         {
-            Type = (int)Types.unirom;
+            Type = Types.unirom;
         }
     }
 }

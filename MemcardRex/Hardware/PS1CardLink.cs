@@ -38,10 +38,15 @@ namespace MemcardRex
             return FirmwareVersion;
         }
 
+        public override SupportedFeatures Features()
+        {
+            return SupportedFeatures.RealtimeMode | /*SupportedFeatures.PocketStation | */SupportedFeatures.TcpMode;
+        }
+
         public override string Start(string ComPortName, int ComPortSpeed)
         {
             //Check if PS1CardLink needs to start in TCP mode
-            if(base.Mode == (int)HardwareInterface.Modes.tcp)
+            if(base.Mode == HardwareInterface.Modes.tcp)
             {
                 //Comport name used as address
                 //Com port speed used as TCP port
@@ -339,9 +344,9 @@ namespace MemcardRex
             return false;
         }
 
-        public PS1CardLink(int mode, int commMode) : base(mode, commMode)
+        public PS1CardLink() : base()
         {
-            Type = (int)Types.ps1cardlink;
+            Type = Types.ps1cardlink;
         }
 	}
 }
