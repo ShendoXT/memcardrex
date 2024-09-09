@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
-    class xmlSettingsEditor
+    public class xmlSettingsEditor
     {
         //Writer and reader declarations
         XmlTextWriter xmlWriter = null;

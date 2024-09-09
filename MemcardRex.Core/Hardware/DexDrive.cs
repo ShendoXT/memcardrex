@@ -6,9 +6,9 @@ using System;
 using System.IO.Ports;
 using System.Threading;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
-    class DexDrive : HardwareInterface
+    public class DexDrive : HardwareInterface
     {
         enum DexCommands { INIT = 0x00, STATUS = 0x01, READ = 0x02, WRITE = 0x04, LIGHT = 0x07, MAGIC_HANDSHAKE = 0x27 };
         enum DexResponses { POUT = 0x20, ERROR = 0x21, NOCARD = 0x22, CARD = 0x23, WRITE_OK = 0x28, WRITE_SAME = 0x29, WAIT = 0x2A, ID = 0x40, DATA = 0x41 };
