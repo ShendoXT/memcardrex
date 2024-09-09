@@ -8,9 +8,9 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
-    class ps1card
+    public class ps1card
     {
         /// <summary>
         /// Number of available save slots on the Memory Card (hard limit)
@@ -713,7 +713,9 @@ namespace MemcardRex
                         }
 
                         //Convert save name from Shift-JIS to UTF-16 and normalize full-width characters
-                        saveName[slotNumber] = Encoding.GetEncoding(932).GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
+                        var encodingProvider = CodePagesEncodingProvider.Instance.GetEncoding(932);
+                        if (encodingProvider != null)
+                            saveName[slotNumber] = encodingProvider.GetString(tempByteArray).Normalize(NormalizationForm.FormKC);
 
                         //Check if the title converted properly, get ASCII if it didn't
                         if (saveName[slotNumber] == null) saveName[slotNumber] = Encoding.Default.GetString(tempByteArray, 0, 32);
