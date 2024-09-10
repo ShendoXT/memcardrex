@@ -24,6 +24,9 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
   </PropertyGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="Windows10" />
+  </ItemGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
