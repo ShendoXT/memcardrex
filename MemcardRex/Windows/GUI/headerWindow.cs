@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class headerWindow : Form
     {
         //If OK is pressed this value will be true

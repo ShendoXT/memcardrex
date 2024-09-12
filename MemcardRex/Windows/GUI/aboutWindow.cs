@@ -1,16 +1,13 @@
 ﻿//Generic about window
-//Shendo 2009-2010
+//Shendo 2009-2024
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class AboutWindow : Form
     {
         public AboutWindow()

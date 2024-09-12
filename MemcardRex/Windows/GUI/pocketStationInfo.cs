@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex.Windows.GUI
 {
+    [SupportedOSPlatform("windows")]
     public partial class pocketStationInfo : Form
     {
         private const string dialogName = "PocketStation info";

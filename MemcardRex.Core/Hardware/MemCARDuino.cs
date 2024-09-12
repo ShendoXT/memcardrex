@@ -7,7 +7,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.Linq;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
 	public class MemCARDuino : HardwareInterface
 	{

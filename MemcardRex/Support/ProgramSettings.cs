@@ -2,21 +2,19 @@
 using System.Drawing;
 using System.IO;
 
+using MemcardRex.Core;
+
 namespace MemcardRex
 {
 	public class ProgramSettings
 	{
-        public int ShowListGrid = 0;                        //List grid settings
-        public int IconInterpolationMode = 0;               //Icon iterpolation mode settings
-        public int IconPropertiesSize = 0;                  //Icon size settings in save properties
-        public string ListFont = FontFamily.GenericSansSerif.Name;
+        public int ShowListGrid = 0;                       //List grid settings
         public int IconBackgroundColor = 0;                //Various colors based on PS1 BIOS backgrounds
         public int BackupMemcards = 0;                     //Backup Memory Card settings
         public int RestoreWindowPosition = 0;              //Restore window position
         public int FixCorruptedCards = 0;                  //Try to fix corrupted memory cards
         public int FormatType = 0;                         //Type of formatting for hardware interfaces
         public string CommunicationPort = "COM1";          //Communication port for Hardware interfaces
-        public int CommunicationSpeed = 0;                 //Speed setting for serial port
         public int LastSaveFormat = 0;                     //Last used format to save memory card
         public int LastExportFormat = 0;                   //Last used format to export save
         public string RemoteCommAddress = "192.168.4.1";   // Address / hostname of the remote serial bridge host
@@ -48,12 +46,8 @@ namespace MemcardRex
             xmlAppSettings.openXmlReader(filename);
 
             ShowListGrid = xmlAppSettings.readXmlEntryInt("ShowGrid", 0, 1);
-            IconInterpolationMode = xmlAppSettings.readXmlEntryInt("IconInterpolationMode", 0, 1);
-            IconPropertiesSize = xmlAppSettings.readXmlEntryInt("IconSize", 0, 1);
-            ListFont = xmlAppSettings.readXmlEntry("ListFont");
 
             CommunicationPort = xmlAppSettings.readXmlEntry("ComPort");
-            CommunicationSpeed = xmlAppSettings.readXmlEntryInt("ComSpeed", 0, 1);
 
             RemoteCommAddress = xmlAppSettings.readXmlEntry("RemoteComAddress");
             RemoteCommPort = xmlAppSettings.readXmlEntryInt("RemoteComPort", 0, 65535);
@@ -91,12 +85,8 @@ namespace MemcardRex
             xmlAppSettings.openXmlWriter(Path.Combine(directory, settingsFilename), appName + " " + appVersion + " settings data");
 
             xmlAppSettings.writeXmlEntry("ShowGrid", ShowListGrid.ToString());
-            xmlAppSettings.writeXmlEntry("IconInterpolationMode", IconInterpolationMode.ToString());
-            xmlAppSettings.writeXmlEntry("IconSize", IconPropertiesSize.ToString());
-            xmlAppSettings.writeXmlEntry("ListFont", ListFont);
 
             xmlAppSettings.writeXmlEntry("ComPort", CommunicationPort);
-            xmlAppSettings.writeXmlEntry("ComSpeed", CommunicationSpeed.ToString());
 
             xmlAppSettings.writeXmlEntry("RemoteComAddress", RemoteCommAddress);
             xmlAppSettings.writeXmlEntry("RemoteComPort", RemoteCommPort.ToString());

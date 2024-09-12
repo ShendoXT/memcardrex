@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class commentsWindow : Form
     {
         //If OK is pressed this will be true
@@ -17,11 +14,6 @@ namespace MemcardRex
         public commentsWindow()
         {
             InitializeComponent();
-        }
-
-        private void commentsWindow_Load(object sender, EventArgs e)
-        {
-
         }
 
         //Load initial values

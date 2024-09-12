@@ -7,7 +7,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.Net.Sockets;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
 	public class PS1CardLink : HardwareInterface
 	{

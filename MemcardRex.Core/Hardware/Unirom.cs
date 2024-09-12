@@ -8,9 +8,9 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Text;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
-    class Unirom : HardwareInterface
+    public class Unirom : HardwareInterface
     {
         //Unirom serial port
         private SerialPort OpenedPort = null;

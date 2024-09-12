@@ -16,9 +16,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Runtime.Versioning;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     static class Program
     {
         /// <summary>

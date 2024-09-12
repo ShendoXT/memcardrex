@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
 	public class HardwareInterface
 	{

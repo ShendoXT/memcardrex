@@ -1,15 +1,17 @@
 ﻿//Hardware card reading device information window
-//Shendo 2012 - 2023
+//Shendo 2012 - 2024
 
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using static MemcardRex.mainWindow;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+using MemcardRex.Core;
+using System.Runtime.Versioning;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class cardReaderWindow : Form
     {
         private HardwareInterface _hardInterface;

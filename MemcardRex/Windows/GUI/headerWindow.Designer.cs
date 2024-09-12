@@ -28,127 +28,156 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.productLabel = new System.Windows.Forms.Label();
-            this.prodCodeTextbox = new System.Windows.Forms.TextBox();
-            this.identifierLabel = new System.Windows.Forms.Label();
-            this.identifierTextbox = new System.Windows.Forms.TextBox();
-            this.regionCombobox = new System.Windows.Forms.ComboBox();
-            this.regionLabel = new System.Windows.Forms.Label();
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.spacerLabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            productLabel = new System.Windows.Forms.Label();
+            prodCodeTextbox = new System.Windows.Forms.TextBox();
+            identifierLabel = new System.Windows.Forms.Label();
+            identifierTextbox = new System.Windows.Forms.TextBox();
+            regionCombobox = new System.Windows.Forms.ComboBox();
+            regionLabel = new System.Windows.Forms.Label();
+            okButton = new System.Windows.Forms.Button();
+            cancelButton = new System.Windows.Forms.Button();
+            spacerLabel = new System.Windows.Forms.Label();
+            button1 = new System.Windows.Forms.Button();
+            textBox1 = new System.Windows.Forms.TextBox();
+            SuspendLayout();
             // 
             // productLabel
             // 
-            this.productLabel.AutoSize = true;
-            this.productLabel.Location = new System.Drawing.Point(120, 4);
-            this.productLabel.Name = "productLabel";
-            this.productLabel.Size = new System.Drawing.Size(71, 13);
-            this.productLabel.TabIndex = 0;
-            this.productLabel.Text = "Product code";
+            productLabel.AutoSize = true;
+            productLabel.Location = new System.Drawing.Point(114, 6);
+            productLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            productLabel.Name = "productLabel";
+            productLabel.Size = new System.Drawing.Size(81, 15);
+            productLabel.TabIndex = 0;
+            productLabel.Text = "Product code:";
             // 
             // prodCodeTextbox
             // 
-            this.prodCodeTextbox.Location = new System.Drawing.Point(120, 20);
-            this.prodCodeTextbox.MaxLength = 10;
-            this.prodCodeTextbox.Name = "prodCodeTextbox";
-            this.prodCodeTextbox.Size = new System.Drawing.Size(104, 20);
-            this.prodCodeTextbox.TabIndex = 1;
+            prodCodeTextbox.Location = new System.Drawing.Point(114, 24);
+            prodCodeTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            prodCodeTextbox.MaxLength = 10;
+            prodCodeTextbox.Name = "prodCodeTextbox";
+            prodCodeTextbox.Size = new System.Drawing.Size(121, 23);
+            prodCodeTextbox.TabIndex = 1;
             // 
             // identifierLabel
             // 
-            this.identifierLabel.AutoSize = true;
-            this.identifierLabel.Location = new System.Drawing.Point(228, 4);
-            this.identifierLabel.Name = "identifierLabel";
-            this.identifierLabel.Size = new System.Drawing.Size(47, 13);
-            this.identifierLabel.TabIndex = 2;
-            this.identifierLabel.Text = "Identifier";
+            identifierLabel.AutoSize = true;
+            identifierLabel.Location = new System.Drawing.Point(240, 6);
+            identifierLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            identifierLabel.Name = "identifierLabel";
+            identifierLabel.Size = new System.Drawing.Size(57, 15);
+            identifierLabel.TabIndex = 2;
+            identifierLabel.Text = "Identifier:";
             // 
             // identifierTextbox
             // 
-            this.identifierTextbox.Location = new System.Drawing.Point(228, 20);
-            this.identifierTextbox.MaxLength = 8;
-            this.identifierTextbox.Name = "identifierTextbox";
-            this.identifierTextbox.Size = new System.Drawing.Size(104, 20);
-            this.identifierTextbox.TabIndex = 2;
+            identifierTextbox.Location = new System.Drawing.Point(240, 24);
+            identifierTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            identifierTextbox.MaxLength = 8;
+            identifierTextbox.Name = "identifierTextbox";
+            identifierTextbox.Size = new System.Drawing.Size(120, 23);
+            identifierTextbox.TabIndex = 2;
             // 
             // regionCombobox
             // 
-            this.regionCombobox.FormattingEnabled = true;
-            this.regionCombobox.Items.AddRange(new object[] {
-            "America",
-            "Europe",
-            "Japan"});
-            this.regionCombobox.Location = new System.Drawing.Point(4, 20);
-            this.regionCombobox.Name = "regionCombobox";
-            this.regionCombobox.Size = new System.Drawing.Size(111, 21);
-            this.regionCombobox.TabIndex = 0;
+            regionCombobox.FormattingEnabled = true;
+            regionCombobox.Items.AddRange(new object[] { "America", "Europe", "Japan" });
+            regionCombobox.Location = new System.Drawing.Point(5, 24);
+            regionCombobox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            regionCombobox.Name = "regionCombobox";
+            regionCombobox.Size = new System.Drawing.Size(103, 23);
+            regionCombobox.TabIndex = 0;
             // 
             // regionLabel
             // 
-            this.regionLabel.AutoSize = true;
-            this.regionLabel.Location = new System.Drawing.Point(4, 4);
-            this.regionLabel.Name = "regionLabel";
-            this.regionLabel.Size = new System.Drawing.Size(41, 13);
-            this.regionLabel.TabIndex = 5;
-            this.regionLabel.Text = "Region";
+            regionLabel.AutoSize = true;
+            regionLabel.Location = new System.Drawing.Point(5, 5);
+            regionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            regionLabel.Name = "regionLabel";
+            regionLabel.Size = new System.Drawing.Size(47, 15);
+            regionLabel.TabIndex = 5;
+            regionLabel.Text = "Region:";
             // 
             // okButton
             // 
-            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okButton.Location = new System.Drawing.Point(176, 54);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(76, 23);
-            this.okButton.TabIndex = 3;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            okButton.Location = new System.Drawing.Point(206, 64);
+            okButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.TabIndex = 3;
+            okButton.Text = "OK";
+            okButton.UseVisualStyleBackColor = true;
+            okButton.Click += okButton_Click;
             // 
             // cancelButton
             // 
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelButton.Location = new System.Drawing.Point(256, 54);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(76, 23);
-            this.cancelButton.TabIndex = 4;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            cancelButton.Location = new System.Drawing.Point(284, 64);
+            cancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.TabIndex = 4;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += cancelButton_Click;
             // 
             // spacerLabel
             // 
-            this.spacerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.spacerLabel.Location = new System.Drawing.Point(4, 48);
-            this.spacerLabel.Name = "spacerLabel";
-            this.spacerLabel.Size = new System.Drawing.Size(328, 2);
-            this.spacerLabel.TabIndex = 12;
+            spacerLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            spacerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            spacerLabel.Location = new System.Drawing.Point(5, 55);
+            spacerLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            spacerLabel.Name = "spacerLabel";
+            spacerLabel.Size = new System.Drawing.Size(356, 2);
+            spacerLabel.TabIndex = 12;
+            // 
+            // button1
+            // 
+            button1.Location = new System.Drawing.Point(5, 62);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(0, 0);
+            button1.TabIndex = 13;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new System.Drawing.Point(5, 63);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(0, 23);
+            textBox1.TabIndex = 14;
             // 
             // headerWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(336, 81);
-            this.Controls.Add(this.spacerLabel);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.okButton);
-            this.Controls.Add(this.regionLabel);
-            this.Controls.Add(this.regionCombobox);
-            this.Controls.Add(this.identifierTextbox);
-            this.Controls.Add(this.identifierLabel);
-            this.Controls.Add(this.prodCodeTextbox);
-            this.Controls.Add(this.productLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "headerWindow";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "headerWindow";
-            this.Load += new System.EventHandler(this.headerWindow_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(365, 93);
+            Controls.Add(textBox1);
+            Controls.Add(button1);
+            Controls.Add(spacerLabel);
+            Controls.Add(cancelButton);
+            Controls.Add(okButton);
+            Controls.Add(regionLabel);
+            Controls.Add(regionCombobox);
+            Controls.Add(identifierTextbox);
+            Controls.Add(identifierLabel);
+            Controls.Add(prodCodeTextbox);
+            Controls.Add(productLabel);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "headerWindow";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "headerWindow";
+            Load += headerWindow_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -162,5 +191,7 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label spacerLabel;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
