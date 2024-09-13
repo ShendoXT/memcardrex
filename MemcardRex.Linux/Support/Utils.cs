@@ -14,6 +14,22 @@ namespace MemcardRex.Linux;
 
 public class Utils
 {
+    public static void ErrorMessage(Gtk.Window parent, string title, string message)
+    {
+        var dialog = new Adw.MessageDialog
+        {
+            Modal = true,
+            Heading = title,
+            Body = message,
+            TransientFor = parent
+        };
+        dialog.AddResponse("close", "Close");
+        dialog.Show();
+        dialog.OnResponse += (_, _) => {
+            dialog.Destroy();
+        };
+    }
+
     public static Gdk.Texture? TextureResource(string resourceName)
     {
         try

@@ -19,12 +19,26 @@ public class MainWindow : Gtk.ApplicationWindow
     [Connect] private readonly Gtk.Stack stack;
     [Connect] private readonly Adw.WindowTitle windowTitle;
 
+    // Card actions
     private readonly Gio.SimpleAction actionNew;
     private readonly Gio.SimpleAction actionOpen;
     private readonly Gio.SimpleAction actionSave;
     private readonly Gio.SimpleAction actionSaveAs;
     private readonly Gio.SimpleAction actionCloseTab;
-    private readonly Gio.SimpleAction actionCloseAll;
+
+    // Single save actions
+    private readonly Gio.SimpleAction actionImportSave;
+    private readonly Gio.SimpleAction actionExportSave;
+    private readonly Gio.SimpleAction actionCopySave;
+    private readonly Gio.SimpleAction actionPasteSave;
+    private readonly Gio.SimpleAction actionCompareSave;
+    private readonly Gio.SimpleAction actionDeleteSave;
+    private readonly Gio.SimpleAction actionRestoreSave;
+    private readonly Gio.SimpleAction actionEraseSave;
+    //private readonly Gio.SimpleAction actionEditComment;
+    //private readonly Gio.SimpleAction actionEditHeader;
+    //private readonly Gio.SimpleAction actionEditIcon;
+    private readonly Gio.SimpleAction actionProperties;
 
     private MainWindow(Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
@@ -74,17 +88,42 @@ public class MainWindow : Gtk.ApplicationWindow
         actionOpen.OnActivate += OpenCardAction;
         this.AddAction(actionOpen);
         actionSave = Gio.SimpleAction.New("save", null);
-        actionSave.OnActivate += SaveAction;
+        actionSave.OnActivate += (_, _) => CurrentCard()?.Save(this);
         this.AddAction(actionSave);
         actionSaveAs = Gio.SimpleAction.New("save-as", null);
-        actionSaveAs.OnActivate += SaveAsAction;
+        actionSaveAs.OnActivate += (_, _) => CurrentCard()?.SaveAs(this);
         this.AddAction(actionSaveAs);
         actionCloseTab = Gio.SimpleAction.New("close-tab", null);
         actionCloseTab.OnActivate += CloseTabAction;
         this.AddAction(actionCloseTab);
-        actionCloseAll = Gio.SimpleAction.New("close-all", null);
-        actionCloseAll.OnActivate += CloseAllAction;
-        this.AddAction(actionCloseAll);
+
+        actionExportSave = Gio.SimpleAction.New("export-save", null);
+        actionExportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionExportSave);
+        actionImportSave = Gio.SimpleAction.New("import-save", null);
+        actionImportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionImportSave);
+        actionDeleteSave = Gio.SimpleAction.New("delete-save", null);
+        actionDeleteSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionDeleteSave);
+        actionRestoreSave = Gio.SimpleAction.New("restore-save", null);
+        actionRestoreSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionRestoreSave);
+        actionCopySave = Gio.SimpleAction.New("copy-save", null);
+        actionCopySave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionCopySave);
+        actionPasteSave = Gio.SimpleAction.New("paste-save", null);
+        actionPasteSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionPasteSave);
+        actionCompareSave = Gio.SimpleAction.New("compare-save", null);
+        actionCompareSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionCompareSave);
+        actionEraseSave = Gio.SimpleAction.New("erase-save", null);
+        actionEraseSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionEraseSave);
+        actionProperties = Gio.SimpleAction.New("properties", null);
+        actionProperties.OnActivate += (_, _) => CurrentCard()?.Properties();
+        this.AddAction(actionProperties);
 
         SetCardActionsEnabled(false);
     }
@@ -94,7 +133,6 @@ public class MainWindow : Gtk.ApplicationWindow
         actionSave.SetEnabled(enabled);
         actionSaveAs.SetEnabled(enabled);
         actionCloseTab.SetEnabled(enabled);
-        actionCloseAll.SetEnabled(enabled);
     }
 
     private void NewCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
@@ -108,67 +146,8 @@ public class MainWindow : Gtk.ApplicationWindow
         var tab = new PS1CardTab(card);
         var child = tabView.Append(tab);
         tab.SetPage(child);
+        tabView.SetSelectedPage(child);
         SetCardActionsEnabled(true);
-    }
-
-    internal static Gtk.FileFilter AllFilesFilter()
-    {
-        var filter = FileFilter.New();
-        filter.Name = "All Files";
-        filter.AddPattern("*");
-        return filter;
-    }
-
-    internal static Gtk.FileFilter FormatFilter(string name, string[] patterns)
-    {
-        var filter = Gtk.FileFilter.New();
-        filter.Name = name;
-        foreach (string pattern in patterns)
-        {
-            filter.AddPattern(pattern);
-        }
-        return filter;
-    }
-
-    internal static Gtk.FileFilter SingleSavesFilter()
-    {
-        var filter = Gtk.FileFilter.New();
-        string[] patterns = ["*.mcs", "*.ps1", "*.PSV", "*.mcb", "*.mcx", "*.pda", "*.psx", "B???????????*"];
-        filter.Name = "All Supported Files";
-        foreach (string pattern in patterns)
-        {
-            filter.AddPattern(pattern);
-        }
-        return filter;
-    }
-
-    internal static Gtk.FileFilter FilterForType(CardTypes type)
-    {
-        return type switch
-        {
-            CardTypes.gme => FormatFilter("DexDrive Memory Card", ["*.gme"]),
-            CardTypes.vgs => FormatFilter("VGS Memory Card", ["*.mem", "*.vgs"]),
-            CardTypes.vmp => FormatFilter("PSP/Vita Memory Card", ["*.VMP"]),
-            CardTypes.mcx => FormatFilter("PS Vita 'MCX' PocketStation Memory Card", ["*.BIN"]),
-            _ => FormatFilter("Standard Memory Card", ["*.mcr", "*.bin", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"]),
-        };
-    }
-
-    internal static Gtk.FileFilter MemoryCardsFilter()
-    {
-        var filter = Gtk.FileFilter.New();
-        string[] patterns = [".BIN", "*.mcr", "*.VMP", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"];
-        filter.Name = "All Supported Files";
-        foreach (string pattern in patterns)
-        {
-            filter.AddPattern(pattern);
-        }
-        return filter;
-    }
-
-    internal static ps1card.CardTypes TypeForName(string name)
-    {
-        return ps1card.CardTypes.raw;
     }
 
     private void OpenCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
@@ -187,30 +166,17 @@ public class MainWindow : Gtk.ApplicationWindow
                 var card = new ps1card();
                 string? result = card.OpenMemoryCard(file!.GetPath()!, false);
                 if (result != null) {
-                    Console.WriteLine("Failed to open memory card: {0}", result);
+                    Utils.ErrorMessage(this, "Open Failed", result);
                     return;
                 }
                 var tab = new PS1CardTab(card);
                 var child = tabView.Append(tab);
                 tab.SetPage(child);
+                tabView.SetSelectedPage(child);
                 SetCardActionsEnabled(true);
             }
             catch { return; }
         };
-    }
-
-    private void SaveAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
-        var page = tabView.GetSelectedPage();
-        var tab = (PS1CardTab?) page?.GetChild();
-        tab?.Save(this);
-    }
-
-    private void SaveAsAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
-        var page = tabView.GetSelectedPage();
-        var tab = (PS1CardTab?) page?.GetChild();
-        tab?.SaveAs(this);
     }
 
     private void CloseTabAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
@@ -220,8 +186,10 @@ public class MainWindow : Gtk.ApplicationWindow
             tabView.ClosePage(page);
     }
 
-    private void CloseAllAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
+    private PS1CardTab? CurrentCard()
     {
+        var page = tabView.GetSelectedPage();
+        return (PS1CardTab?) page?.GetChild();
     }
 
     public bool HasUnsavedChanges()
@@ -292,6 +260,66 @@ public class MainWindow : Gtk.ApplicationWindow
             return true;
         }
         return false;
+    }
+
+    internal static Gtk.FileFilter AllFilesFilter()
+    {
+        var filter = FileFilter.New();
+        filter.Name = "All Files";
+        filter.AddPattern("*");
+        return filter;
+    }
+
+    internal static Gtk.FileFilter FormatFilter(string name, string[] patterns)
+    {
+        var filter = Gtk.FileFilter.New();
+        filter.Name = name;
+        foreach (string pattern in patterns)
+        {
+            filter.AddPattern(pattern);
+        }
+        return filter;
+    }
+
+    internal static Gtk.FileFilter SingleSavesFilter()
+    {
+        var filter = Gtk.FileFilter.New();
+        string[] patterns = ["*.mcs", "*.ps1", "*.PSV", "*.mcb", "*.mcx", "*.pda", "*.psx", "B???????????*"];
+        filter.Name = "All Supported Files";
+        foreach (string pattern in patterns)
+        {
+            filter.AddPattern(pattern);
+        }
+        return filter;
+    }
+
+    internal static Gtk.FileFilter FilterForType(CardTypes type)
+    {
+        return type switch
+        {
+            CardTypes.gme => FormatFilter("DexDrive Memory Card", ["*.gme"]),
+            CardTypes.vgs => FormatFilter("VGS Memory Card", ["*.mem", "*.vgs"]),
+            CardTypes.vmp => FormatFilter("PSP/Vita Memory Card", ["*.VMP"]),
+            CardTypes.mcx => FormatFilter("PS Vita 'MCX' PocketStation Memory Card", ["*.BIN"]),
+            _ => FormatFilter("Standard Memory Card", ["*.mcr", "*.bin", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"]),
+        };
+    }
+
+    internal static Gtk.FileFilter MemoryCardsFilter()
+    {
+        var filter = Gtk.FileFilter.New();
+        string[] patterns = [".BIN", "*.mcr", "*.VMP", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"];
+        filter.Name = "All Supported Files";
+        foreach (string pattern in patterns)
+        {
+            filter.AddPattern(pattern);
+        }
+        return filter;
+    }
+
+    internal static ps1card.CardTypes TypeForName(string name)
+    {
+        return ps1card.CardTypes.raw;
     }
 
     public MainWindow() : this(new Gtk.Builder("MemcardRex.Linux.GUI.MainWindow.ui"), "main_window") {}

@@ -1,17 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <interface>
   <requires lib="gtk" version="4.0"/>
   <object class="GtkBox" id="card_tab">
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkColumnView" id="saveList">
-        <property name="reorderable">False</property>
-        <property name="hexpand">True</property>
-        <property name="vexpand">True</property>
         <property name="css-classes">
 view
 data-table</property>
+        <property name="hexpand">True</property>
+        <property name="reorderable">False</property>
+        <property name="vexpand">True</property>
       </object>
     </child>
   </object>
+  <object class="GtkPopoverMenu" id="contextMenu">
+    <property name="menu-model">context_menu_model</property>
+    <property name="halign">start</property>
+    <property name="valign">end</property>
+    <property name="has-arrow">false</property>
+  </object>
+  <object class="GtkPopoverMenu" id="freeContextMenu">
+    <property name="menu-model">free_context_menu_model</property>
+    <property name="halign">start</property>
+    <property name="valign">end</property>
+    <property name="has-arrow">false</property>
+  </object>
+  <menu id="free_context_menu_model">
+    <section>
+      <item>
+        <attribute name="action">win.import-save</attribute>
+        <attribute name="label" translatable="yes">Import save…</attribute>
+      </item>
+      <item>
+        <attribute name="action">win.paste-save</attribute>
+        <attribute name="label" translatable="yes">Paste save from temp buffer…</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="context_menu_model">
+    <section>
+      <item>
+        <attribute name="action">win.properties</attribute>
+        <attribute name="label" translatable="yes">_Information</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="action">win.copy-save</attribute>
+        <attribute name="label" translatable="yes">Copy save to temp buffer</attribute>
+      </item>
+      <item>
+        <attribute name="action">win.export-save</attribute>
+        <attribute name="label" translatable="yes">Export save…</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="action">win.delete-save</attribute>
+        <attribute name="label" translatable="yes">Delete save</attribute>
+      </item>
+      <item>
+        <attribute name="action">win.erase-save</attribute>
+        <attribute name="label" translatable="yes">Remove save (format slot)…</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

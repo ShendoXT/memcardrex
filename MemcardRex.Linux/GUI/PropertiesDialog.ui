@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="AdwWindow" id="properties_dialog">
+    <property name="title">Properties</property>
+    <property name="height-request">300</property>
+    <property name="width-request">300</property>
+    <child>
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">flat</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+          </object>
+        </child>
+        <child>
+          <object class="GtkListBox">
+            <property name="selection-mode">none</property>
+            <property name="margin-bottom">24</property>
+            <property name="margin-end">24</property>
+            <property name="margin-start">24</property>
+            <property name="margin-top">24</property>
+            <property name="valign">start</property>
+            <property name="css-classes">boxed-list</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Product code</property>
+                <child type="suffix">
+                  <object class="GtkEditableLabel" id="productCodeLabel">
+                    <property name="xalign">1.0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Identifier</property>
+                <child type="suffix">
+                  <object class="GtkEditableLabel" id="identifierLabel">
+                    <property name="xalign">1.0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwComboRow" id="regionCombo">
+                <property name="title">Region</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item translatable="yes">America</item>
+                      <item translatable="yes">Europe</item>
+                      <item translatable="yes">Japan</item>
+                    </items>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Slot</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="slotLabel">
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Size</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="sizeLabel">
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

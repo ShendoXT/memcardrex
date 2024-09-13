@@ -36,3 +36,20 @@ To build a standalone executable (does not require .NET to be installed), run:
 dotnet publish --self-contained MemcardRex.Linux
 ```
 
+## Roadmap
+
+### Version 1.0
+
+[x] Open and save memory cards
+[ ] Import and export saves to slots
+[ ] Edit save headers
+
+### Version 2.0
+
+[ ] Save icon editor
+[ ] Hardware support (not tested)
+
+### Not currently planned
+
+[ ] Plugin support
+

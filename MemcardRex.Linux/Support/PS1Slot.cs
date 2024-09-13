@@ -16,7 +16,9 @@ namespace MemcardRex.Linux;
 public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
 {
     private ps1card Card { get; } = card;
-    private int SlotNumber { get; } = slotNumber;
+    public int SlotNumber { get; } = slotNumber;
+    public int Size { get { return Card.saveSize[SlotNumber]; } }
+    public string Region { get { return Card.saveRegion[SlotNumber]; } }
     public ps1card.SlotTypes Type { get { return (SlotTypes) Card.slotType[SlotNumber]; } }
     public Gdk.Texture Icon { get { return _icon ??= GetIcon(); } }
     private Gdk.Texture? _icon = null;

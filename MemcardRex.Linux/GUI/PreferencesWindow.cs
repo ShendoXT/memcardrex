@@ -20,7 +20,6 @@ public class PreferencesWindow : Adw.Window
 
     private readonly StringList serialPortList;
 
-    private readonly Gio.SimpleAction actionApply;
     private readonly Gio.SimpleAction actionOk;
     private readonly Gio.SimpleAction actionCancel;
 
@@ -39,32 +38,19 @@ public class PreferencesWindow : Adw.Window
 
         var actions = Gio.SimpleActionGroup.New();
 
-        actionApply = Gio.SimpleAction.New("apply", null);
-        actionApply.OnActivate += ApplyAction;
-        actions.AddAction(actionApply);
         actionOk = Gio.SimpleAction.New("ok", null);
         actionOk.OnActivate += OkAction;
         actions.AddAction(actionOk);
         actionCancel = Gio.SimpleAction.New("cancel", null);
-        actionCancel.OnActivate += CancelAction;
+        actionCancel.OnActivate += (_, _) => Close();
         actions.AddAction(actionCancel);
 
         this.InsertActionGroup("prefs-win", actions);
     }
 
-    private void ApplyAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
-        Save();
-    }
-
     private void OkAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
         Save();
-        Close();
-    }
-
-    private void CancelAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
         Close();
     }
 
