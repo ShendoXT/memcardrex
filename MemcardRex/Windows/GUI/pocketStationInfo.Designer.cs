@@ -28,167 +28,179 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.okButton = new System.Windows.Forms.Button();
-            this.serialLabel = new System.Windows.Forms.Label();
-            this.serialTextbox = new System.Windows.Forms.TextBox();
-            this.versionTextbox = new System.Windows.Forms.TextBox();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.dateTextbox = new System.Windows.Forms.TextBox();
-            this.dateLabel = new System.Windows.Forms.Label();
-            this.checksumTextbox = new System.Windows.Forms.TextBox();
-            this.checksumLabel = new System.Windows.Forms.Label();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.remarkTextbox = new System.Windows.Forms.TextBox();
-            this.remarkLabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            okButton = new System.Windows.Forms.Button();
+            serialLabel = new System.Windows.Forms.Label();
+            serialTextbox = new System.Windows.Forms.TextBox();
+            versionTextbox = new System.Windows.Forms.TextBox();
+            versionLabel = new System.Windows.Forms.Label();
+            dateTextbox = new System.Windows.Forms.TextBox();
+            dateLabel = new System.Windows.Forms.Label();
+            checksumTextbox = new System.Windows.Forms.TextBox();
+            checksumLabel = new System.Windows.Forms.Label();
+            saveButton = new System.Windows.Forms.Button();
+            remarkTextbox = new System.Windows.Forms.TextBox();
+            remarkLabel = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(152, 128);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 0;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.Location = new System.Drawing.Point(192, 148);
+            okButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
+            okButton.UseVisualStyleBackColor = true;
+            okButton.Click += okButton_Click;
             // 
             // serialLabel
             // 
-            this.serialLabel.AutoSize = true;
-            this.serialLabel.Location = new System.Drawing.Point(4, 12);
-            this.serialLabel.Name = "serialLabel";
-            this.serialLabel.Size = new System.Drawing.Size(104, 13);
-            this.serialLabel.TabIndex = 1;
-            this.serialLabel.Text = "PocketStation serial:";
+            serialLabel.AutoSize = true;
+            serialLabel.Location = new System.Drawing.Point(5, 14);
+            serialLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            serialLabel.Name = "serialLabel";
+            serialLabel.Size = new System.Drawing.Size(113, 15);
+            serialLabel.TabIndex = 1;
+            serialLabel.Text = "PocketStation serial:";
             // 
             // serialTextbox
             // 
-            this.serialTextbox.BackColor = System.Drawing.SystemColors.Window;
-            this.serialTextbox.Location = new System.Drawing.Point(112, 8);
-            this.serialTextbox.Name = "serialTextbox";
-            this.serialTextbox.ReadOnly = true;
-            this.serialTextbox.Size = new System.Drawing.Size(116, 20);
-            this.serialTextbox.TabIndex = 2;
+            serialTextbox.BackColor = System.Drawing.SystemColors.Window;
+            serialTextbox.Location = new System.Drawing.Point(131, 9);
+            serialTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            serialTextbox.Name = "serialTextbox";
+            serialTextbox.ReadOnly = true;
+            serialTextbox.Size = new System.Drawing.Size(135, 23);
+            serialTextbox.TabIndex = 2;
             // 
             // versionTextbox
             // 
-            this.versionTextbox.BackColor = System.Drawing.SystemColors.Window;
-            this.versionTextbox.Location = new System.Drawing.Point(112, 32);
-            this.versionTextbox.Name = "versionTextbox";
-            this.versionTextbox.ReadOnly = true;
-            this.versionTextbox.Size = new System.Drawing.Size(116, 20);
-            this.versionTextbox.TabIndex = 4;
-            this.versionTextbox.Visible = false;
+            versionTextbox.BackColor = System.Drawing.SystemColors.Window;
+            versionTextbox.Location = new System.Drawing.Point(131, 37);
+            versionTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            versionTextbox.Name = "versionTextbox";
+            versionTextbox.ReadOnly = true;
+            versionTextbox.Size = new System.Drawing.Size(135, 23);
+            versionTextbox.TabIndex = 4;
+            versionTextbox.Visible = false;
             // 
             // versionLabel
             // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(4, 36);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(72, 13);
-            this.versionLabel.TabIndex = 3;
-            this.versionLabel.Text = "BIOS version:";
-            this.versionLabel.Visible = false;
+            versionLabel.AutoSize = true;
+            versionLabel.Location = new System.Drawing.Point(5, 42);
+            versionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            versionLabel.Name = "versionLabel";
+            versionLabel.Size = new System.Drawing.Size(76, 15);
+            versionLabel.TabIndex = 3;
+            versionLabel.Text = "BIOS version:";
+            versionLabel.Visible = false;
             // 
             // dateTextbox
             // 
-            this.dateTextbox.BackColor = System.Drawing.SystemColors.Window;
-            this.dateTextbox.Location = new System.Drawing.Point(112, 56);
-            this.dateTextbox.Name = "dateTextbox";
-            this.dateTextbox.ReadOnly = true;
-            this.dateTextbox.Size = new System.Drawing.Size(116, 20);
-            this.dateTextbox.TabIndex = 6;
-            this.dateTextbox.Visible = false;
+            dateTextbox.BackColor = System.Drawing.SystemColors.Window;
+            dateTextbox.Location = new System.Drawing.Point(131, 65);
+            dateTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            dateTextbox.Name = "dateTextbox";
+            dateTextbox.ReadOnly = true;
+            dateTextbox.Size = new System.Drawing.Size(135, 23);
+            dateTextbox.TabIndex = 6;
+            dateTextbox.Visible = false;
             // 
             // dateLabel
             // 
-            this.dateLabel.AutoSize = true;
-            this.dateLabel.Location = new System.Drawing.Point(4, 60);
-            this.dateLabel.Name = "dateLabel";
-            this.dateLabel.Size = new System.Drawing.Size(59, 13);
-            this.dateLabel.TabIndex = 5;
-            this.dateLabel.Text = "BIOS date:";
-            this.dateLabel.Visible = false;
+            dateLabel.AutoSize = true;
+            dateLabel.Location = new System.Drawing.Point(5, 69);
+            dateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            dateLabel.Name = "dateLabel";
+            dateLabel.Size = new System.Drawing.Size(61, 15);
+            dateLabel.TabIndex = 5;
+            dateLabel.Text = "BIOS date:";
+            dateLabel.Visible = false;
             // 
             // checksumTextbox
             // 
-            this.checksumTextbox.BackColor = System.Drawing.SystemColors.Window;
-            this.checksumTextbox.Location = new System.Drawing.Point(112, 80);
-            this.checksumTextbox.Name = "checksumTextbox";
-            this.checksumTextbox.ReadOnly = true;
-            this.checksumTextbox.Size = new System.Drawing.Size(116, 20);
-            this.checksumTextbox.TabIndex = 8;
-            this.checksumTextbox.Visible = false;
+            checksumTextbox.BackColor = System.Drawing.SystemColors.Window;
+            checksumTextbox.Location = new System.Drawing.Point(131, 92);
+            checksumTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checksumTextbox.Name = "checksumTextbox";
+            checksumTextbox.ReadOnly = true;
+            checksumTextbox.Size = new System.Drawing.Size(135, 23);
+            checksumTextbox.TabIndex = 8;
+            checksumTextbox.Visible = false;
             // 
             // checksumLabel
             // 
-            this.checksumLabel.AutoSize = true;
-            this.checksumLabel.Location = new System.Drawing.Point(4, 84);
-            this.checksumLabel.Name = "checksumLabel";
-            this.checksumLabel.Size = new System.Drawing.Size(87, 13);
-            this.checksumLabel.TabIndex = 7;
-            this.checksumLabel.Text = "BIOS checksum:";
-            this.checksumLabel.Visible = false;
+            checksumLabel.AutoSize = true;
+            checksumLabel.Location = new System.Drawing.Point(5, 97);
+            checksumLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            checksumLabel.Name = "checksumLabel";
+            checksumLabel.Size = new System.Drawing.Size(92, 15);
+            checksumLabel.TabIndex = 7;
+            checksumLabel.Text = "BIOS checksum:";
+            checksumLabel.Visible = false;
             // 
             // saveButton
             // 
-            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.saveButton.Location = new System.Drawing.Point(4, 128);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 9;
-            this.saveButton.Text = "Save BIOS";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Visible = false;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            saveButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            saveButton.Location = new System.Drawing.Point(4, 148);
+            saveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new System.Drawing.Size(75, 23);
+            saveButton.TabIndex = 9;
+            saveButton.Text = "Save BIOS";
+            saveButton.UseVisualStyleBackColor = true;
+            saveButton.Visible = false;
+            saveButton.Click += saveButton_Click;
             // 
             // remarkTextbox
             // 
-            this.remarkTextbox.BackColor = System.Drawing.SystemColors.Window;
-            this.remarkTextbox.Location = new System.Drawing.Point(112, 104);
-            this.remarkTextbox.Name = "remarkTextbox";
-            this.remarkTextbox.ReadOnly = true;
-            this.remarkTextbox.Size = new System.Drawing.Size(116, 20);
-            this.remarkTextbox.TabIndex = 11;
-            this.remarkTextbox.Visible = false;
+            remarkTextbox.BackColor = System.Drawing.SystemColors.Window;
+            remarkTextbox.Location = new System.Drawing.Point(131, 120);
+            remarkTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            remarkTextbox.Name = "remarkTextbox";
+            remarkTextbox.ReadOnly = true;
+            remarkTextbox.Size = new System.Drawing.Size(135, 23);
+            remarkTextbox.TabIndex = 11;
+            remarkTextbox.Visible = false;
             // 
             // remarkLabel
             // 
-            this.remarkLabel.AutoSize = true;
-            this.remarkLabel.Location = new System.Drawing.Point(4, 108);
-            this.remarkLabel.Name = "remarkLabel";
-            this.remarkLabel.Size = new System.Drawing.Size(70, 13);
-            this.remarkLabel.TabIndex = 10;
-            this.remarkLabel.Text = "BIOS remark:";
-            this.remarkLabel.Visible = false;
+            remarkLabel.AutoSize = true;
+            remarkLabel.Location = new System.Drawing.Point(5, 125);
+            remarkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            remarkLabel.Name = "remarkLabel";
+            remarkLabel.Size = new System.Drawing.Size(75, 15);
+            remarkLabel.TabIndex = 10;
+            remarkLabel.Text = "BIOS remark:";
+            remarkLabel.Visible = false;
             // 
             // pocketStationInfo
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(233, 157);
-            this.Controls.Add(this.remarkTextbox);
-            this.Controls.Add(this.remarkLabel);
-            this.Controls.Add(this.saveButton);
-            this.Controls.Add(this.checksumTextbox);
-            this.Controls.Add(this.checksumLabel);
-            this.Controls.Add(this.dateTextbox);
-            this.Controls.Add(this.dateLabel);
-            this.Controls.Add(this.versionTextbox);
-            this.Controls.Add(this.versionLabel);
-            this.Controls.Add(this.serialTextbox);
-            this.Controls.Add(this.serialLabel);
-            this.Controls.Add(this.okButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "pocketStationInfo";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "pocketStationInfo";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(272, 176);
+            Controls.Add(remarkTextbox);
+            Controls.Add(remarkLabel);
+            Controls.Add(saveButton);
+            Controls.Add(checksumTextbox);
+            Controls.Add(checksumLabel);
+            Controls.Add(dateTextbox);
+            Controls.Add(dateLabel);
+            Controls.Add(versionTextbox);
+            Controls.Add(versionLabel);
+            Controls.Add(serialTextbox);
+            Controls.Add(serialLabel);
+            Controls.Add(okButton);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "pocketStationInfo";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "pocketStationInfo";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

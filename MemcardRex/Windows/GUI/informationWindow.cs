@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class informationWindow : Form
     {
         //Save icons
         Bitmap[] iconData = new Bitmap[3];
         int iconIndex = 0;
         int maxCount = 1;
-        int iconInterpolationMode = 0;
-        int iconSize = 0;
         int iconBackColor = 0;
 
         public informationWindow()
@@ -31,14 +27,12 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, int saveSize, int iconFrames, int interpolationMode, int iconPropertiesSize, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, int saveSize, int iconFrames, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
         {
             string ocupiedSlots = null;
 
             BmpBuilder bmpImage = new BmpBuilder();
 
-            iconInterpolationMode = interpolationMode;
-            iconSize = iconPropertiesSize;
             saveTitleLabel.Text = saveTitle;
             productCodeLabel.Text = saveProdCode;
             identifierLabel.Text = saveIdentifier;
@@ -78,8 +72,7 @@ namespace MemcardRex
             Graphics iconGraphics = Graphics.FromImage(tempBitmap);
 
             //Set icon interpolation mode
-            if(iconInterpolationMode == 0)iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            else iconGraphics.InterpolationMode = InterpolationMode.Bilinear;
+            iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
 
@@ -99,7 +92,7 @@ namespace MemcardRex
                     break;
             }
 
-            iconGraphics.DrawImage(iconData[selectedIndex], 0, 0, 32 + (iconSize * 16), 32 + (iconSize * 16));
+            iconGraphics.DrawImage(iconData[selectedIndex], 0, 0, 48, 48);
 
             iconRender.Image = tempBitmap;
             iconGraphics.Dispose();
@@ -115,11 +108,6 @@ namespace MemcardRex
         {
             if (iconIndex < (maxCount-1)) iconIndex++; else iconIndex = 0;
             drawIcons(iconIndex);
-        }
-
-        private void informationWindow_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

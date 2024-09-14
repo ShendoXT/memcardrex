@@ -1,19 +1,17 @@
 ﻿//PSX icon editor for MemcardRex
-//Shendo 2009-2013
+//Shendo 2009-2024
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
-using System.IO;
+using System.Runtime.Versioning;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class iconWindow : Form
     {
         //Icon data

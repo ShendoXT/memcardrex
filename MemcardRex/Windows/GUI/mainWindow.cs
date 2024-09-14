@@ -7,17 +7,14 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Drawing.Imaging;
-using System.Resources;
-using MemcardRex.Properties;
-using System.Drawing.Drawing2D;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using MemcardRex.Windows.GUI;
 
 using MemcardRex.Core;
+using System.Runtime.Versioning;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class mainWindow : Form
     {
         //Application related strings
@@ -383,8 +380,6 @@ namespace MemcardRex
             //Make new tab page
             TabPage tabPage = new TabPage();
 
-            //tabPage.Paint += TabPage_Paint;
-
             //Add a tab corresponding to opened card
             mainTabControl.TabPages.Add(tabPage);
 
@@ -473,7 +468,7 @@ namespace MemcardRex
         {
             if (PScard[listIndex].SaveMemoryCard(fileName, memoryCardType, appSettings.FixCorruptedCards == 1))
             {
-                //refreshListView(listIndex, cardList[listIndex].SelectedIndices[0]);
+                refreshListView(listIndex, cardList[listIndex].SelectedIndices[0]);
                 refreshStatusStrip();
             }
             else
@@ -597,7 +592,7 @@ namespace MemcardRex
 
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
-                memCard.saveRegion[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot], appSettings.IconInterpolationMode, appSettings.IconPropertiesSize,
+                memCard.saveRegion[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
                 memCard.iconColorData, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor, xScale, yScale);
 
             informationDlg.ShowDialog(this);
@@ -833,6 +828,10 @@ namespace MemcardRex
         {
             new preferencesWindow().initializeDialog(this, registeredInterfaces);
             EnableDisableHardwareMenus();
+
+            //Refresh current list after preferences change
+            if(!validityCheck(out int listIndex, out int slotNumber)) return;
+            refreshListView(listIndex, slotNumber);
         }
 
         //Open edit icon dialog
@@ -896,7 +895,7 @@ namespace MemcardRex
 
             //Add history list
             historyList.Add(new CardListView());
-            historyList[historyList.Count - 1].Font = new Font(appSettings.ListFont, 8.25f);
+            historyList[historyList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
             historyList[historyList.Count - 1].Location = new Point(512, 0);
             historyList[historyList.Count - 1].Size = new Size(172, 302);
             historyList[historyList.Count - 1].BorderStyle = BorderStyle.None;
@@ -911,7 +910,7 @@ namespace MemcardRex
             historyList[historyList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.historyList_IndexChanged);
 
             cardList.Add(new CardListView());
-            //cardList[cardList.Count - 1].Visible = false;
+            cardList[cardList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
             cardList[cardList.Count - 1].BorderStyle = BorderStyle.None;
             cardList[cardList.Count - 1].Size = new Size(512, 300);
             cardList[cardList.Count - 1].BackColor = ActiveColors.backColor;
@@ -940,11 +939,9 @@ namespace MemcardRex
         //Refresh the ListView
         private void refreshListView(int listIndex, int slotNumber)
         {
-            //Temporary FontFamily
-            FontFamily tempFontFamily = null;
-
             //Place cardName on the tab
-            mainTabControl.TabPages[listIndex].Text = PScard[listIndex].cardName;
+            if(mainTabControl.TabPages[listIndex].Text != PScard[listIndex].cardName)
+                mainTabControl.TabPages[listIndex].Text = PScard[listIndex].cardName;
 
             //Remove all icons from the list
             iconList[listIndex].Images.Clear();
@@ -991,26 +988,6 @@ namespace MemcardRex
 
             //Select the active item in the list
             if(slotNumber >= 0) cardList[listIndex].Items[slotNumber].Selected = true;
-
-            //Set font for the list
-            if (appSettings.ListFont != null)
-            {
-                //Create FontFamily from font name
-                tempFontFamily = new FontFamily(appSettings.ListFont);
-
-                //Check if regular style is supported
-                if (tempFontFamily.IsStyleAvailable(FontStyle.Regular))
-                {
-                    //Use custom font
-                    cardList[listIndex].Font = new Font(appSettings.ListFont, 8.25f);
-                }
-                else
-                {
-                    //Use default font
-                    appSettings.ListFont = FontFamily.GenericSansSerif.Name;
-                    cardList[listIndex].Font = new Font(appSettings.ListFont, 8.25f);
-                }
-            }
 
             //Set showListGrid option
             cardList[listIndex].GridLines = appSettings.ShowListGrid == 1;
@@ -1384,6 +1361,10 @@ namespace MemcardRex
 
             //Enable undo/redo menu items
             enableDisableUndoRedo();
+
+            //Refresh active listview
+            if (!validityCheck(out int listIndex, out int slotNumber)) return;
+            refreshListView(listIndex, slotNumber);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

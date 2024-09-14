@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class preferencesWindow : Form
     {
         //Window that hosted this dialog
@@ -24,8 +25,6 @@ namespace MemcardRex
         {
             hostWindow = window;
 
-            interpolationCombo.SelectedIndex = hostWindow.appSettings.IconInterpolationMode;
-            iconSizeCombo.SelectedIndex = hostWindow.appSettings.IconPropertiesSize;
             backgroundCombo.SelectedIndex = hostWindow.appSettings.IconBackgroundColor;
             formatCombo.SelectedIndex = hostWindow.appSettings.FormatType;
             SavedComPort = hostWindow.appSettings.CommunicationPort;
@@ -57,24 +56,12 @@ namespace MemcardRex
             //Select a com port (if it exists)
             dexDriveCombo.SelectedItem = hostWindow.appSettings.CommunicationPort;
 
-            //Load all fonts installed on system
-            foreach (FontFamily font in FontFamily.Families)
-            {
-                //Add the font on the list
-                fontCombo.Items.Add(font.Name);
-            }
-
-            //Find font used in the save list
-            fontCombo.SelectedItem = hostWindow.appSettings.ListFont;
-
             this.ShowDialog(hostWindow);
         }
 
         //Apply configured settings
         private void applySettings()
         {
-            hostWindow.appSettings.IconInterpolationMode = interpolationCombo.SelectedIndex;
-            hostWindow.appSettings.IconPropertiesSize = iconSizeCombo.SelectedIndex;
             hostWindow.appSettings.IconBackgroundColor = backgroundCombo.SelectedIndex;
             hostWindow.appSettings.FormatType = formatCombo.SelectedIndex;
             hostWindow.appSettings.CommunicationPort = SavedComPort;
@@ -88,7 +75,6 @@ namespace MemcardRex
 
             if (restorePositionCheckbox.Checked == true) hostWindow.appSettings.RestoreWindowPosition = 1; else hostWindow.appSettings.RestoreWindowPosition = 0;
             if (fixCorruptedCardsCheckbox.Checked == true) hostWindow.appSettings.FixCorruptedCards = 1; else hostWindow.appSettings.FixCorruptedCards = 0;
-            if (fontCombo.SelectedIndex != -1) hostWindow.appSettings.ListFont = fontCombo.SelectedItem.ToString();
 
             //hostWindow.appSettings.SaveSettings(hostWindow.appPath, hostWindow.appName, hostWindow.appVersion);
         }
@@ -102,11 +88,6 @@ namespace MemcardRex
         {
             applySettings();
             this.Close();
-        }
-
-        private void applyButton_Click(object sender, EventArgs e)
-        {
-            applySettings();
         }
 
         private void dexDriveCombo_SelectedIndexChanged(object sender, EventArgs e)

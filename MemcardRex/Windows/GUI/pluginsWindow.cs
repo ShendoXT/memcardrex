@@ -1,16 +1,14 @@
 ﻿//Plugin information dialog
-//Shendo 2010 - 2011
+//Shendo 2010 - 2024
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace MemcardRex
 {
+    [SupportedOSPlatform("windows")]
     public partial class pluginsWindow : Form
     {
         //Form that hosted this dialog
