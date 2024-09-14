@@ -1,5 +1,5 @@
 ﻿//PS1 Memory Card class
-//Shendo 2009-2023
+//Shendo 2009-2024
 
 using System;
 using System.Collections.Generic;
@@ -1032,6 +1032,15 @@ namespace MemcardRex.Core
             return masterSlot[sSlot];
         }
 
+        //Update "gme" comment for slot
+        public void SetComment(int slotNumber, string comment)
+        {
+            //Add current save data state to undo buffer
+            pushToUndoRedoBuffer(new int[] { slotNumber }, ref undoList, true);
+
+            saveComments[slotNumber] = comment;
+        }
+
         /// <summary>
         /// Set Product code, Identifier and Region in the header of the selected save
         /// </summary>
@@ -1266,7 +1275,7 @@ namespace MemcardRex.Core
         private void loadGMEComments()
         {
             for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
-                saveComments[slotNumber] = "";
+                if(saveComments[slotNumber] == null) saveComments[slotNumber] = "";
         }
 
         //Calculate XOR checksum

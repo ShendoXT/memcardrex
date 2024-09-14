@@ -572,8 +572,10 @@ namespace MemcardRex
             if (commentsDlg.okPressed)
             {
                 //Insert edited comments back in the card
-                memCard.saveComments[slotNum] = commentsDlg.saveComment;
+                memCard.SetComment(slotNum, commentsDlg.saveComment);
                 pushHistory("Comment edited", mainTabControl.SelectedIndex);
+
+                refreshListView(listIndex, slotNumber);
             }
             commentsDlg.Dispose();
         }
