@@ -209,6 +209,7 @@ namespace MemcardRex
         }
     }
 
+    [SupportedOSPlatform("windows")]
     public partial class CardListView : ListView
     {
         public CardListView() : base()
@@ -312,7 +313,7 @@ namespace MemcardRex
             using (SolidBrush brush = new SolidBrush(e.Item.BackColor))
             {
                 StringFormat sf = new StringFormat();
-                Rectangle textRectangle = new Rectangle(e.Bounds.Left + 48, e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
+                Rectangle textRectangle = new Rectangle(e.Bounds.Left + this.SmallImageList.ImageSize.Width, e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
 
                 sf.LineAlignment = StringAlignment.Center;
 
@@ -320,7 +321,8 @@ namespace MemcardRex
                 
                 if (this.SmallImageList != null)
                 {
-                    e.Graphics.DrawImage(this.SmallImageList.Images[e.ItemIndex], e.Bounds.Left, e.Bounds.Top, 48, 16);
+                    if(this.SmallImageList.Images.Count > 0)
+                    e.Graphics.DrawImage(this.SmallImageList.Images[e.ItemIndex], e.Bounds.Left, e.Bounds.Top, this.SmallImageList.Images[e.ItemIndex].Width, this.SmallImageList.Images[e.ItemIndex].Height);
 
                     if(e.Item.BackColor != this.BackColor)
                     {
@@ -352,6 +354,7 @@ namespace MemcardRex
             base.WndProc(ref m);
         }
     }
+    [SupportedOSPlatform("windows")]
     public class MyRender : ToolStripProfessionalRenderer
     {
         public MyRender() : base(new MyColorTable()) { }

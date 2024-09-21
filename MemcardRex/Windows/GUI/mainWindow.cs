@@ -56,6 +56,9 @@ namespace MemcardRex
         //List of icons for the saves
         List<ImageList> iconList = new List<ImageList>();
 
+        //List of icons for the history list
+        List<ImageList> historyIconList = new List<ImageList>();
+
         public struct HardInterfaces
         {
             public HardwareInterface hardwareInterface;
@@ -361,8 +364,8 @@ namespace MemcardRex
                 createTabPage();
 
                 //Show event in the history tab
-                if(fileName != null) pushHistory("Card opened", historyList.Count - 1);
-                else pushHistory("Card created", historyList.Count - 1);
+                if(fileName != null) pushHistory("Card opened", historyList.Count - 1, new Bitmap(16, 16));
+                else pushHistory("Card created", historyList.Count - 1, new Bitmap(16, 16));
             }
             else
             {
@@ -510,6 +513,7 @@ namespace MemcardRex
                 cardList.RemoveAt(listIndex);
                 historyList.RemoveAt(listIndex);
                 iconList.RemoveAt(listIndex);
+                historyIconList.RemoveAt(listIndex);
                 mainTabControl.RemoveTabPrepare();
                 mainTabControl.TabPages.RemoveAt(listIndex);
 
@@ -573,7 +577,7 @@ namespace MemcardRex
             {
                 //Insert edited comments back in the card
                 memCard.SetComment(slotNum, commentsDlg.saveComment);
-                pushHistory("Comment edited", mainTabControl.SelectedIndex);
+                pushHistory("Comment edited", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNum, false));
 
                 refreshListView(listIndex, slotNumber);
             }
@@ -633,9 +637,9 @@ namespace MemcardRex
             refreshListView(listIndex, slotNumber);
 
             if (memCard.slotType[masterSlot] == (int) ps1card.SlotTypes.deleted_initial)
-                pushHistory("Save deleted", mainTabControl.SelectedIndex);
+                pushHistory("Save deleted", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
             else
-                pushHistory("Save restored", mainTabControl.SelectedIndex);
+                pushHistory("Save restored", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
         }
 
         //Format selected save
@@ -643,11 +647,16 @@ namespace MemcardRex
         {
             if (!validityCheck(out int listIndex, out int slotNumber)) return;
 
-            memCard.FormatSave(memCard.GetMasterLinkForSlot(slotNumber));
+            int masterSlot = memCard.GetMasterLinkForSlot(slotNumber);
+
+            //Fetch save icon before deletion
+            Bitmap saveIcon = prepareIcons(listIndex, masterSlot, false);
+
+            memCard.FormatSave(masterSlot);
 
             refreshListView(listIndex, slotNumber);
 
-            pushHistory("Save removed", mainTabControl.SelectedIndex);
+            pushHistory("Save removed", mainTabControl.SelectedIndex, saveIcon);
         }
 
         //Copy save selected save from Memory Card
@@ -684,7 +693,7 @@ namespace MemcardRex
             if (PScard[listIndex].SetSaveBytes(slotNumber, tempBuffer, out requiredSlots))
             {
                 refreshListView(listIndex, slotNumber);
-                pushHistory("Save pasted", mainTabControl.SelectedIndex);
+                pushHistory("Save pasted", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
             }
             else
             {
@@ -807,7 +816,7 @@ namespace MemcardRex
                     if (PScard[listIndex].OpenSingleSave(openFileDlg.FileName, slotNumber, out int requiredSlots))
                     {
                         refreshListView(listIndex, slotNumber);
-                        pushHistory("Save imported", mainTabControl.SelectedIndex);
+                        pushHistory("Save imported", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
                     }
                     else if (requiredSlots > 0)
                     {
@@ -852,7 +861,7 @@ namespace MemcardRex
             {
                 PScard[listIndex].SetIconBytes(masterSlot, iconDlg.iconData);
                 refreshListView(listIndex, slotNumber);
-                pushHistory("Icon edited", mainTabControl.SelectedIndex);
+                pushHistory("Icon edited", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
             }
 
             iconDlg.Dispose();
@@ -879,8 +888,23 @@ namespace MemcardRex
         }
 
         //Bring a new item to the history list
-        private void pushHistory(string description, int listIndex)
+        private void pushHistory(string description, int listIndex, Bitmap saveIcon)
         {
+
+            //Clean everything from current index to end
+            if (historyList[listIndex].SelectedIndices.Count > 0)
+            {
+                while (historyList[listIndex].SelectedIndices[0] < historyList[listIndex].Items.Count - 1)
+                {
+                    historyList[listIndex].Items.RemoveAt(historyList[listIndex].Items.Count - 1);
+                    historyIconList[listIndex].Images.RemoveAt(historyIconList[listIndex].Images.Count - 1);
+                }
+            }
+
+            //Add save icon to history list
+            historyIconList[listIndex].Images.Add(saveIcon);
+
+            //Add item to list
             historyList[listIndex].Items.Add(description);
 
             //Select the added item
@@ -894,6 +918,12 @@ namespace MemcardRex
             iconList.Add(new ImageList());
             iconList[iconList.Count - 1].ImageSize = new Size((int)(xScale * 48), (int)(yScale * 16));
             iconList[iconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
+
+            //Also for history list
+            historyIconList.Add(new ImageList());
+            historyIconList[historyIconList.Count - 1].ImageSize = new Size((int)(xScale * 16), (int)(yScale * 16));
+            historyIconList[historyIconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
+
 
             //Add history list
             historyList.Add(new CardListView());
@@ -910,6 +940,7 @@ namespace MemcardRex
             historyList[historyList.Count - 1].Columns[0].Width = (int)(xScale * 160);
             historyList[historyList.Count - 1].View = View.Details;
             historyList[historyList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.historyList_IndexChanged);
+            historyList[historyList.Count - 1].SmallImageList = historyIconList[historyIconList.Count - 1];
 
             cardList.Add(new CardListView());
             cardList[cardList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
@@ -956,7 +987,7 @@ namespace MemcardRex
                 switch (PScard[listIndex].slotType[i])
                 {
                     default:
-                        iconList[listIndex].Images.Add(prepareIcons(listIndex, i));
+                        iconList[listIndex].Images.Add(prepareIcons(listIndex, i, true));
                         cardList[listIndex].Items.Add(PScard[listIndex].saveName[i]);
 
                         //Check if save is using non standard region and append it to product code if not
@@ -1004,9 +1035,13 @@ namespace MemcardRex
         }
 
         //Prepare icons for drawing (add flags and make them transparent if save is deleted)
-        private Bitmap prepareIcons(int listIndex, int slotNumber)
+        private Bitmap prepareIcons(int listIndex, int slotNumber, bool withFlag)
         {
-            Bitmap iconBitmap = new Bitmap(48, 16);
+            Bitmap iconBitmap;
+
+            if (withFlag) iconBitmap = new Bitmap(48, 16);
+            else iconBitmap = new Bitmap(16, 16);
+
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
             BmpBuilder bmpImage = new BmpBuilder();
             Bitmap saveIcon = new Bitmap(new MemoryStream(bmpImage.BuildBmp(PScard[listIndex].iconColorData[slotNumber, 0])));
@@ -1042,6 +1077,13 @@ namespace MemcardRex
                     iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xA0, blendColor.R, blendColor.G, blendColor.B)), 
                         new Region(new Rectangle(0, 0, 16, 16)));
                     break;
+            }
+
+            //Skip drawing flag
+            if (!withFlag)
+            {
+                iconGraphics.Dispose();
+                return iconBitmap;
             }
 
             //Draw flag depending of the region
@@ -1112,7 +1154,7 @@ namespace MemcardRex
                 //Insert data to save header of the selected card and slot
                 memCard.SetHeaderData(masterSlot, headerDlg.prodCode, headerDlg.saveIdentifier, headerDlg.saveRegion);
                 refreshListView(listIndex, slotNumber);
-                pushHistory("Header edited", mainTabControl.SelectedIndex);
+                pushHistory("Header edited", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
             }
             headerDlg.Dispose();
         }
@@ -1215,7 +1257,7 @@ namespace MemcardRex
                     //Set the edited flag of the card
                     PScard[listIndex].changedFlag = true;
 
-                    pushHistory("Edited by plugin", mainTabControl.SelectedIndex);
+                    pushHistory("Edited by plugin", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
                 }
             }
         }
@@ -1347,7 +1389,7 @@ namespace MemcardRex
             PScard[PScard.Count - 1].cardLocation = null;
 
             //Set the info to history list
-            pushHistory("Card read (" + deviceName + ")", historyList.Count - 1);
+            pushHistory("Card read (" + deviceName + ")", historyList.Count - 1, new Bitmap(16, 16));
         }
 
         private void mainTabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -1529,6 +1571,8 @@ namespace MemcardRex
             //If nothing is selected abort
             if (selectedList.SelectedIndices.Count < 1) return;
 
+            int selectedIndex = selectedList.SelectedIndices[0];
+
             //Set item colors
             for (int i = 0; i < selectedList.Items.Count; i++)
             {
@@ -1537,6 +1581,20 @@ namespace MemcardRex
                 else
                 colorListItem(selectedList, i, selectedList.BackColor, selectedList.ForeColor);
             }
+
+            //Jump to the selected point in time
+            if(memCard.UndoCount > selectedIndex)
+            {
+                while(memCard.UndoCount > selectedIndex) memCard.Undo();
+            }
+            else if (memCard.UndoCount < selectedIndex)
+            {
+                while (memCard.UndoCount < selectedIndex) memCard.Redo();
+            }
+
+            //Refresh list so the updates can be visible
+            validityCheck(out int listIndex, out int slotNumber);
+            refreshListView(listIndex, slotNumber);
         }
 
         private void cardList_IndexChanged(object sender, EventArgs e)

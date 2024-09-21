@@ -17,8 +17,8 @@ namespace MemcardRex.Core
         private const int ReadCommandLength = 144;
         private const int WriteCommandLength = 142;
         private const int PocketInfoLength = 25;
-        private const int PocketBIOSLength = 142;
-        private const int PocketTimeLength = 18;
+        private const int PocketMemoryLength = 142;
+        private const int PocketTimeLength = 142;   //Should be 18, but 3rd party adapters don't support short commands
         private const int Timeout = 5000;
         private const int MaxRetries = 5;
 
@@ -26,7 +26,7 @@ namespace MemcardRex.Core
         private static readonly byte[] HdrReadPS1Frame = new byte[] { 0xAA, 0x42, ReadCommandLength - 4, 0x00, 0x81, 0x52 };
         private static readonly byte[] HdrWritePS1Frame = new byte[] { 0xAA, 0x42, WriteCommandLength - 4, 0x00, 0x81, 0x57 };
         private static readonly byte[] HdrPocketInfo = new byte[] { 0xAA, 0x42, PocketInfoLength - 4, 0x00, 0x81, 0x5A };
-        private static readonly byte[] HdrPocketBIOS = new byte[] { 0xAA, 0x42, PocketBIOSLength - 4, 0x00, 0x81, 0x5B };
+        private static readonly byte[] HdrPocketBIOS = new byte[] { 0xAA, 0x42, PocketMemoryLength - 4, 0x00, 0x81, 0x5B };
         private static readonly byte[] HdrPocketTime = new byte[] { 0xAA, 0x42, PocketTimeLength - 4, 0x00, 0x81, 0x5C };
 
         private static readonly UsbDeviceFinder DeviceFinder = new UsbDeviceFinder(0x054C, 0x02EA);
@@ -39,7 +39,7 @@ namespace MemcardRex.Core
         private byte[] _readFrameCommand = new byte[ReadCommandLength];
         private byte[] _writeFrameCommand = new byte[WriteCommandLength];
         private byte[] _pocketInfoCommand = new byte[PocketInfoLength];
-        private byte[] _pocketBIOSCommand = new byte[PocketBIOSLength];
+        private byte[] _pocketMemoryCommand = new byte[PocketMemoryLength];
         private byte[] _pocketTimeCommand = new byte[PocketTimeLength];
 
         public ErrorCode LastErrorCode { get; private set; }
@@ -71,8 +71,8 @@ namespace MemcardRex.Core
             Array.Clear(_pocketInfoCommand, 0, _pocketInfoCommand.Length);
             Array.Copy(HdrPocketInfo, _pocketInfoCommand, HdrPocketInfo.Length);
 
-            Array.Clear(_pocketBIOSCommand, 0, _pocketBIOSCommand.Length);
-            Array.Copy(HdrPocketBIOS, _pocketBIOSCommand, HdrPocketBIOS.Length);
+            Array.Clear(_pocketMemoryCommand, 0, _pocketMemoryCommand.Length);
+            Array.Copy(HdrPocketBIOS, _pocketMemoryCommand, HdrPocketBIOS.Length);
 
             Array.Clear(_pocketTimeCommand, 0, _pocketTimeCommand.Length);
             Array.Copy(HdrPocketTime, _pocketTimeCommand, HdrPocketTime.Length);
@@ -136,26 +136,51 @@ namespace MemcardRex.Core
             }
         }
 
-        //Dump 128 byte chunks of BIOS from PocketStation
         public override byte[] DumpPocketStationBIOS(int part)
         {
-            part *= 128;
+            //Address of the BIOS ROM in PocketStation memory
+            UInt32 address = 0x04000000;
 
+            //Data is read in 128 byte chunks
+            address += (UInt32) part * 128;
+
+            byte [] frame = DumpPocketStationMemory(address);
+            if (frame == null) return null;
+
+            //Check if this is a 3rd party adaptor, they like to inject 'G' - good "write status"
+            //even though connected peripheral should return that status and not the adaptor.
+            //Since PocketStation extended commands do not use that status we get corrupted last byte.
+            if (frame[127] != 0x47) return frame;
+
+            //Found 'G' at the last byte, this might be a knockoff.
+            //So read everything again shifted by 2 bytes and copy the real byte over
+            byte[] reframe = DumpPocketStationMemory(address + 2);
+            if (reframe == null) return null;
+
+            //Copy the real byte over
+            frame[127] = reframe[125];
+
+            return frame;
+        }
+
+        //Dump 128 byte chunks of memory from PocketStation
+        private byte[] DumpPocketStationMemory(UInt32 address)
+        {
             //Get memory block function
-            _pocketBIOSCommand[6] = 0x1;
+            _pocketMemoryCommand[6] = 0x1;
 
             //Address
-            _pocketBIOSCommand[8] = (byte) (part & 0xFF);
-            _pocketBIOSCommand[9] = (byte) (part >> 8);
-            _pocketBIOSCommand[10] = 0x0;
-            _pocketBIOSCommand[11] = 0x4;
+            _pocketMemoryCommand[8] = (byte) (address & 0xFF);
+            _pocketMemoryCommand[9] = (byte) (address >> 8);
+            _pocketMemoryCommand[10] = (byte)(address >> 16);
+            _pocketMemoryCommand[11] = (byte)(address >> 24);
 
             //Data length
-            _pocketBIOSCommand[12] = 0x80;
+            _pocketMemoryCommand[12] = 0x80;
 
             int bytesWritten;
-            LastErrorCode = _writer.Write(_pocketBIOSCommand, Timeout, out bytesWritten);
-            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketBIOSLength)
+            LastErrorCode = _writer.Write(_pocketMemoryCommand, Timeout, out bytesWritten);
+            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketMemoryLength)
             {
                 return null;
             }
@@ -163,7 +188,7 @@ namespace MemcardRex.Core
             // Read response from PocketStation
             int bytesRead;
             LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
-            if (LastErrorCode != ErrorCode.None || bytesRead != PocketBIOSLength /*|| _buffer[6] != 0x12*/)
+            if (LastErrorCode != ErrorCode.None || bytesRead != PocketMemoryLength /*|| _buffer[6] != 0x12*/)
             {
                 return null;
             }
@@ -176,26 +201,23 @@ namespace MemcardRex.Core
 
         public override UInt32 ReadPocketStationSerial(out string errorMsg)
         {
-            int bytesWritten;
-            LastErrorCode = _writer.Write(_pocketInfoCommand, Timeout, out bytesWritten);
-            if (LastErrorCode != ErrorCode.None || bytesWritten != PocketInfoLength)
-            {
-                errorMsg = "USB comm error.";
-                return 0;
-            }
+            //There are a couple of ways to read the serial from a PocketStation
+            //Fastest one is to use a special BU command designed just for that.
+            //But since short commands used to send data to PocketStation are not working
+            //on 3rd party adaptors we will use a memory dump function which
+            //seems to work (other than the in this case irrelevant 128th byte corruption)
 
-            // Read response from PocketStation
-            int bytesRead;
-            LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
-            if (LastErrorCode != ErrorCode.None || bytesRead != PocketInfoLength || _buffer[6] != 0x12)
-            {
+            //Dump 128 byte data from memory, starting with the serial number
+            byte[] frame = DumpPocketStationMemory(0x06000300);
+
+            if (frame == null) {
                 errorMsg = "PocketStation not detected.";
                 return 0;
             }
 
             //All good, return data
             errorMsg = null;
-            return (UInt32)(_buffer[13] | _buffer[14] << 8 | _buffer[15] << 16 | _buffer[16] << 24);
+            return (UInt32)(frame[0] | frame[1] << 8 | frame[2] << 16 | frame[3] << 24);
         }
 
         //Get a 2 digit BCD value from an int
@@ -232,7 +254,7 @@ namespace MemcardRex.Core
             // Read response from PocketStation
             int bytesRead;
             LastErrorCode = _reader.Read(_buffer, Timeout, out bytesRead);
-            if (LastErrorCode != ErrorCode.None || bytesRead != PocketTimeLength)
+            if (LastErrorCode != ErrorCode.None || bytesRead == 0)
             {
                 errorMsg = "PocketStation not detected.";
                 return false;
