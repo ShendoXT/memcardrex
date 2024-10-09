@@ -593,8 +593,8 @@ namespace MemcardRex
             int masterSlot = memCard.GetMasterLinkForSlot(slotNumber);
 
             //Only show info for valid saves
-            if (!(memCard.slotType[masterSlot] == (int)ps1card.SlotTypes.initial || 
-                memCard.slotType[masterSlot] == (int)ps1card.SlotTypes.deleted_initial)) return;
+            if (!(memCard.slotType[masterSlot] == ps1card.SlotTypes.initial || 
+                memCard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)) return;
 
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
@@ -636,7 +636,7 @@ namespace MemcardRex
 
             refreshListView(listIndex, slotNumber);
 
-            if (memCard.slotType[masterSlot] == (int) ps1card.SlotTypes.deleted_initial)
+            if (memCard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)
                 pushHistory("Save deleted", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
             else
                 pushHistory("Save restored", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
@@ -1006,12 +1006,12 @@ namespace MemcardRex
                         cardList[listIndex].Items[i].ImageIndex = i;
                         break;
 
-                    case (byte)ps1card.SlotTypes.formatted:
+                    case ps1card.SlotTypes.formatted:
                         cardList[listIndex].Items.Add("Free slot");
                         iconList[listIndex].Images.Add(new Bitmap(48, 16));
                         break;
 
-                    case (byte)ps1card.SlotTypes.corrupted:
+                    case ps1card.SlotTypes.corrupted:
                         cardList[listIndex].Items.Add("Corrupted slot");
                         iconList[listIndex].Images.Add(new Bitmap(48, 16));
                         break;
@@ -1069,9 +1069,9 @@ namespace MemcardRex
 
             switch (PScard[listIndex].slotType[slotNumber])
             {
-                case (byte)ps1card.SlotTypes.deleted_initial:
-                case (byte)ps1card.SlotTypes.deleted_middle_link:
-                case (byte)ps1card.SlotTypes.deleted_end_link:
+                case ps1card.SlotTypes.deleted_initial:
+                case ps1card.SlotTypes.deleted_middle_link:
+                case ps1card.SlotTypes.deleted_end_link:
                     Color blendColor = cardList[listIndex].BackColor;
                     iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xA0, blendColor.R, blendColor.G, blendColor.B)), 
                         new Region(new Rectangle(0, 0, 16, 16)));
@@ -1289,7 +1289,7 @@ namespace MemcardRex
             //Enable menu items based on the content
             switch (memCard.slotType[memCard.masterSlot[currentCardList.SelectedIndices[0]]])
             {
-                case (int)ps1card.SlotTypes.formatted:
+                case ps1card.SlotTypes.formatted:
                     importSaveToolStripMenuItem.Enabled = true;
                     importSaveToolStripMenuItem1.Enabled = true;
                     importButton.Enabled = true;
@@ -1301,7 +1301,7 @@ namespace MemcardRex
                     }
                     break;
 
-                case (int)ps1card.SlotTypes.initial:
+                case ps1card.SlotTypes.initial:
                     SetEditItemsState(true);
 
                     restoreSaveToolStripMenuItem.Enabled = false;
@@ -1313,7 +1313,7 @@ namespace MemcardRex
                     paseToolStripMenuItem.Enabled = false;
                     break;
 
-                case (int)ps1card.SlotTypes.deleted_initial:
+                case ps1card.SlotTypes.deleted_initial:
                     SetEditItemsState(true);
 
                     deleteSaveToolStripMenuItem.Enabled = false;
@@ -1325,7 +1325,7 @@ namespace MemcardRex
                     paseToolStripMenuItem.Enabled = false;
                     break;
 
-                case (int)ps1card.SlotTypes.corrupted:
+                case ps1card.SlotTypes.corrupted:
                     //Enable only formating of the slot
                     removeSaveformatSlotsToolStripMenuItem.Enabled = true;
                     removeSaveformatSlotsToolStripMenuItem1.Enabled = true;

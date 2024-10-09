@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Linq;
+using System.Diagnostics;
 
 namespace MemcardRex.Core
 {
@@ -122,7 +123,7 @@ namespace MemcardRex.Core
         public string[] saveComments = new string[SlotCount];
 
         //Type of the save slot
-        public byte[] slotType = new byte[SlotCount];
+        public SlotTypes[] slotType = new SlotTypes[SlotCount];
 
         //Next slot pointer (for multilink saves)
         public ushort[] nextSlotPointer = new ushort[SlotCount];
@@ -546,8 +547,8 @@ namespace MemcardRex.Core
             {
                 switch (slotType[slotNumber])
                 {
-                    case (int)SlotTypes.initial:
-                    case (int)SlotTypes.deleted_initial:
+                    case SlotTypes.initial:
+                    case SlotTypes.deleted_initial:
                         foreach (int slot in FindSaveLinks(slotNumber)) slotTouched[slot] = true;
                         break;
 
@@ -559,13 +560,12 @@ namespace MemcardRex.Core
             {
                 switch (slotType[slotNumber])
                 {
-                    case (int)SlotTypes.middle_link:
-                    case (int)SlotTypes.end_link:
-                    case (int)SlotTypes.deleted_middle_link:
-                    case (int)SlotTypes.deleted_end_link:
+                    case SlotTypes.middle_link:
+                    case SlotTypes.end_link:
+                    case SlotTypes.deleted_middle_link:
+                    case SlotTypes.deleted_end_link:
                         if (!slotTouched[slotNumber]) slotType[slotNumber] = (int)SlotTypes.formatted;
                         break;
-
                 }
             }
         }
@@ -574,42 +574,42 @@ namespace MemcardRex.Core
         private void loadSlotTypes()
         {
             //Clear existing data
-            slotType = new byte[SlotCount];
+            slotType = new ps1card.SlotTypes[SlotCount];
 
             for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
             {
                 switch (headerData[slotNumber, 0])
                 {
                     default:        //Regular values have not been found, save is corrupted
-                        slotType[slotNumber] = (byte) SlotTypes.corrupted;
+                        slotType[slotNumber] = SlotTypes.corrupted;
                         break;
 
                     case 0xA0:      //Formatted
-                        slotType[slotNumber] = (byte)SlotTypes.formatted;
+                        slotType[slotNumber] = SlotTypes.formatted;
                         break;
 
                     case 0x51:      //Initial
-                        slotType[slotNumber] = (byte)SlotTypes.initial;
+                        slotType[slotNumber] = SlotTypes.initial;
                         break;
 
                     case 0x52:      //Middle link
-                        slotType[slotNumber] = (byte)SlotTypes.middle_link;
+                        slotType[slotNumber] = SlotTypes.middle_link;
                         break;
 
                     case 0x53:      //End link
-                        slotType[slotNumber] = (byte)SlotTypes.end_link;
+                        slotType[slotNumber] = SlotTypes.end_link;
                         break;
 
                     case 0xA1:      //Initial deleted
-                        slotType[slotNumber] = (byte)SlotTypes.deleted_initial;
+                        slotType[slotNumber] = SlotTypes.deleted_initial;
                         break;
 
                     case 0xA2:      //Middle link deleted
-                        slotType[slotNumber] = (byte)SlotTypes.deleted_middle_link;
+                        slotType[slotNumber] = SlotTypes.deleted_middle_link;
                         break;
 
                     case 0xA3:      //End link deleted
-                        slotType[slotNumber] = (byte)SlotTypes.deleted_end_link;
+                        slotType[slotNumber] = SlotTypes.deleted_end_link;
                         break;
                 }
 
@@ -722,13 +722,13 @@ namespace MemcardRex.Core
                         if (saveName[slotNumber] == null) saveName[slotNumber] = Encoding.Default.GetString(tempByteArray, 0, 32);
                         break;
 
-                    case (int) SlotTypes.middle_link:
-                    case (int) SlotTypes.deleted_middle_link:
+                    case SlotTypes.middle_link:
+                    case SlotTypes.deleted_middle_link:
                         saveName[slotNumber] = "Linked slot (middle link)";
                         break;
 
-                    case (int)SlotTypes.end_link:
-                    case (int)SlotTypes.deleted_end_link:
+                    case SlotTypes.end_link:
+                    case SlotTypes.deleted_end_link:
                         saveName[slotNumber] = "Linked slot (end link)";
                         break;
                 }
@@ -767,27 +767,27 @@ namespace MemcardRex.Core
                     default:            //Slot should not be deleted
                         break;
 
-                    case (byte)SlotTypes.initial:               //Regular save
+                    case SlotTypes.initial:               //Regular save
                         headerData[saveSlots[i], 0] = 0xA1;
                         break;
 
-                    case (byte)SlotTypes.middle_link:           //Middle link
+                    case SlotTypes.middle_link:           //Middle link
                         headerData[saveSlots[i], 0] = 0xA2;
                         break;
 
-                    case (byte)SlotTypes.end_link:              //End link
+                    case SlotTypes.end_link:              //End link
                         headerData[saveSlots[i], 0] = 0xA3;
                         break;
 
-                    case (byte)SlotTypes.deleted_initial:       //Regular deleted save
+                    case SlotTypes.deleted_initial:       //Regular deleted save
                         headerData[saveSlots[i], 0] = 0x51;
                         break;
 
-                    case (byte)SlotTypes.deleted_middle_link:   //Middle link deleted
+                    case SlotTypes.deleted_middle_link:   //Middle link deleted
                         headerData[saveSlots[i], 0] = 0x52;
                         break;
 
-                    case (byte)SlotTypes.deleted_end_link:      //End link deleted
+                    case SlotTypes.deleted_end_link:      //End link deleted
                         headerData[saveSlots[i], 0] = 0x53;
                         break;
                 }
@@ -881,7 +881,7 @@ namespace MemcardRex.Core
                 tempSlotList.Add(currentSlot);
 
                 //Check if current slot is corrupted
-                if (slotType[currentSlot] == (int)SlotTypes.corrupted) break;
+                if (slotType[currentSlot] == SlotTypes.corrupted) break;
 
                 //Check if pointer points to the next save
                 if (headerData[currentSlot, 8] == 0xFF) break;
@@ -895,10 +895,10 @@ namespace MemcardRex.Core
                     default:
                         return tempSlotList.ToArray();
 
-                    case (int)SlotTypes.middle_link:
-                    case (int)SlotTypes.end_link:
-                    case (int)SlotTypes.deleted_middle_link:
-                    case (int)SlotTypes.deleted_end_link:
+                    case SlotTypes.middle_link:
+                    case SlotTypes.end_link:
+                    case SlotTypes.deleted_middle_link:
+                    case SlotTypes.deleted_end_link:
                         //Finally add slot to the list
                         currentSlot = headerData[currentSlot, 8];
                         break;
@@ -909,19 +909,18 @@ namespace MemcardRex.Core
             return tempSlotList.ToArray();
         }
 
-        //Find and return continuous free slots
-        private int[] findFreeSlots(int slotNumber, int slotCount)
+        //Find and return required free slots
+        private int[] findFreeSlots(int slotNumber, int requiredSlots)
         {
             List<int> tempSlotList = new List<int>();
+            int currentSlot = 0;
 
-            //Cycle through available slots
-            for (int i = slotNumber; i < (slotNumber + slotCount); i++)
+            //Find all free slots on the save, start with the defined slot number
+            for (int i = 0; i < SlotCount; i++)
             {
-                if (slotType[i] == 0) tempSlotList.Add(i);
-                else break;
-
-                //Exit if next save would be over the limit of 15
-                if (slotNumber + slotCount > 15) break;
+                currentSlot = (i + slotNumber) % SlotCount;
+                if (slotType[currentSlot] == SlotTypes.formatted) tempSlotList.Add(currentSlot);
+                if (tempSlotList.Count == requiredSlots) break;
             }
 
             //Return int array
@@ -991,7 +990,6 @@ namespace MemcardRex.Core
             //Set changedFlag to edited
             changedFlag = true;
         }
-
 
         /// <summary>
         /// Input given bytes back to the Memory Card
@@ -1208,7 +1206,7 @@ namespace MemcardRex.Core
                 //Each save has 3 icons (some are data but those will not be shown)
                 for (int iconNumber = 0; iconNumber < 3; iconNumber++)
                 {
-                    if (slotType[slotNumber] == (int)SlotTypes.initial || slotType[slotNumber] == (int)SlotTypes.deleted_initial)
+                    if (slotType[slotNumber] == SlotTypes.initial || slotType[slotNumber] == SlotTypes.deleted_initial)
                     {
                         byteCount = 128 + (128 * iconNumber);
 
