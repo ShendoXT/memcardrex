@@ -184,7 +184,7 @@ namespace MemcardRex
                 _hardInterface.Stop();
 
                 if (_hardInterface.Type != HardwareInterface.Types.ps3mca)
-                    _errorMessage += "\n\nMake sure to select proper communication port and speed in preferences dialog";
+                    _errorMessage += "\n\nMake sure to select proper communication port in preferences dialog";
 
                 backgroundWorker.CancelAsync();
                 return;
@@ -323,13 +323,21 @@ namespace MemcardRex
 
             abortButton.Enabled = false;
 
-            deviceLabel.Text = "Detecting " + _hardInterface.Name() + " on " + _comPort;
+            //Show detecting message
+            deviceLabel.Text = "Detecting " + _hardInterface.Name();
+            if(_hardInterface.Type != HardwareInterface.Types.ps3mca)
+            {
+                if(_hardInterface.Mode == HardwareInterface.Modes.tcp)
+                    deviceLabel.Text += " on " + _remoteAddress + ":" + _remoteComPort.ToString();
+                else
+                    deviceLabel.Text += " on " + _comPort;
+            }
 
             //Unirom requires card checksum and has less data frames because of bigger frame size
             if (_hardInterface.Type == HardwareInterface.Types.unirom)
             {
                 _hardInterface.LastChecksum = _hardInterface.CalculateChecksum(completeMemoryCard);
-                if (_hardInterface.CommMode != (int)HardwareInterface.CommModes.read)
+                if (_hardInterface.CommMode != HardwareInterface.CommModes.read)
                 {
                     _hardInterface.FrameCount /= 16;
                 }

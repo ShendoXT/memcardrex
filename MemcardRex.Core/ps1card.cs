@@ -7,6 +7,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace MemcardRex.Core
 {
@@ -954,6 +955,43 @@ namespace MemcardRex.Core
             //Return save bytes
             return saveBytes;
         }
+
+
+        /// <summary>
+        /// Replace existing save with new data (save edited by plugin for example)
+        /// </summary>
+        /// <param name="slotNumber">Master slot of the save</param>
+        /// <param name="saveBytes">Data to be replaced in mcs format</param>
+        public void ReplaceSaveBytes(int slotNumber, byte[] saveBytes)
+        {
+            //Get all linked saves
+            int[] saveSlots = FindSaveLinks(slotNumber);
+
+            //Add current state of slots to undo buffer
+            pushToUndoRedoBuffer(saveSlots, ref undoList, true);
+
+            //Place header data
+            for (int i = 0; i < 128; i++)
+                headerData[saveSlots[0], i] = saveBytes[i];
+
+            //Place save data(cycle through each save)
+            for (int i = 0; i < saveSlots.Count(); i++)
+            {
+                //Set all bytes
+                for (int byteCount = 0; byteCount < 8192; byteCount++)
+                {
+                    saveData[saveSlots[i], byteCount] = saveBytes[128 + (i * 8192) + byteCount];
+                }
+            }
+
+            //Reload data
+            calculateXOR();
+            loadMemcardData();
+
+            //Set changedFlag to edited
+            changedFlag = true;
+        }
+
 
         /// <summary>
         /// Input given bytes back to the Memory Card

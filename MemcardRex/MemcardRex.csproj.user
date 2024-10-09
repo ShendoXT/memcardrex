@@ -13,6 +13,7 @@
     <FallbackCulture>en-US</FallbackCulture>
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
     <ErrorReportUrlHistory />
+    <_LastSelectedProfileId>C:\Users\Shendo\source\repos\memcardrex\MemcardRex\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="Windows\GUI\aboutWindow.cs">

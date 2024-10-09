@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using MemcardRex.Windows.GUI;
-
+using System.Diagnostics;
 using MemcardRex.Core;
 using System.Runtime.Versioning;
 
@@ -880,9 +880,9 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2023", 
-                "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\n" + 
-                "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91.\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2024", 
+                "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\n" +
+                "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91, NKO. \n\n" +
                 "Thanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem, \nPadraig Flood.\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
@@ -924,12 +924,11 @@ namespace MemcardRex
             historyIconList[historyIconList.Count - 1].ImageSize = new Size((int)(xScale * 16), (int)(yScale * 16));
             historyIconList[historyIconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
 
-
             //Add history list
             historyList.Add(new CardListView());
             historyList[historyList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
             historyList[historyList.Count - 1].Location = new Point(512, 0);
-            historyList[historyList.Count - 1].Size = new Size(172, 302);
+            historyList[historyList.Count - 1].Size = new Size(172, 300);
             historyList[historyList.Count - 1].BorderStyle = BorderStyle.None;
             historyList[historyList.Count - 1].BackColor = ActiveColors.backColor;
             historyList[historyList.Count - 1].ForeColor = ActiveColors.foreColor;
@@ -1241,15 +1240,11 @@ namespace MemcardRex
             {
                 int listIndex = mainTabControl.SelectedIndex;
                 int slotNumber = memCard.GetMasterLinkForSlot(cardList[listIndex].SelectedIndices[0]);
-                int reqSlots = 0;
                 byte[] editedSaveBytes = pluginSystem.editSaveData(supportedPlugins[pluginIndex], PScard[listIndex].GetSaveBytes(slotNumber), PScard[listIndex].saveProdCode[slotNumber]);
 
                 if (editedSaveBytes != null)
                 {
-                    //Delete save so the edited one can be placed in.
-                    PScard[listIndex].FormatSave(slotNumber);
-
-                    PScard[listIndex].SetSaveBytes(slotNumber, editedSaveBytes, out reqSlots);
+                    PScard[listIndex].ReplaceSaveBytes(slotNumber, editedSaveBytes);
 
                     //Refresh the list with new data
                     refreshListView(listIndex, slotNumber);
@@ -1807,22 +1802,24 @@ namespace MemcardRex
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (memCard.UndoCount > 0)
-            {
-                validityCheck(out int listIndex, out int slotNumber);
-                memCard.Undo();
-                refreshListView(listIndex, slotNumber);
-            }
+            //Go up a history list
+            if(!validityCheck(out int listIndex, out int slotNumber)) return;
+
+            if (historyList[listIndex].SelectedIndices.Count < 1) return;
+            int selectedIndex = historyList[listIndex].SelectedIndices[0];
+
+            if(selectedIndex > 0) historyList[listIndex].Items[selectedIndex - 1].Selected = true;
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (memCard.RedoCount > 0)
-            {
-                validityCheck(out int listIndex, out int slotNumber);
-                memCard.Redo();
-                refreshListView(listIndex, slotNumber);
-            }
+            //Go down a history list
+            if (!validityCheck(out int listIndex, out int slotNumber)) return;
+
+            if (historyList[listIndex].SelectedIndices.Count < 1) return;
+            int selectedIndex = historyList[listIndex].SelectedIndices[0];
+
+            if (selectedIndex < historyList[listIndex].Items.Count - 1) historyList[listIndex].Items[selectedIndex + 1].Selected = true;
         }
     }
 }
