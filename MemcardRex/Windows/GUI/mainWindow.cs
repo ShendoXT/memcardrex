@@ -909,6 +909,9 @@ namespace MemcardRex
 
             //Select the added item
             historyList[listIndex].Items[historyList[listIndex].Items.Count - 1].Selected = true;
+
+            //Make sure that it's visible
+            historyList[listIndex].Items[historyList[listIndex].Items.Count - 1].EnsureVisible();
         }
 
         //Make a new ListView control
@@ -1808,7 +1811,11 @@ namespace MemcardRex
             if (historyList[listIndex].SelectedIndices.Count < 1) return;
             int selectedIndex = historyList[listIndex].SelectedIndices[0];
 
-            if(selectedIndex > 0) historyList[listIndex].Items[selectedIndex - 1].Selected = true;
+            if (selectedIndex > 0)
+            {
+                historyList[listIndex].Items[selectedIndex - 1].Selected = true;
+                historyList[listIndex].Items[selectedIndex - 1].EnsureVisible();
+            }
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1819,7 +1826,11 @@ namespace MemcardRex
             if (historyList[listIndex].SelectedIndices.Count < 1) return;
             int selectedIndex = historyList[listIndex].SelectedIndices[0];
 
-            if (selectedIndex < historyList[listIndex].Items.Count - 1) historyList[listIndex].Items[selectedIndex + 1].Selected = true;
+            if (selectedIndex < historyList[listIndex].Items.Count - 1)
+            {
+                historyList[listIndex].Items[selectedIndex + 1].Selected = true;
+                historyList[listIndex].Items[selectedIndex + 1].EnsureVisible();
+            }
         }
     }
 }
