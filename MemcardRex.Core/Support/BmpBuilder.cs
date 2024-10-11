@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Drawing;
 
-namespace MemcardRex
+namespace MemcardRex.Core
 {
-	public class BmpBuilder
-	{
-		public BmpBuilder()
-		{
-		}
+    public class BmpBuilder
+    {
+        public BmpBuilder()
+        {
+        }
 
         /// <summary>
         /// Create 16x16 ARGB BMP image
@@ -15,7 +15,7 @@ namespace MemcardRex
         /// <param name="RawImageData"></param>
         /// <returns></returns>
 		public byte[] BuildBmp(Color[] RawImageData)
-		{
+        {
             byte[] altBmpImage = new byte[] // All values are little-endian
             {
                         0x42, 0x4D,             // Signature 'BM'
@@ -77,4 +77,3 @@ namespace MemcardRex
         }
     }
 }
-
