@@ -4,6 +4,7 @@ using CoreGraphics;
 using Foundation;
 using System.Collections.Generic;
 using System.Drawing;
+using MemcardRex.Core;
 
 namespace MemcardRex
 {

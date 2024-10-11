@@ -376,7 +376,7 @@ namespace MemcardRex
             //Send either serial port data or address data from TCP
             if (deviceMode == (int)HardwareInterface.Modes.serial)
             {
-                errMsg = hardInterface.Start(App.appSettings.CommunicationPort, App.appSettings.CommunicationSpeed);
+                errMsg = hardInterface.Start(App.appSettings.CommunicationPort, 0);
             }
             else
             {

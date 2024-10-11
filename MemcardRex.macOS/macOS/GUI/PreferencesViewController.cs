@@ -37,7 +37,7 @@ namespace MemcardRex
             //Read program settings
             iconPopup.SelectItem(iconPopup.ItemAtIndex(App.appSettings.IconBackgroundColor));
             formatPopup.SelectItem(formatPopup.ItemAtIndex(App.appSettings.FormatType));
-            speedPopup.SelectItem(speedPopup.ItemAtIndex(App.appSettings.CommunicationSpeed));
+            //speedPopup.SelectItem(speedPopup.ItemAtIndex(App.appSettings.CommunicationSpeed));
             cardPopup.SelectItem(cardPopup.ItemAtIndex(App.appSettings.CardSlot));
 
             addressInput.StringValue = App.appSettings.RemoteCommAddress;
@@ -65,7 +65,7 @@ namespace MemcardRex
             //Save program settings
             App.appSettings.IconBackgroundColor = (int) iconPopup.IndexOfSelectedItem;
             App.appSettings.FormatType = (int) formatPopup.IndexOfSelectedItem;
-            App.appSettings.CommunicationSpeed = (int)speedPopup.IndexOfSelectedItem;
+            //App.appSettings.CommunicationSpeed = (int)speedPopup.IndexOfSelectedItem;
             App.appSettings.CardSlot = (int)cardPopup.IndexOfSelectedItem;
 
             if (addressInput.StringValue != "")

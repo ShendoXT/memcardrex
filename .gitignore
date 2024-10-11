@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /MemcardRex/.DS_Store
+.DS_Store
+MemcardRex.macOS/Resources/.DS_Store
