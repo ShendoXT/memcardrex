@@ -5,15 +5,37 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "MemcardRex.macOS",
+            "name": "MemcardRex.macOS.debug.x64",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/MemcardRex.macOS/bin/Debug/net8.0-macos/osx-arm64/MemcardRex.app/Contents/MacOS/MemcardRex",
+            "preLaunchTask": "x64build",
+            "program": "${workspaceFolder}/MemcardRex.macOS/bin/Debug/net7.0-macos/osx-x64/memcardrex.app/Contents/MacOS/memcardrex",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
         },
+        {
+            "name": "MemcardRex.macOS.debug.arm64",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "armbuild",
+            "program": "${workspaceFolder}/MemcardRex.macOS/bin/Debug/net7.0-macos/osx-arm64/MemcardRex.app/Contents/MacOS/MemcardRex",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "MemcardRex.macOS.publish",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "publish",
+            "program": "${workspaceFolder}/MemcardRex.macOS/bin/Release/net7.0-macos/MemcardRex.app/Contents/MacOS/MemcardRex",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
     ],
 }

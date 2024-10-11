@@ -189,7 +189,7 @@ namespace MemcardRex
                 MessageText = "Warning",
             };
             
-            alert.RunModal();
+            //alert.RunModal();
 
             //Add initial window controller to the controller list
             //winCtrlList.Add(NSApplication.SharedApplication.KeyWindow.WindowController);
