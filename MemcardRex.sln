@@ -1,13 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex", "MemcardRex\MemcardRex.csproj", "{39B94E8A-7BD1-4072-8A60-D90464326B18}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcardRex.macOS", "MemcardRex.macOS\MemcardRex.csproj", "{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex", "MemcardRex.Windows\MemcardRex.csproj", "{39B94E8A-7BD1-4072-8A60-D90464326B18}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.Core", "MemcardRex.Core\MemcardRex.Core.csproj", "{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.macOS", "MemcardRex.macOS\MemcardRex.macOS.csproj", "{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +32,14 @@ Global
 		{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}.Release|x64.ActiveCfg = Release|Any CPU
 		{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}.Release|x64.Build.0 = Release|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Debug|x64.Build.0 = Debug|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|x64.ActiveCfg = Release|Any CPU
+		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
