@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-macos</TargetFramework>
+    <AssemblyName>memcardrex</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <PublishSingleFile>false</PublishSingleFile>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MemcardRex.Core\MemcardRex.Core.csproj">
+      <Project>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Project>
+      <Name>MemcardRex.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+{
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "MemcardRex.macOS"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
