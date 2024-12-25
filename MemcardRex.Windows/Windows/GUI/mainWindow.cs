@@ -22,9 +22,9 @@ namespace MemcardRex
         const string appDate = "Unknown";
 
 #if DEBUG
-        const string appVersion = "2.0 alpha (Debug)";
+        const string appVersion = "2.0 beta (Debug)";
 #else
-        const string appVersion = "2.0 alpha";
+        const string appVersion = "2.0 beta";
 #endif
         //All available application settings
         public ProgramSettings appSettings = new ProgramSettings();

@@ -86,6 +86,7 @@
             gridCheckbox.TabIndex = 9;
             gridCheckbox.Text = "Show grid on slot list.";
             gridCheckbox.UseVisualStyleBackColor = true;
+            gridCheckbox.Visible = false;
             // 
             // backupWarningCheckBox
             // 
