@@ -1,15 +1,16 @@
 # MemcardRex
 ### Advanced PlayStation 1 Memory Card editor
-![memcardrex](https://cloud.githubusercontent.com/assets/8411572/25514938/21160ed8-2be1-11e7-9848-e086a5ac5859.png)
+![memcardrex](https://github.com/user-attachments/assets/cc168728-1a3a-4548-a83f-5393a0e59460)
 
 <br>**Features:**
 * Tabbed interface - multiple Memory Cards can be opened at the same time.
 * Ability to copy, delete, restore, export, import and edit saves.
 * Plugin support for 3rd party save editors.
 * Hardware interfaces for communication with real Memory Cards.
+* PocketStation support (read serial, dump BIOS, push PC time)
 
 <br>**Requirements:**
-* .NET Framework 4.8.
+* .NET 8.
 
 <br>**Supported Memory Card formats:**
 * ePSXe/PSEmu Pro Memory Card(*.mcr)
@@ -100,7 +101,7 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 <br>Alvaro Tanarro, bitrot-alpha, lmiori92, Nico de Poel, KuromeSan, Robxnano, Shendo.
 
 **Beta testers:**
-<br>Gamesoul Master, Xtreme2damax and Carmax91.
+<br>Gamesoul Master, Xtreme2damax, Carmax91 and NKO.
 
 **Thanks to:**
-<br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e and DeadlySystem.
+<br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e, DeadlySystem and Padraig Flood.
