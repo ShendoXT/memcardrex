@@ -502,12 +502,12 @@ namespace MemcardRex.Core
             psvSave[0x3C] = 1;
             psvSave[0x44] = 0x84;
             psvSave[0x49] = 2;
-            psvSave[0x5D] = 0x20;
             psvSave[0x60] = 3;
             psvSave[0x61] = 0x90;
 
             Array.Copy(save, 0x0A, psvSave, 0x64, 0x20);
             Array.Copy(BitConverter.GetBytes(save.Length - 0x80), 0, psvSave, 0x40, 4);
+            Array.Copy(BitConverter.GetBytes(save.Length - 0x80), 0, psvSave, 0x5C, 4);
             Array.Copy(save, 0x80, psvSave, 0x84, save.Length - 0x80);
 
             using (SHA1 sha = SHA1.Create())
