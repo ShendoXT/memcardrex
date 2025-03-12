@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 
@@ -7,10 +8,8 @@ namespace MemcardRex.Core
     /// <summary>
     /// Implementation of the PS3 Memory Card Adaptor USB device, based on the LibUsbDotNet library.
     /// 
-    /// To use this implementation, a WinUSB driver needs to be installed for the PS3 Memory Card Adaptor first.
+    /// To use this implementation, a WinUSB or LibUSB driver needs to be installed for the PS3 Memory Card Adaptor first.
     /// This driver can be created and installed with Zadig USB driver installer: https://zadig.akeo.ie
-    /// 
-    /// Based on the PS3mca-PS1mc tool by Orion_: http://onorisoft.free.fr/psx/psx.htm#Tools
     /// </summary>
     public class PS3MemCardAdaptor : HardwareInterface
     {
@@ -82,15 +81,40 @@ namespace MemcardRex.Core
         {
             try
             {
+                //Use LibUSB backend if available, otherwise use WinUSB (relevant only on Windows)
+                UsbDevice.ForceLibUsbWinBack = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "libusb-1.0.dll"));
+                
                 // Detect and open the PS3 Memory Card Adaptor USB device
                 _usbDevice = UsbDevice.OpenUsbDevice(DeviceFinder);
+
                 if (_usbDevice == null)
                 {
-                    return "Could not find the PS3 Memory Card Adaptor.\nPlease make sure it is connected to a USB port and that the WinUSB driver is installed.";
+                    UsbDevice.Exit();
+
+                    return "Could not find the PS3 Memory Card Adaptor." + 
+                        "\nPlease make sure it is connected to a USB port and that the appropriate driver is installed." + 
+                        "\nConsult ReadMe for detailed instructions.";
+                }
+
+                //Check if this is a "whole" usb device
+                IUsbDevice wholeUsbDevice = _usbDevice as IUsbDevice;
+
+                if (!ReferenceEquals(wholeUsbDevice, null))
+                {
+                    // This is a "whole" USB device. Before it can be used, 
+                    // the desired configuration and interface must be selected.
+
+                    // Select config #1
+                    wholeUsbDevice.SetConfiguration(1);
+
+                    // Claim interface #0.
+                    wholeUsbDevice.ClaimInterface(0);
                 }
             }
             catch (Exception e)
             {
+                _usbDevice.Close();
+                UsbDevice.Exit();
                 return e.Message;
             }
 
@@ -113,6 +137,7 @@ namespace MemcardRex.Core
             LastErrorCode = _writer.Write(CmdGetCardType, Timeout, out bytesWritten);
             if (LastErrorCode != ErrorCode.None || bytesWritten != CmdGetCardType.Length)
             {
+                return UsbDevice.LastErrorString;
                 return "Failed to write command to the PS3 Memory Card Adaptor device.";
             }
 
@@ -133,6 +158,7 @@ namespace MemcardRex.Core
             {
                 _usbDevice.Close();
                 _usbDevice = null;
+                UsbDevice.Exit();
             }
         }
 
