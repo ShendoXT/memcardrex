@@ -917,58 +917,63 @@ namespace MemcardRex
         //Make a new ListView control
         private void makeListView()
         {
+            int listIndex = mainTabControl.TabPages.Count - 1;
+            int tabWidth = mainTabControl.TabPages[listIndex].Width;
+
             //Add a new ImageList to hold the card icons
             iconList.Add(new ImageList());
-            iconList[iconList.Count - 1].ImageSize = new Size((int)(xScale * 48), (int)(yScale * 16));
-            iconList[iconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
+            iconList[listIndex].ImageSize = new Size((int)(xScale * 48), (int)(yScale * 16));
+            iconList[listIndex].ColorDepth = ColorDepth.Depth32Bit;
 
             //Also for history list
             historyIconList.Add(new ImageList());
-            historyIconList[historyIconList.Count - 1].ImageSize = new Size((int)(xScale * 16), (int)(yScale * 16));
-            historyIconList[historyIconList.Count - 1].ColorDepth = ColorDepth.Depth32Bit;
+            historyIconList[listIndex].ImageSize = new Size((int)(xScale * 16), (int)(yScale * 16));
+            historyIconList[listIndex].ColorDepth = ColorDepth.Depth32Bit;
 
             //Add history list
             historyList.Add(new CardListView());
-            historyList[historyList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
-            historyList[historyList.Count - 1].Location = new Point(512, 0);
-            historyList[historyList.Count - 1].Size = new Size(172, 300);
-            historyList[historyList.Count - 1].BorderStyle = BorderStyle.None;
-            historyList[historyList.Count - 1].BackColor = ActiveColors.backColor;
-            historyList[historyList.Count - 1].ForeColor = ActiveColors.foreColor;
-            historyList[historyList.Count - 1].FullRowSelect = true;
-            historyList[historyList.Count - 1].MultiSelect = false;
-            historyList[historyList.Count - 1].HideSelection = false;
-            historyList[historyList.Count - 1].Columns.Add("History");
-            historyList[historyList.Count - 1].Columns[0].Width = (int)(xScale * 160);
-            historyList[historyList.Count - 1].View = View.Details;
-            historyList[historyList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.historyList_IndexChanged);
-            historyList[historyList.Count - 1].SmallImageList = historyIconList[historyIconList.Count - 1];
+            historyList[listIndex].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
+            historyList[listIndex].Location = new Point(512, 0);
+            historyList[listIndex].Dock = DockStyle.Right;
+            historyList[listIndex].Size = new Size((int)(xScale * 160), 300);
+            historyList[listIndex].BorderStyle = BorderStyle.None;
+            historyList[listIndex].BackColor = ActiveColors.backColor;
+            historyList[listIndex].ForeColor = ActiveColors.foreColor;
+            historyList[listIndex].HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            historyList[listIndex].FullRowSelect = true;
+            historyList[listIndex].MultiSelect = false;
+            historyList[listIndex].HideSelection = false;
+            historyList[listIndex].Columns.Add("History");
+            historyList[listIndex].Columns[0].Width = (int)(xScale * 160);
+            historyList[listIndex].View = View.Details;
+            historyList[listIndex].SelectedIndexChanged += new System.EventHandler(this.historyList_IndexChanged);
+            historyList[listIndex].SmallImageList = historyIconList[historyIconList.Count - 1];
 
             cardList.Add(new CardListView());
-            cardList[cardList.Count - 1].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
-            cardList[cardList.Count - 1].BorderStyle = BorderStyle.None;
-            cardList[cardList.Count - 1].Size = new Size(512, 300);
-            cardList[cardList.Count - 1].BackColor = ActiveColors.backColor;
-            cardList[cardList.Count - 1].ForeColor = ActiveColors.foreColor;
-            cardList[cardList.Count - 1].Dock = DockStyle.Bottom | DockStyle.Top | DockStyle.Left;
-            cardList[cardList.Count - 1].SmallImageList = iconList[iconList.Count - 1];
-            cardList[cardList.Count - 1].ContextMenuStrip = mainContextMenu;
-            cardList[cardList.Count - 1].FullRowSelect = true;
-            cardList[cardList.Count - 1].MultiSelect = false;
-            cardList[cardList.Count - 1].HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            cardList[cardList.Count - 1].HideSelection = false;
-            cardList[cardList.Count - 1].Columns.Add("Icon, region and title");
-            cardList[cardList.Count - 1].Columns.Add("Product code");
-            cardList[cardList.Count - 1].Columns.Add("Identifier");
-            cardList[cardList.Count - 1].Columns[0].Width = (int)(xScale * 312);
-            cardList[cardList.Count - 1].Columns[1].Width = (int)(xScale * 98);
-            cardList[cardList.Count - 1].Columns[2].Width = (int)(xScale * 102);
-            cardList[cardList.Count - 1].View = View.Details;
-            //cardList[cardList.Count - 1].Click += new System.EventHandler(this.cardList_Click);
-            cardList[cardList.Count - 1].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
-            cardList[cardList.Count - 1].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);
+            cardList[listIndex].Font = new Font(FontFamily.GenericSansSerif.Name, 8.25f);
+            cardList[listIndex].BorderStyle = BorderStyle.None;
+            cardList[listIndex].Size = new Size(tabWidth - (int)(xScale * 160), 300);
+            cardList[listIndex].BackColor = ActiveColors.backColor;
+            cardList[listIndex].ForeColor = ActiveColors.foreColor;
+            cardList[listIndex].Dock = DockStyle.Bottom | DockStyle.Top | DockStyle.Left;
+            cardList[listIndex].SmallImageList = iconList[iconList.Count - 1];
+            cardList[listIndex].ContextMenuStrip = mainContextMenu;
+            cardList[listIndex].FullRowSelect = true;
+            cardList[listIndex].MultiSelect = false;
+            cardList[listIndex].HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            cardList[listIndex].HideSelection = false;
+            cardList[listIndex].Columns.Add("Icon, region and title");
+            cardList[listIndex].Columns.Add("Product code");
+            cardList[listIndex].Columns.Add("Identifier");
+            cardList[listIndex].Columns[0].Width = (int)(xScale * 312);
+            cardList[listIndex].Columns[1].Width = (int)(xScale * 98);
+            cardList[listIndex].Columns[2].Width = tabWidth - (int)(xScale * 312) - (int)(xScale * 98) - (int)(xScale * 160);
+            cardList[listIndex].View = View.Details;
+            //cardList[listIndex].Click += new System.EventHandler(this.cardList_Click);
+            cardList[listIndex].DoubleClick += new System.EventHandler(this.cardList_DoubleClick);
+            cardList[listIndex].SelectedIndexChanged += new System.EventHandler(this.cardList_IndexChanged);
 
-            refreshListView(cardList.Count - 1, -1);
+            refreshListView(listIndex, -1);
         }
         
         //Refresh the ListView
