@@ -28,7 +28,7 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, int saveSize, int iconFrames, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
         {
             string ocupiedSlots = null;
 
@@ -43,8 +43,12 @@ namespace MemcardRex
             iconBackColor = backColor;
             regionLabel.Text = saveRegion;
 
+            //Save file data type
+            if (saveType == ps1card.DataTypes.save) typeLabel.Text = "Save data";
+            else if (saveType == ps1card.DataTypes.software) typeLabel.Text = "Software (PocketStation)";
+
             //Create icons
-            for(int i=0; i<3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 iconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(saveIcons[slotNumbers[0], i])));
                 iconData[i].RotateFlip(RotateFlipType.RotateNoneFlipY);

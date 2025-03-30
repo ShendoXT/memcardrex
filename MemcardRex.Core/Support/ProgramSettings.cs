@@ -17,6 +17,7 @@ namespace MemcardRex.Core
         public int RemoteCommPort = 23;                    // Port to open a socket for the remote serial bridge
         public int CardSlot = 0;                           //Active card slot for reading data from PS1CardLink or Unirom
         public int ActiveInterface = 0;                    //Currently active hardware interface
+        public int WarningMessages = 1;                    //Show warning messages for dangerous tasks
 
         private const string settingsFilename = "Settings.xml";
 
@@ -65,6 +66,8 @@ namespace MemcardRex.Core
             CardSlot = xmlAppSettings.readXmlEntryInt("CardSlot", 0, 1);
 
             ActiveInterface = xmlAppSettings.readXmlEntryInt("ActiveInterface", 0, 10);
+
+            WarningMessages = xmlAppSettings.readXmlEntryInt("WarningMessages", 0, 1);
         }
 
         /// <summary>
@@ -104,6 +107,8 @@ namespace MemcardRex.Core
             xmlAppSettings.writeXmlEntry("CardSlot", CardSlot.ToString());
 
             xmlAppSettings.writeXmlEntry("ActiveInterface", ActiveInterface.ToString());
+
+            xmlAppSettings.writeXmlEntry("WarningMessages", WarningMessages.ToString());
 
             xmlAppSettings.closeXmlWriter();
         }

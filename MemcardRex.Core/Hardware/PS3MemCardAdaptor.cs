@@ -157,7 +157,6 @@ namespace MemcardRex.Core
             if (_usbDevice != null && _usbDevice.IsOpen)
             {
                 _usbDevice.Close();
-                _usbDevice = null;
                 UsbDevice.Exit();
             }
         }

@@ -46,15 +46,18 @@
             saveTitleLabelInfo = new System.Windows.Forms.Label();
             iconPaintTimer = new System.Windows.Forms.Timer(components);
             iconRender = new System.Windows.Forms.PictureBox();
+            typeLabel = new System.Windows.Forms.Label();
+            typeLabelInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)iconRender).BeginInit();
             SuspendLayout();
             // 
             // OKbutton
             // 
             OKbutton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            OKbutton.Location = new System.Drawing.Point(296, 120);
+            OKbutton.Location = new System.Drawing.Point(370, 180);
+            OKbutton.Margin = new System.Windows.Forms.Padding(4);
             OKbutton.Name = "OKbutton";
-            OKbutton.Size = new System.Drawing.Size(76, 24);
+            OKbutton.Size = new System.Drawing.Size(95, 30);
             OKbutton.TabIndex = 0;
             OKbutton.Text = "OK";
             OKbutton.UseMnemonic = false;
@@ -63,127 +66,140 @@
             // 
             // slotLabel
             // 
-            slotLabel.Location = new System.Drawing.Point(140, 88);
+            slotLabel.Location = new System.Drawing.Point(175, 140);
+            slotLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             slotLabel.Name = "slotLabel";
-            slotLabel.Size = new System.Drawing.Size(236, 13);
+            slotLabel.Size = new System.Drawing.Size(295, 22);
             slotLabel.TabIndex = 12;
             slotLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             slotLabel.UseMnemonic = false;
             // 
             // slotLabelInfo
             // 
-            slotLabelInfo.Location = new System.Drawing.Point(12, 88);
+            slotLabelInfo.Location = new System.Drawing.Point(15, 140);
+            slotLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             slotLabelInfo.Name = "slotLabelInfo";
-            slotLabelInfo.Size = new System.Drawing.Size(128, 13);
+            slotLabelInfo.Size = new System.Drawing.Size(160, 22);
             slotLabelInfo.TabIndex = 5;
             slotLabelInfo.Text = "Slot:";
             slotLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // iconFramesLabel
             // 
-            iconFramesLabel.Location = new System.Drawing.Point(140, 128);
+            iconFramesLabel.Location = new System.Drawing.Point(175, 190);
+            iconFramesLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             iconFramesLabel.Name = "iconFramesLabel";
-            iconFramesLabel.Size = new System.Drawing.Size(156, 13);
+            iconFramesLabel.Size = new System.Drawing.Size(195, 22);
             iconFramesLabel.TabIndex = 14;
             iconFramesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             iconFramesLabel.UseMnemonic = false;
             // 
             // sizeLabel
             // 
-            sizeLabel.Location = new System.Drawing.Point(140, 108);
+            sizeLabel.Location = new System.Drawing.Point(175, 165);
+            sizeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             sizeLabel.Name = "sizeLabel";
-            sizeLabel.Size = new System.Drawing.Size(156, 13);
+            sizeLabel.Size = new System.Drawing.Size(195, 22);
             sizeLabel.TabIndex = 13;
             sizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             sizeLabel.UseMnemonic = false;
             // 
             // regionLabel
             // 
-            regionLabel.Location = new System.Drawing.Point(140, 68);
+            regionLabel.Location = new System.Drawing.Point(175, 85);
+            regionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             regionLabel.Name = "regionLabel";
-            regionLabel.Size = new System.Drawing.Size(236, 13);
+            regionLabel.Size = new System.Drawing.Size(295, 22);
             regionLabel.TabIndex = 11;
             regionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             regionLabel.UseMnemonic = false;
             // 
             // identifierLabel
             // 
-            identifierLabel.Location = new System.Drawing.Point(140, 48);
+            identifierLabel.Location = new System.Drawing.Point(175, 60);
+            identifierLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             identifierLabel.Name = "identifierLabel";
-            identifierLabel.Size = new System.Drawing.Size(236, 13);
+            identifierLabel.Size = new System.Drawing.Size(295, 22);
             identifierLabel.TabIndex = 10;
             identifierLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             identifierLabel.UseMnemonic = false;
             // 
             // productCodeLabel
             // 
-            productCodeLabel.Location = new System.Drawing.Point(140, 28);
+            productCodeLabel.Location = new System.Drawing.Point(175, 35);
+            productCodeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             productCodeLabel.Name = "productCodeLabel";
-            productCodeLabel.Size = new System.Drawing.Size(236, 13);
+            productCodeLabel.Size = new System.Drawing.Size(295, 22);
             productCodeLabel.TabIndex = 9;
             productCodeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             productCodeLabel.UseMnemonic = false;
             // 
             // saveTitleLabel
             // 
-            saveTitleLabel.Location = new System.Drawing.Point(140, 8);
+            saveTitleLabel.Location = new System.Drawing.Point(175, 10);
+            saveTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             saveTitleLabel.Name = "saveTitleLabel";
-            saveTitleLabel.Size = new System.Drawing.Size(236, 13);
+            saveTitleLabel.Size = new System.Drawing.Size(295, 22);
             saveTitleLabel.TabIndex = 8;
             saveTitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             saveTitleLabel.UseMnemonic = false;
             // 
             // iconFramesLabelInfo
             // 
-            iconFramesLabelInfo.Location = new System.Drawing.Point(12, 128);
+            iconFramesLabelInfo.Location = new System.Drawing.Point(15, 190);
+            iconFramesLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             iconFramesLabelInfo.Name = "iconFramesLabelInfo";
-            iconFramesLabelInfo.Size = new System.Drawing.Size(128, 13);
+            iconFramesLabelInfo.Size = new System.Drawing.Size(160, 22);
             iconFramesLabelInfo.TabIndex = 7;
             iconFramesLabelInfo.Text = "Icon frames:";
             iconFramesLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // sizeLabelInfo
             // 
-            sizeLabelInfo.Location = new System.Drawing.Point(12, 108);
+            sizeLabelInfo.Location = new System.Drawing.Point(15, 165);
+            sizeLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             sizeLabelInfo.Name = "sizeLabelInfo";
-            sizeLabelInfo.Size = new System.Drawing.Size(128, 13);
+            sizeLabelInfo.Size = new System.Drawing.Size(160, 22);
             sizeLabelInfo.TabIndex = 6;
             sizeLabelInfo.Text = "Size:";
             sizeLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // regionLabelInfo
             // 
-            regionLabelInfo.Location = new System.Drawing.Point(12, 68);
+            regionLabelInfo.Location = new System.Drawing.Point(15, 85);
+            regionLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             regionLabelInfo.Name = "regionLabelInfo";
-            regionLabelInfo.Size = new System.Drawing.Size(128, 13);
+            regionLabelInfo.Size = new System.Drawing.Size(160, 22);
             regionLabelInfo.TabIndex = 4;
             regionLabelInfo.Text = "Region:";
             regionLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // identifierLabelInfo
             // 
-            identifierLabelInfo.Location = new System.Drawing.Point(64, 48);
+            identifierLabelInfo.Location = new System.Drawing.Point(80, 60);
+            identifierLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             identifierLabelInfo.Name = "identifierLabelInfo";
-            identifierLabelInfo.Size = new System.Drawing.Size(76, 13);
+            identifierLabelInfo.Size = new System.Drawing.Size(95, 22);
             identifierLabelInfo.TabIndex = 3;
             identifierLabelInfo.Text = "Identifier:";
             identifierLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // productCodeLabelInfo
             // 
-            productCodeLabelInfo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            productCodeLabelInfo.Location = new System.Drawing.Point(12, 28);
+            productCodeLabelInfo.Location = new System.Drawing.Point(15, 35);
+            productCodeLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             productCodeLabelInfo.Name = "productCodeLabelInfo";
-            productCodeLabelInfo.Size = new System.Drawing.Size(128, 13);
+            productCodeLabelInfo.Size = new System.Drawing.Size(160, 22);
             productCodeLabelInfo.TabIndex = 2;
             productCodeLabelInfo.Text = "Product code:";
             productCodeLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // saveTitleLabelInfo
             // 
-            saveTitleLabelInfo.Location = new System.Drawing.Point(64, 8);
+            saveTitleLabelInfo.Location = new System.Drawing.Point(80, 10);
+            saveTitleLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             saveTitleLabelInfo.Name = "saveTitleLabelInfo";
-            saveTitleLabelInfo.Size = new System.Drawing.Size(76, 13);
+            saveTitleLabelInfo.Size = new System.Drawing.Size(95, 22);
             saveTitleLabelInfo.TabIndex = 1;
             saveTitleLabelInfo.Text = "Title:";
             saveTitleLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -197,17 +213,40 @@
             // 
             iconRender.BackColor = System.Drawing.Color.Transparent;
             iconRender.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            iconRender.Location = new System.Drawing.Point(8, 8);
+            iconRender.Location = new System.Drawing.Point(10, 10);
+            iconRender.Margin = new System.Windows.Forms.Padding(4);
             iconRender.Name = "iconRender";
-            iconRender.Size = new System.Drawing.Size(48, 48);
+            iconRender.Size = new System.Drawing.Size(60, 60);
             iconRender.TabIndex = 18;
             iconRender.TabStop = false;
             // 
+            // typeLabel
+            // 
+            typeLabel.Location = new System.Drawing.Point(172, 112);
+            typeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            typeLabel.Name = "typeLabel";
+            typeLabel.Size = new System.Drawing.Size(295, 22);
+            typeLabel.TabIndex = 20;
+            typeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            typeLabel.UseMnemonic = false;
+            // 
+            // typeLabelInfo
+            // 
+            typeLabelInfo.Location = new System.Drawing.Point(12, 112);
+            typeLabelInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            typeLabelInfo.Name = "typeLabelInfo";
+            typeLabelInfo.Size = new System.Drawing.Size(160, 22);
+            typeLabelInfo.TabIndex = 19;
+            typeLabelInfo.Text = "File type:";
+            typeLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // informationWindow
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            ClientSize = new System.Drawing.Size(376, 148);
+            ClientSize = new System.Drawing.Size(470, 217);
+            Controls.Add(typeLabel);
+            Controls.Add(typeLabelInfo);
             Controls.Add(iconRender);
             Controls.Add(slotLabel);
             Controls.Add(slotLabelInfo);
@@ -225,6 +264,7 @@
             Controls.Add(saveTitleLabelInfo);
             Controls.Add(OKbutton);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "informationWindow";
@@ -255,5 +295,7 @@
         internal System.Windows.Forms.Label saveTitleLabelInfo;
         private System.Windows.Forms.Timer iconPaintTimer;
         internal System.Windows.Forms.PictureBox iconRender;
+        internal System.Windows.Forms.Label typeLabel;
+        internal System.Windows.Forms.Label typeLabelInfo;
     }
 }

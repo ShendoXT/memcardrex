@@ -1,5 +1,5 @@
 ﻿//PS1 Memory Card class
-//Shendo 2009-2024
+//Shendo 2009-2025
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Linq;
-using System.Diagnostics;
 
 namespace MemcardRex.Core
 {
@@ -56,6 +55,15 @@ namespace MemcardRex.Core
             deleted_end_link,
             corrupted
         };
+
+        /// <summary>
+        /// Types of data on the Memory Card
+        /// </summary>
+        public enum DataTypes : int
+        {
+            save,           //Regular save file
+            software        //PocketStation application (called software in PS2 browser)
+        }
 
         /// <summary>
         /// All supported Memory Card file extensions
@@ -115,6 +123,9 @@ namespace MemcardRex.Core
 
         //Size of the save in KBs
         public int[] saveSize = new int[SlotCount];
+
+        //Save data type
+        public DataTypes[] saveDataType = new DataTypes[SlotCount];
 
         //Name of the save in UTF-16 encoding
         public string[] saveName = new string[SlotCount];
@@ -566,6 +577,27 @@ namespace MemcardRex.Core
                     case SlotTypes.deleted_end_link:
                         if (!slotTouched[slotNumber]) slotType[slotNumber] = (int)SlotTypes.formatted;
                         break;
+                }
+            }
+        }
+
+        //Get the type of data in the save slot
+        private void loadSlotDataTypes()
+        {
+            //Go through each slot
+            for (int slotNumber = 0; slotNumber < SlotCount; slotNumber++)
+            {
+                //Set as save data by default
+                saveDataType[slotNumber] = DataTypes.save;
+
+                //Check if save is initial and header contains "P" for PocketStation
+                if ((slotType[slotNumber] == SlotTypes.initial || slotType[slotNumber] == SlotTypes.deleted_initial)
+                    && headerData[slotNumber, 0x10] == 0x50)
+                {
+
+                    //Check for PocketStation magic (MCX0 or MCX1, CRD0 doesn't trigger software display on PS2)
+                    if ((saveData[slotNumber, 0x52] == 0x4D) && (saveData[slotNumber, 0x53] == 0x43) && (saveData[slotNumber, 0x54] == 0x58) && (saveData[slotNumber, 0x55] == 0x30 || saveData[slotNumber, 0x55] == 0x31)
+                        ) saveDataType[slotNumber] = DataTypes.software;
                 }
             }
         }
@@ -1147,6 +1179,9 @@ namespace MemcardRex.Core
             //Reload data
             loadStringData();
 
+            //Reload data types because "P" in the product code determines if this is a PocketStation save
+            loadSlotDataTypes();
+
             //Calculate XOR
             calculateXOR();
 
@@ -1368,6 +1403,7 @@ namespace MemcardRex.Core
             calculateXOR();
             loadStringData();
             loadSlotTypes();
+            loadSlotDataTypes();
             loadSaveSize();
             loadPalette();
             loadIcons();
@@ -1711,6 +1747,9 @@ namespace MemcardRex.Core
 
             //Load size data
             loadSaveSize();
+
+            //Load slot data types (save or software)
+            loadSlotDataTypes();
 
             //Load icon palette data as Color values
             loadPalette();

@@ -112,8 +112,8 @@ namespace MemcardRex
             //Create hardware menus
             BuildHardwareMenus();
 
-            //Beginning of Dark Theme implementation
-            ApplyTheme(Theme.Dark);
+            //Apply theme based on the global Windows settings
+            ApplyTheme();
         }
 
         //Register hardware interfaces
@@ -230,6 +230,14 @@ namespace MemcardRex
             {
                 ps1card blankCard = new ps1card();
                 blankCard.OpenMemoryCard(null, true);
+                
+                //Show warning message
+                if(appSettings.WarningMessages == 1)
+                {
+                    if(MessageBox.Show("This operation will wipe all data on the Memory Card.\nProceed?",
+                        "Format Memory Card", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) return;
+                }
+                
                 cardReader.MemoryCard = blankCard.SaveMemoryCardStream(true);
             }
 
@@ -598,7 +606,7 @@ namespace MemcardRex
 
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
-                memCard.saveRegion[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
+                memCard.saveRegion[masterSlot], memCard.saveDataType[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
                 memCard.iconColorData, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor, xScale, yScale);
 
             informationDlg.ShowDialog(this);

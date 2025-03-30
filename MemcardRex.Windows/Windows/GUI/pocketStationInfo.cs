@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
@@ -76,12 +77,12 @@ namespace MemcardRex.Windows.GUI
         {
             displaySerial(serial);
 
-            this.Height = 104;
+            this.Height = (int) (104 * CreateGraphics().DpiX / 96.0);
             this.Text = dialogName;
             this.ShowDialog();
         }
 
-        //SHow everything about the dumped BIOS
+        //Show everything about the dumped BIOS
         public void ShowBios(UInt32 serial, byte[] bData)
         {
             biosData = bData;

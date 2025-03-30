@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Runtime.Versioning;
+using Microsoft.Win32;
 
 namespace MemcardRex
 {
@@ -125,7 +126,6 @@ namespace MemcardRex
                 _backColor = value;
             }
         }
-
 
         private void HandlePaint(ref Message m)
         {
@@ -408,15 +408,10 @@ namespace MemcardRex
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            //return;
+            if (!IsDarkModeEnabled()) return;
             if (DwmSetWindowAttribute(Handle, 19, new[] { 1 }, 4) != 0)
                 DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
         }
-        public enum Theme
-        {
-            Light,
-            Dark
-        };
 
         public struct ThemeColors
         {
@@ -465,47 +460,61 @@ namespace MemcardRex
             }
         }
 
-        private void ApplyTheme(Theme theme)
+        static bool IsDarkModeEnabled()
         {
-            if(theme == Theme.Light)
+            // The registry key for dark mode setting
+            string key = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+            string valueName = "AppsUseLightTheme"; // 0 = dark, 1 = light
+
+            // Check if the value exists and retrieve it
+            object value = Registry.GetValue(key, valueName, null);
+
+            if (value != null && value is int)
             {
+                // If the value is 0, dark mode is enabled, otherwise light mode is enabled
+                return (int)value == 0;
+            }
 
-            }else if(theme == Theme.Dark)
+            // Default to light mode if the value is not set or invalid
+            return false;
+        }
+
+        private void ApplyTheme()
+        {
+            //Check if dark theme needs to be set
+            if (!IsDarkModeEnabled()) return;
+
+            this.BackColor = darkColors.backColor;
+
+            mainMenu.Renderer  = new MyRender();
+            mainMenu.ForeColor = darkColors.foreColor;
+            mainMenu.BackColor = Color.FromArgb(32, 32, 32);
+
+            //Color for each of the menu items
+            foreach (ToolStripMenuItem mainItem in mainMenu.Items)
             {
-                //ChangeTheme(this.Controls);
-
-                this.BackColor = darkColors.backColor;
-
-                mainMenu.Renderer  = new MyRender();
-                mainMenu.ForeColor = darkColors.foreColor;
-                mainMenu.BackColor = Color.FromArgb(32, 32, 32);
-
-                //Color for each of the menu items
-                foreach (ToolStripMenuItem mainItem in mainMenu.Items)
-                {
-                    foreach (ToolStripItem toolItem in mainItem.DropDownItems)
-                    {
-                        toolItem.ForeColor = darkColors.foreColor;
-                    }
-                }
-
-                //Color PocketStation menus
-                foreach (ToolStripItem toolItem in pocketStationToolStripMenuItem.DropDownItems)
+                foreach (ToolStripItem toolItem in mainItem.DropDownItems)
                 {
                     toolItem.ForeColor = darkColors.foreColor;
                 }
-
-                mainToolbar.Renderer = new MyRender();
-                mainToolbar.ForeColor = darkColors.foreColor;
-                mainToolbar.BackColor = Color.FromArgb(32, 32, 32);
-
-                mainContextMenu.Renderer = new MyRender();
-                mainContextMenu.ForeColor = darkColors.foreColor;
-                mainContextMenu.BackColor = Color.FromArgb(32, 32, 32);
-
-                mainStatusStrip.BackColor = darkColors.backColor;
-                mainStatusStrip.ForeColor = darkColors.foreColor;
             }
+
+            //Color PocketStation menus
+            foreach (ToolStripItem toolItem in pocketStationToolStripMenuItem.DropDownItems)
+            {
+                toolItem.ForeColor = darkColors.foreColor;
+            }
+
+            mainToolbar.Renderer = new MyRender();
+            mainToolbar.ForeColor = darkColors.foreColor;
+            mainToolbar.BackColor = Color.FromArgb(32, 32, 32);
+
+            mainContextMenu.Renderer = new MyRender();
+            mainContextMenu.ForeColor = darkColors.foreColor;
+            mainContextMenu.BackColor = Color.FromArgb(32, 32, 32);
+
+            mainStatusStrip.BackColor = darkColors.backColor;
+            mainStatusStrip.ForeColor = darkColors.foreColor;
         }
 
         //Create toolbar and menu icons with proper DPI scale and accent color

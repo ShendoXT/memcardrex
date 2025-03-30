@@ -32,6 +32,7 @@ namespace MemcardRex
             if (hostWindow.appSettings.BackupMemcards == 1) backupCheckbox.Checked = true; else backupCheckbox.Checked = false;
             if (hostWindow.appSettings.RestoreWindowPosition == 1) restorePositionCheckbox.Checked = true; else restorePositionCheckbox.Checked = false;
             if (hostWindow.appSettings.FixCorruptedCards == 1) fixCorruptedCardsCheckbox.Checked = true; else fixCorruptedCardsCheckbox.Checked = false;
+            if (hostWindow.appSettings.WarningMessages == 1) warningCheckBox.Checked = true; else warningCheckBox.Checked = false;
             remoteAddressBox.Text = hostWindow.appSettings.RemoteCommAddress;
             remotePortUpDown.Value = hostWindow.appSettings.RemoteCommPort;
             cardSlotCombo.SelectedIndex = hostWindow.appSettings.CardSlot;
@@ -70,11 +71,11 @@ namespace MemcardRex
             hostWindow.appSettings.ActiveInterface = hardwareInterfacesCombo.SelectedIndex;
             hostWindow.appSettings.CardSlot = cardSlotCombo.SelectedIndex;
 
-            if (gridCheckbox.Checked == true) hostWindow.appSettings.ShowListGrid = 1; else hostWindow.appSettings.ShowListGrid = 0;
-            if (backupCheckbox.Checked == true) hostWindow.appSettings.BackupMemcards = 1; else hostWindow.appSettings.BackupMemcards = 0;
-
-            if (restorePositionCheckbox.Checked == true) hostWindow.appSettings.RestoreWindowPosition = 1; else hostWindow.appSettings.RestoreWindowPosition = 0;
-            if (fixCorruptedCardsCheckbox.Checked == true) hostWindow.appSettings.FixCorruptedCards = 1; else hostWindow.appSettings.FixCorruptedCards = 0;
+            if (gridCheckbox.Checked) hostWindow.appSettings.ShowListGrid = 1; else hostWindow.appSettings.ShowListGrid = 0;
+            if (backupCheckbox.Checked) hostWindow.appSettings.BackupMemcards = 1; else hostWindow.appSettings.BackupMemcards = 0;
+            if (warningCheckBox.Checked) hostWindow.appSettings.WarningMessages = 1; else hostWindow.appSettings.WarningMessages = 0;
+            if (restorePositionCheckbox.Checked) hostWindow.appSettings.RestoreWindowPosition = 1; else hostWindow.appSettings.RestoreWindowPosition = 0;
+            if (fixCorruptedCardsCheckbox.Checked) hostWindow.appSettings.FixCorruptedCards = 1; else hostWindow.appSettings.FixCorruptedCards = 0;
 
             //hostWindow.appSettings.SaveSettings(hostWindow.appPath, hostWindow.appName, hostWindow.appVersion);
         }
