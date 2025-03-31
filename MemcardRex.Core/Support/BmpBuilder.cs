@@ -9,6 +9,21 @@ namespace MemcardRex.Core
         {
         }
 
+        byte ReverseBits(byte b)
+        {
+            byte reversed = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                // Shift the reversed byte to the left
+                reversed <<= 1;
+                // Get the least significant bit of the original byte and add it to the reversed byte
+                reversed |= (byte)(b & 1);
+                // Shift the original byte to the right
+                b >>= 1;
+            }
+            return reversed;
+        }
+
         /// <summary>
         /// Create a 32x32 monochrome BMP image
         /// </summary>
@@ -16,7 +31,7 @@ namespace MemcardRex.Core
         /// <returns></returns>
         public byte[] BuildBmp(byte[] RawImageData)
         {
-            byte[] monoBmpImage = {
+            byte[] monoBmpHeader = {
                 0x42, 0x4D, 0xBE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00,
                 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x20, 0x00,
                 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00,
@@ -35,13 +50,17 @@ namespace MemcardRex.Core
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
             };
 
+            byte[] monoBmpImage = new byte[190];
+
+            //Copy BMP header to bmp data array
+            Array.Copy(monoBmpHeader, monoBmpImage, monoBmpHeader.Length);
 
             for (int i = 0; i < 0x80; i += 4)
             {
-                monoBmpImage[monoBmpImage.Length - 1 - i] = (byte)~RawImageData[0 + i];
-                monoBmpImage[monoBmpImage.Length - 2 - i] = (byte)~RawImageData[1 + i];
-                monoBmpImage[monoBmpImage.Length - 3 - i] = (byte)~RawImageData[2 + i];
-                monoBmpImage[monoBmpImage.Length - 4 - i] = (byte)~RawImageData[3 + i];
+                monoBmpImage[monoBmpImage.Length - 4 - i] = (byte)~ReverseBits(RawImageData[0 + i]);
+                monoBmpImage[monoBmpImage.Length - 3 - i] = (byte)~ReverseBits(RawImageData[1 + i]);
+                monoBmpImage[monoBmpImage.Length - 2 - i] = (byte)~ReverseBits(RawImageData[2 + i]);
+                monoBmpImage[monoBmpImage.Length - 1 - i] = (byte)~ReverseBits(RawImageData[3 + i]);
             }
 
             return monoBmpImage;
@@ -54,7 +73,7 @@ namespace MemcardRex.Core
         /// <returns></returns>
 		public byte[] BuildBmp(Color[] RawImageData)
         {
-            byte[] altBmpImage = new byte[] // All values are little-endian
+            byte[] argbBmpHeader = new byte[] // All values are little-endian
             {
                 0x42, 0x4D,             // Signature 'BM'
                 0x8a, 0x40, 0x00, 0x00, // Size: 1162 bytes
@@ -98,15 +117,32 @@ namespace MemcardRex.Core
             byte[] bmpImage = new byte[1162];
 
             //Copy BMP header to bmp data array
-            Array.Copy(altBmpImage, bmpImage, altBmpImage.Length);
+            Array.Copy(argbBmpHeader, bmpImage, argbBmpHeader.Length);
+
+            Color[] FlippedRawImageData = new Color[RawImageData.Length];
+
+            //Y flip color data for compatibility with BMP
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    // Convert 2D (y, x) to 1D index
+                    int indexTop = y * 16 + x;           // Current position
+                    int indexBottom = (15 - y) * 16 + x; // Mirrored position
+
+                    // Swap the colors
+                    FlippedRawImageData[indexTop] = RawImageData[indexBottom];
+                    FlippedRawImageData[indexBottom] = RawImageData[indexTop];
+                }
+            }
 
             int index = 255;
             for (int i = 0; i < 256 * 4; i += 4)
             {
-                bmpImage[bmpImage.Length - i - 1] = RawImageData[index].A;
-                bmpImage[bmpImage.Length - i - 2] = RawImageData[index].R;
-                bmpImage[bmpImage.Length - i - 3] = RawImageData[index].G;
-                bmpImage[bmpImage.Length - i - 4] = RawImageData[index].B;
+                bmpImage[bmpImage.Length - i - 1] = FlippedRawImageData[index].A;
+                bmpImage[bmpImage.Length - i - 2] = FlippedRawImageData[index].R;
+                bmpImage[bmpImage.Length - i - 3] = FlippedRawImageData[index].G;
+                bmpImage[bmpImage.Length - i - 4] = FlippedRawImageData[index].B;
                 index--;
             }
 

@@ -679,8 +679,6 @@ namespace MemcardRex
             BmpBuilder bmpImage = new BmpBuilder();
             Bitmap saveIcon = new Bitmap(new MemoryStream(bmpImage.BuildBmp(PScard[listIndex].iconColorData[initialSlot, 0])));
 
-            saveIcon.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
             //Show temp buffer toolbar info
             tBufToolButton.Enabled = true;
             tBufToolButton.Image = saveIcon;
@@ -1060,9 +1058,6 @@ namespace MemcardRex
             Graphics iconGraphics = Graphics.FromImage(iconBitmap);
             BmpBuilder bmpImage = new BmpBuilder();
             Bitmap saveIcon = new Bitmap(new MemoryStream(bmpImage.BuildBmp(PScard[listIndex].iconColorData[slotNumber, 0])));
-
-            //Flipped because bmp stores data flipped but the raw icon data is not
-            saveIcon.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
             //Check what background color should be set
             switch (appSettings.IconBackgroundColor)

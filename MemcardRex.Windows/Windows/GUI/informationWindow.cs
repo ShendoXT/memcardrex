@@ -56,7 +56,6 @@ namespace MemcardRex
             for (int i = 0; i < 3; i++)
             {
                 iconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(saveIcons[slotNumbers[0], i])));
-                iconData[i].RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
 
             //Create mcIcons (if available)
