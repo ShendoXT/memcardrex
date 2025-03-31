@@ -8,6 +8,8 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Linq;
+using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace MemcardRex.Core
 {
@@ -63,6 +65,15 @@ namespace MemcardRex.Core
         {
             save,           //Regular save file
             software        //PocketStation application (called software in PS2 browser)
+        }
+
+        /// <summary>
+        /// Types of PocketStation icons available
+        /// </summary>
+        public enum IconTypes: int
+        {
+            MCIcon,     //Monochromatic icon for file explorer
+            APIcon      //Monochromatic icon for application
         }
 
         /// <summary>
@@ -776,6 +787,40 @@ namespace MemcardRex.Core
             //Fill data for each slot
             for (int slotNumber = 0; slotNumber < 15; slotNumber++)
                 saveSize[slotNumber] = (headerData[slotNumber, 4] | (headerData[slotNumber, 5] << 8) | (headerData[slotNumber, 6] << 16)) / 1024;
+        }
+
+        /// <summary>
+        /// Return byte stream of requested PocketStation icon
+        /// </summary>
+        /// <param name="iconType">MCIcon or APIcon</param>
+        /// <returns></returns>
+        public byte[] GetPocketStationIcon(int slotNumber, IconTypes iconType)
+        {
+            //Grab icons only for initial slots
+            if (!(slotType[slotNumber] == SlotTypes.initial || slotType[slotNumber] == SlotTypes.deleted_initial)) return null;
+
+            if(iconType == IconTypes.MCIcon)
+            {
+                int mcIconFrames = saveData[slotNumber, 0x50];
+                if (mcIconFrames < 1) return null;
+
+                byte[] iconData = new byte[mcIconFrames * 0x80];
+
+                //Copy icon data to buffer
+                for(int i = 0; i < 0x80 * mcIconFrames; i++)
+                {
+                    iconData[i] = saveData[slotNumber, 0x80 + (0x80 * iconFrames[slotNumber]) + i];
+                }
+
+                return iconData;
+            }
+            else if (iconType == IconTypes.APIcon)
+            {
+
+            }
+
+            //Return nothing by default
+            return null;
         }
 
         /// <summary>

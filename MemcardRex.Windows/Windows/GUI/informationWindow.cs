@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -13,6 +14,8 @@ namespace MemcardRex
     {
         //Save icons
         Bitmap[] iconData = new Bitmap[3];
+        Bitmap[] mcIconData;
+        Bitmap[] apIconData;
         int iconIndex = 0;
         int maxCount = 1;
         int iconBackColor = 0;
@@ -28,7 +31,9 @@ namespace MemcardRex
         }
 
         //Initialize default values
-        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion, ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, int[] slotNumbers, int backColor, double xScale, double yScale)
+        public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion,
+            ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, byte[] mcIcons,
+            int[] slotNumbers, int backColor, double xScale, double yScale)
         {
             string ocupiedSlots = null;
 
@@ -54,6 +59,17 @@ namespace MemcardRex
                 iconData[i].RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
 
+            //Create mcIcons (if available)
+            if(mcIcons != null)
+            {
+                mcIconData = new Bitmap[mcIcons.Length / 0x80];
+
+                for(int i = 0; i < mcIconData.Length; i++)
+                {
+                    mcIconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(mcIcons)));
+                }
+            }
+
             //Get ocupied slots
             for (int i = 0; i < slotNumbers.Length; i++)
             {
@@ -74,12 +90,16 @@ namespace MemcardRex
         private void drawIcons(int selectedIndex)
         {
             Bitmap tempBitmap = new Bitmap(48, 48);
+            Bitmap mcTempBitmap = new Bitmap(64, 64);
             Graphics iconGraphics = Graphics.FromImage(tempBitmap);
+            Graphics mcIconGraphics = Graphics.FromImage(mcTempBitmap);
 
             //Set icon interpolation mode
             iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            mcIconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
+            mcIconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
 
             //Check what background color should be set
             switch (iconBackColor)
@@ -101,6 +121,13 @@ namespace MemcardRex
 
             iconRender.Image = tempBitmap;
             iconGraphics.Dispose();
+
+            if (mcIconData != null)
+            {
+                mcIconGraphics.DrawImage(mcIconData[0], 0, 0, 64, 64);
+                pocketIconRender.Image = mcTempBitmap;
+                mcIconGraphics.Dispose();
+            }
         }
 
         private void informationWindow_FormClosing(object sender, FormClosingEventArgs e)

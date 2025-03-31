@@ -48,7 +48,9 @@
             iconRender = new System.Windows.Forms.PictureBox();
             typeLabel = new System.Windows.Forms.Label();
             typeLabelInfo = new System.Windows.Forms.Label();
+            pocketIconRender = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)iconRender).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pocketIconRender).BeginInit();
             SuspendLayout();
             // 
             // OKbutton
@@ -216,7 +218,7 @@
             iconRender.Location = new System.Drawing.Point(10, 10);
             iconRender.Margin = new System.Windows.Forms.Padding(4);
             iconRender.Name = "iconRender";
-            iconRender.Size = new System.Drawing.Size(60, 60);
+            iconRender.Size = new System.Drawing.Size(48, 48);
             iconRender.TabIndex = 18;
             iconRender.TabStop = false;
             // 
@@ -240,11 +242,23 @@
             typeLabelInfo.Text = "File type:";
             typeLabelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // pocketIconRender
+            // 
+            pocketIconRender.BackColor = System.Drawing.Color.Transparent;
+            pocketIconRender.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            pocketIconRender.Location = new System.Drawing.Point(10, 68);
+            pocketIconRender.Margin = new System.Windows.Forms.Padding(4);
+            pocketIconRender.Name = "pocketIconRender";
+            pocketIconRender.Size = new System.Drawing.Size(64, 64);
+            pocketIconRender.TabIndex = 21;
+            pocketIconRender.TabStop = false;
+            // 
             // informationWindow
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             ClientSize = new System.Drawing.Size(470, 217);
+            Controls.Add(pocketIconRender);
             Controls.Add(typeLabel);
             Controls.Add(typeLabelInfo);
             Controls.Add(iconRender);
@@ -273,6 +287,7 @@
             Text = "Save information";
             FormClosing += informationWindow_FormClosing;
             ((System.ComponentModel.ISupportInitialize)iconRender).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pocketIconRender).EndInit();
             ResumeLayout(false);
         }
 
@@ -297,5 +312,6 @@
         internal System.Windows.Forms.PictureBox iconRender;
         internal System.Windows.Forms.Label typeLabel;
         internal System.Windows.Forms.Label typeLabelInfo;
+        internal System.Windows.Forms.PictureBox pocketIconRender;
     }
 }
