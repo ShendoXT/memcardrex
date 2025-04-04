@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Linq;
 using System.Xml.Serialization;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace MemcardRex.Core
 {
@@ -794,14 +795,24 @@ namespace MemcardRex.Core
         /// </summary>
         /// <param name="iconType">MCIcon or APIcon</param>
         /// <returns></returns>
-        public byte[] GetPocketStationIcon(int slotNumber, IconTypes iconType)
+        public byte[] GetPocketStationIcon(int slotNumber, IconTypes iconType, out int delay)
         {
+            delay = 0;
+
             //Grab icons only for initial slots
             if (!(slotType[slotNumber] == SlotTypes.initial || slotType[slotNumber] == SlotTypes.deleted_initial)) return null;
 
-            if(iconType == IconTypes.MCIcon)
+            int mcIconFrames = saveData[slotNumber, 0x50];
+            int apIconEntries = saveData[slotNumber, 0x56];
+
+            //Saved snapshot offset
+            int savedSnapOffset = saveData[slotNumber, 0x55] == 0x31 ? 0x800 : 0;
+
+            //Function table offset
+            int funcTableOffset = ((saveData[slotNumber, 0x57] * 8) + 0x7F) & ~0x7F;
+
+            if (iconType == IconTypes.MCIcon)
             {
-                int mcIconFrames = saveData[slotNumber, 0x50];
                 if (mcIconFrames < 1) return null;
 
                 byte[] iconData = new byte[mcIconFrames * 0x80];
@@ -809,14 +820,31 @@ namespace MemcardRex.Core
                 //Copy icon data to buffer
                 for(int i = 0; i < 0x80 * mcIconFrames; i++)
                 {
-                    iconData[i] = saveData[slotNumber, 0x80 + (0x80 * iconFrames[slotNumber]) + i];
+                    iconData[i] = saveData[slotNumber, 0x80 + (0x80 * iconFrames[slotNumber]) + i + funcTableOffset + savedSnapOffset];
                 }
 
                 return iconData;
             }
             else if (iconType == IconTypes.APIcon)
             {
+                if (apIconEntries < 1) return null;
 
+                int entryOffset = 0x80 + (0x80 * iconFrames[slotNumber]) + (mcIconFrames * 0x80) + funcTableOffset + savedSnapOffset;
+
+                int apIconFrames = saveData[slotNumber, entryOffset];
+
+                delay = saveData[slotNumber, entryOffset + 2];
+
+                byte[] iconData = new byte[apIconFrames * 0x80];
+
+                int iconOffset = saveData[slotNumber, entryOffset + 4] |
+                        saveData[slotNumber, entryOffset + 5] << 8 | saveData[slotNumber, entryOffset + 6] << 16;
+
+                byte[] apData = GetSaveBytes(slotNumber);
+
+                Array.Copy(apData, iconOffset + 128, iconData, 0, iconData.Length);
+
+                return iconData;
             }
 
             //Return nothing by default

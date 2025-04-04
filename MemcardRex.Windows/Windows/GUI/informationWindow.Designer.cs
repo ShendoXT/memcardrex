@@ -49,8 +49,10 @@
             typeLabel = new System.Windows.Forms.Label();
             typeLabelInfo = new System.Windows.Forms.Label();
             pocketIconRender = new System.Windows.Forms.PictureBox();
+            pocketIconRender2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)iconRender).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pocketIconRender).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pocketIconRender2).BeginInit();
             SuspendLayout();
             // 
             // OKbutton
@@ -253,11 +255,23 @@
             pocketIconRender.TabIndex = 21;
             pocketIconRender.TabStop = false;
             // 
+            // pocketIconRender2
+            // 
+            pocketIconRender2.BackColor = System.Drawing.Color.Transparent;
+            pocketIconRender2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            pocketIconRender2.Location = new System.Drawing.Point(10, 144);
+            pocketIconRender2.Margin = new System.Windows.Forms.Padding(4);
+            pocketIconRender2.Name = "pocketIconRender2";
+            pocketIconRender2.Size = new System.Drawing.Size(64, 64);
+            pocketIconRender2.TabIndex = 22;
+            pocketIconRender2.TabStop = false;
+            // 
             // informationWindow
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             ClientSize = new System.Drawing.Size(470, 217);
+            Controls.Add(pocketIconRender2);
             Controls.Add(pocketIconRender);
             Controls.Add(typeLabel);
             Controls.Add(typeLabelInfo);
@@ -288,6 +302,7 @@
             FormClosing += informationWindow_FormClosing;
             ((System.ComponentModel.ISupportInitialize)iconRender).EndInit();
             ((System.ComponentModel.ISupportInitialize)pocketIconRender).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pocketIconRender2).EndInit();
             ResumeLayout(false);
         }
 
@@ -313,5 +328,6 @@
         internal System.Windows.Forms.Label typeLabel;
         internal System.Windows.Forms.Label typeLabelInfo;
         internal System.Windows.Forms.PictureBox pocketIconRender;
+        internal System.Windows.Forms.PictureBox pocketIconRender2;
     }
 }

@@ -604,10 +604,14 @@ namespace MemcardRex
             if (!(memCard.slotType[masterSlot] == ps1card.SlotTypes.initial || 
                 memCard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)) return;
 
+            int iconDelay = 0;
+            byte[] mcIconData = memCard.GetPocketStationIcon(masterSlot, ps1card.IconTypes.MCIcon, out iconDelay);
+            byte[] apIconData = memCard.GetPocketStationIcon(masterSlot, ps1card.IconTypes.APIcon, out iconDelay);
+
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
                 memCard.saveRegion[masterSlot], memCard.saveDataType[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
-                memCard.iconColorData, memCard.GetPocketStationIcon(masterSlot, ps1card.IconTypes.MCIcon), memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor, xScale, yScale);
+                memCard.iconColorData, mcIconData, apIconData, iconDelay, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor, xScale, yScale);
 
             informationDlg.ShowDialog(this);
 

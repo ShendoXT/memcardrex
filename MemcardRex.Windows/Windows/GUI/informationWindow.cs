@@ -17,8 +17,12 @@ namespace MemcardRex
         Bitmap[] mcIconData;
         Bitmap[] apIconData;
         int iconIndex = 0;
+        int mcIconIndex = 0;
+        int apIconIndex = 0;
         int maxCount = 1;
         int iconBackColor = 0;
+        int apIconDelay = 0;
+        int apDelayCount = 0;
 
         public informationWindow()
         {
@@ -32,8 +36,8 @@ namespace MemcardRex
 
         //Initialize default values
         public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion,
-            ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, byte[] mcIcons,
-            int[] slotNumbers, int backColor, double xScale, double yScale)
+            ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, byte[] mcIcons, byte[] apIcons,
+            int iconDelay, int[] slotNumbers, int backColor, double xScale, double yScale)
         {
             string ocupiedSlots = null;
 
@@ -58,15 +62,43 @@ namespace MemcardRex
                 iconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(saveIcons[slotNumbers[0], i])));
             }
 
+            apIconDelay = iconDelay / 10;
+            apDelayCount = apIconDelay;
+
             //Create mcIcons (if available)
             if(mcIcons != null)
             {
                 mcIconData = new Bitmap[mcIcons.Length / 0x80];
+                byte[] mcIconArray = new byte[0x80];
+
+                //Add info to icon frames
+                iconFramesLabel.Text += " (" + mcIconData.Length + ")";
 
                 for(int i = 0; i < mcIconData.Length; i++)
                 {
-                    mcIconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(mcIcons)));
+                    Array.Copy(mcIcons, i * 0x80, mcIconArray, 0, 0x80);
+                    mcIconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(mcIconArray)));
                 }
+            }
+
+            //Create apIcons (if available)
+            if(apIcons != null)
+            {
+                apIconData = new Bitmap[apIcons.Length / 0x80];
+                byte[] apIconArray = new byte[0x80];
+
+                //Add info to icon frames
+                iconFramesLabel.Text += " (" + apIconData.Length + ")";
+
+                for (int i = 0; i < apIconData.Length; i++)
+                {
+                    Array.Copy(apIcons, i * 0x80, apIconArray, 0, 0x80);
+                    apIconData[i] = new Bitmap(new MemoryStream(bmpImage.BuildBmp(apIconArray)));
+                }
+
+                //PocketStation starts with a 2nd icon in the APIcon list if there is more than 1 icon
+                //Why? I have no idea but we will emulate this in this information dialog
+                if (apIconData.Length > 1) apIconIndex = 1;
             }
 
             //Get ocupied slots
@@ -79,26 +111,30 @@ namespace MemcardRex
             slotLabel.Text = ocupiedSlots.Remove(ocupiedSlots.Length-2);
 
             //Draw first icon so there is no delay
-            drawIcons(iconIndex);
+            drawIcons();
 
-            //Enable Paint timer in case of multiple frames
-            if (iconFrames > 1) iconPaintTimer.Enabled = true;
+            //Enable Paint timer
+            iconPaintTimer.Enabled = true;
         }
 
         //Draw scaled icons
-        private void drawIcons(int selectedIndex)
+        private void drawIcons()
         {
             Bitmap tempBitmap = new Bitmap(48, 48);
             Bitmap mcTempBitmap = new Bitmap(64, 64);
+            Bitmap apTempBitmap = new Bitmap(64, 64);
             Graphics iconGraphics = Graphics.FromImage(tempBitmap);
             Graphics mcIconGraphics = Graphics.FromImage(mcTempBitmap);
+            Graphics apIconGraphics = Graphics.FromImage(apTempBitmap);
 
             //Set icon interpolation mode
             iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             mcIconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            apIconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
             mcIconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
+            apIconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
 
             //Check what background color should be set
             switch (iconBackColor)
@@ -116,17 +152,38 @@ namespace MemcardRex
                     break;
             }
 
-            iconGraphics.DrawImage(iconData[selectedIndex], 0, 0, 48, 48);
+            iconGraphics.DrawImage(iconData[iconIndex], 0, 0, 48, 48);
 
             iconRender.Image = tempBitmap;
             iconGraphics.Dispose();
 
             if (mcIconData != null)
             {
-                mcIconGraphics.DrawImage(mcIconData[0], 0, 0, 64, 64);
+                mcIconGraphics.DrawImage(mcIconData[mcIconIndex], 0, 0, 64, 64);
                 pocketIconRender.Image = mcTempBitmap;
                 mcIconGraphics.Dispose();
+
+                if (mcIconIndex < (mcIconData.Length - 1)) mcIconIndex++; else mcIconIndex = 0;
             }
+
+            if (apIconData != null)
+            {
+                apIconGraphics.DrawImage(apIconData[apIconIndex], 0, 0, 64, 64);
+
+                if(mcIconData != null) pocketIconRender2.Image = apTempBitmap;
+                else pocketIconRender.Image = apTempBitmap;
+                apIconGraphics.Dispose();
+
+                if (apDelayCount > 0) apDelayCount--;
+                else
+                {
+                    if (apIconIndex < (apIconData.Length - 1)) apIconIndex++; else apIconIndex = 0;
+                    apDelayCount = apIconDelay;
+                }
+
+            }
+
+            if (iconIndex < (maxCount - 1)) iconIndex++; else iconIndex = 0;
         }
 
         private void informationWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -137,8 +194,7 @@ namespace MemcardRex
 
         private void iconPaintTimer_Tick(object sender, EventArgs e)
         {
-            if (iconIndex < (maxCount-1)) iconIndex++; else iconIndex = 0;
-            drawIcons(iconIndex);
+            drawIcons();
         }
     }
 }
