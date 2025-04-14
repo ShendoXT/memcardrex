@@ -8,9 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Linq;
-using System.Xml.Serialization;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace MemcardRex.Core
 {

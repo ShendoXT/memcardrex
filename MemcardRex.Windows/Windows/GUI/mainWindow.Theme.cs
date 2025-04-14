@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
-using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
 
 namespace MemcardRex
 {
@@ -73,6 +72,8 @@ namespace MemcardRex
                 if (isSelected)
                 {
                     tabRect.Inflate(2, 2);
+
+                    e.Graphics.FillRectangle(backBrush, tabRect);
 
                     e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Left, tabRect.Top), new Point(tabRect.Right - 1, tabRect.Top));
                     e.Graphics.DrawLine(new Pen(activeBrush), new Point(tabRect.Left, tabRect.Top + 1), new Point(tabRect.Right - 1, tabRect.Top + 1));
@@ -218,7 +219,7 @@ namespace MemcardRex
                     if(e.Item.BackColor != this.BackColor)
                     {
                         Color blendColor = Color.FromArgb(0x55, e.Item.BackColor);
-                        e.Graphics.FillRectangle(new SolidBrush(blendColor), e.Bounds.Left, e.Bounds.Top, 48, 16);
+                        e.Graphics.FillRectangle(new SolidBrush(blendColor), e.Bounds.Left, e.Bounds.Top, (float) (48 * (e.Graphics.DpiX / 96.0)), (float)(16 * (e.Graphics.DpiX / 96.0)));
                     }
 
                     e.Graphics.DrawString(e.Item.Text, this.Font, new SolidBrush(e.Item.ForeColor), textRectangle, sf);
@@ -290,6 +291,14 @@ namespace MemcardRex
         public override Color OverflowButtonGradientBegin => backColor;
         public override Color ToolStripGradientBegin => backColor;
         public override Color ToolStripGradientEnd => backColor;
+
+        public override Color ButtonSelectedGradientBegin => menuHighlight;
+        public override Color ButtonSelectedGradientEnd => menuHighlight;
+        public override Color ButtonSelectedBorder => menuBorder;
+        public override Color ButtonSelectedHighlight => menuBorder;
+
+        public override Color ButtonPressedGradientBegin => menuHighlight;
+        public override Color ButtonPressedGradientEnd => menuHighlight;
     }
 
     partial class mainWindow

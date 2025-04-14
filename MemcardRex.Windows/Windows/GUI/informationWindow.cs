@@ -37,7 +37,7 @@ namespace MemcardRex
         //Initialize default values
         public void initializeDialog(string saveTitle, string saveProdCode, string saveIdentifier, string saveRegion,
             ps1card.DataTypes saveType, int saveSize, int iconFrames, Color[,][] saveIcons, byte[] mcIcons, byte[] apIcons,
-            int iconDelay, int[] slotNumbers, int backColor, double xScale, double yScale)
+            int iconDelay, int[] slotNumbers, int backColor)
         {
             string ocupiedSlots = null;
 
@@ -55,6 +55,16 @@ namespace MemcardRex
             //Save file data type
             if (saveType == ps1card.DataTypes.save) typeLabel.Text = "Save data";
             else if (saveType == ps1card.DataTypes.software) typeLabel.Text = "Software (PocketStation)";
+
+            //Needed for proper scaling on different DPI settings
+            iconRender.Width = 48;
+            iconRender.Height = 48;
+
+            Graphics graphics = CreateGraphics();
+
+            //Calculate position of the middle render for smaller DPI
+            if(graphics.DpiY <= 96.0)
+            pocketIconRender.Top = pocketIconRender2.Top - pocketIconRender.Height - (int)(4 * graphics.DpiY / 96.0);
 
             //Create icons
             for (int i = 0; i < 3; i++)
@@ -129,37 +139,39 @@ namespace MemcardRex
 
             //Set icon interpolation mode
             iconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            mcIconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            apIconGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            mcIconGraphics.InterpolationMode = pocketIconRender.Width < 64 ? InterpolationMode.Bilinear : InterpolationMode.NearestNeighbor;
+            apIconGraphics.InterpolationMode = pocketIconRender.Width < 64 ? InterpolationMode.Bilinear : InterpolationMode.NearestNeighbor;
 
             iconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
             mcIconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
             apIconGraphics.PixelOffsetMode = PixelOffsetMode.Half;
 
+            Rectangle iconRectangle = new Rectangle(0, 0, iconRender.Width, iconRender.Height);
+
             //Check what background color should be set
             switch (iconBackColor)
             {
                 case 1:     //Black
-                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(new Rectangle(0, 0, 48, 48)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.Black), new Region(iconRectangle));
                     break;
 
                 case 2:     //Gray
-                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(new Rectangle(0, 0, 48, 48)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x30, 0x30, 0x30)), new Region(iconRectangle));
                     break;
 
                 case 3:     //Blue
-                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(new Rectangle(0, 0, 48, 48)));
+                    iconGraphics.FillRegion(new SolidBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x98)), new Region(iconRectangle));
                     break;
             }
 
-            iconGraphics.DrawImage(iconData[iconIndex], 0, 0, 48, 48);
+            iconGraphics.DrawImage(iconData[iconIndex], 0, 0, iconRender.Width, iconRender.Height);
 
             iconRender.Image = tempBitmap;
             iconGraphics.Dispose();
 
             if (mcIconData != null)
             {
-                mcIconGraphics.DrawImage(mcIconData[mcIconIndex], 0, 0, 64, 64);
+                mcIconGraphics.DrawImage(mcIconData[mcIconIndex], 0, 0, pocketIconRender.Width, pocketIconRender.Height);
                 pocketIconRender.Image = mcTempBitmap;
                 mcIconGraphics.Dispose();
 
@@ -168,7 +180,7 @@ namespace MemcardRex
 
             if (apIconData != null)
             {
-                apIconGraphics.DrawImage(apIconData[apIconIndex], 0, 0, 64, 64);
+                apIconGraphics.DrawImage(apIconData[apIconIndex], 0, 0, pocketIconRender.Width, pocketIconRender.Height);
 
                 if(mcIconData != null) pocketIconRender2.Image = apTempBitmap;
                 else pocketIconRender.Image = apTempBitmap;

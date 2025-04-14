@@ -522,7 +522,6 @@ namespace MemcardRex
                 historyList.RemoveAt(listIndex);
                 iconList.RemoveAt(listIndex);
                 historyIconList.RemoveAt(listIndex);
-                //mainTabControl.RemoveTabPrepare();
                 mainTabControl.TabPages.RemoveAt(listIndex);
 
                 //Select first tab
@@ -611,7 +610,7 @@ namespace MemcardRex
             //Load values to dialog
             informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
                 memCard.saveRegion[masterSlot], memCard.saveDataType[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
-                memCard.iconColorData, mcIconData, apIconData, iconDelay, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor, xScale, yScale);
+                memCard.iconColorData, mcIconData, apIconData, iconDelay, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor);
 
             informationDlg.ShowDialog(this);
 
