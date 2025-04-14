@@ -522,7 +522,7 @@ namespace MemcardRex
                 historyList.RemoveAt(listIndex);
                 iconList.RemoveAt(listIndex);
                 historyIconList.RemoveAt(listIndex);
-                mainTabControl.RemoveTabPrepare();
+                //mainTabControl.RemoveTabPrepare();
                 mainTabControl.TabPages.RemoveAt(listIndex);
 
                 //Select first tab
@@ -890,10 +890,10 @@ namespace MemcardRex
         //Create and show about dialog
         private void showAbout()
         {
-            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2024", 
-                "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo\n\n" +
+            new AboutWindow().initDialog(this, appName, appVersion, appDate, "Copyright © Shendo 2025", 
+                "Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, \nNico de Poel, KuromeSan, Robxnano, Shendo.\n\n" +
                 "Beta testers: Gamesoul Master, Xtreme2damax,\nCarmax91, NKO. \n\n" +
-                "Thanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem, \nPadraig Flood.\n\n" +
+                "Thanks to: @ruantec, Cobalt, TheCloudOfSmoke,\nRedawgTS, Hard core Rikki, RainMotorsports,\nZieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, \nFrédéric Brière, Cor'e, Gemini, DeadlySystem, \nPadraig Flood, Martin Korth (nocash).\n\n" +
                 "Special thanks to the following people whose\nMemory Card utilities inspired me to write my own:\nSimon Mallion (PSXMemTool),\nLars Ole Dybdal (PSXGameEdit),\nAldo Vargas (Memory Card Manager),\nNeill Corlett (Dexter),\nPaul Phoneix (ConvertM).");
         }
 

@@ -8,204 +8,95 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
+using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
 
 namespace MemcardRex
 {
     [SupportedOSPlatform("windows")]
-    public partial class CardTabControl : TabControl
+
+    public class CardTabControl : TabControl
     {
-        private struct TabItemInfo
-        {
-            public Color BackColor;
-            public Rectangle Bounds;
-            public Font Font;
-            public Color ForeColor;
-            public int Index;
-            public DrawItemState State;
+        MyColorTable colorTable = new MyColorTable();
 
-            public TabItemInfo(DrawItemEventArgs e)
-            {
-                this.BackColor = e.BackColor;
-                this.ForeColor = e.ForeColor;
-                this.Bounds = e.Bounds;
-                this.Font = e.Font;
-                this.Index = e.Index;
-                this.State = e.State;
-            }
+        public CardTabControl()
+        {
+            SetStyle(ControlStyles.UserPaint |
+                     ControlStyles.AllPaintingInWmPaint |
+                     ControlStyles.OptimizedDoubleBuffer |
+                     ControlStyles.ResizeRedraw |
+                     ControlStyles.SupportsTransparentBackColor, true);
+
+            DrawMode = TabDrawMode.OwnerDrawFixed;
+            DoubleBuffered = true;
+            BackColor = mainWindow.ActiveColors.backColor;
         }
 
-        private Dictionary<int, TabItemInfo> _tabItemStateMap = new Dictionary<int, TabItemInfo>();
-        public CardTabControl() : base()
+        protected override void OnPaintBackground(PaintEventArgs e)
         {
-            base.DrawMode = TabDrawMode.OwnerDrawFixed;
+            // Prevent default background paint to avoid flicker
+            e.Graphics.Clear(mainWindow.ActiveColors.backColor);
         }
 
-        //Needed to clear the map of the existing tabs
-        public void RemoveTabPrepare()
+        protected override void OnPaint(PaintEventArgs e)
         {
-            _tabItemStateMap.Clear();
-        }
+            e.Graphics.Clear(mainWindow.ActiveColors.controlColor);
 
-        protected override void OnDrawItem(DrawItemEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            Pen p = new Pen(Color.Blue);
-            Font font = new Font("Arial", 8.25f);
-            SolidBrush brush = new SolidBrush(Color.Red);
-
-            //g.DrawRectangle(p, this.GetTabRect(e.Index));
-            //g.DrawString(this.TabPages[e.Index].Text, font, brush, (RectangleF)this.GetTabRect(e.Index));
-
-            //Console.WriteLine(this.TabPages[e.Index].Text);
-
-            //base.OnDrawItem(e);
-
-            //return;
-
-            base.OnDrawItem(e);
-            if (!_tabItemStateMap.ContainsKey(e.Index))
-            {
-                _tabItemStateMap.Add(e.Index, new TabItemInfo(e));
-            }
-            else
-            {
-                _tabItemStateMap[e.Index] = new TabItemInfo(e);
-            }
-        }
-
-        private const int WM_PAINT = 0x000F;
-        private const int WM_ERASEBKGND = 0x0014;
-
-        // Cache context to avoid repeatedly re-creating the object.
-        // WM_PAINT is called frequently so it's better to declare it as a member.
-        private BufferedGraphicsContext _bufferContext = BufferedGraphicsManager.Current;
-
-        protected override void WndProc(ref Message m)
-        {
-            switch (m.Msg)
-            {
-                case WM_PAINT:
-                    {
-                        // Let system do its thing first.
-                        base.WndProc(ref m);
-
-                        // Custom paint Tab items.
-                        HandlePaint(ref m);
-
-                        break;
-                    }
-                case WM_ERASEBKGND:
-                    {
-                        if (DesignMode)
-                        {
-                            // Ignore to prevent flickering in DesignMode.
-                        }
-                        else
-                        {
-                            base.WndProc(ref m);
-                        }
-                        break;
-                    }
-                default:
-                    base.WndProc(ref m);
-                    break;
-            }
-        }
-
-        private Color _backColor = new MyColorTable().ToolStripBorder;
-        [Browsable(true)]
-        [EditorBrowsable(EditorBrowsableState.Always)]
-        public new Color BackColor
-        {
-            get
-            {
-                return _backColor;
-            }
-            set
-            {
-                _backColor = value;
-            }
-        }
-
-        private void HandlePaint(ref Message m)
-        {
-            using (var g = Graphics.FromHwnd(m.HWnd))
-            {
-                MyColorTable colorTable = new MyColorTable();
-
-                SolidBrush backBrush = new SolidBrush(BackColor);
-                SolidBrush borderBrush = new SolidBrush(colorTable.MenuBorder);
-
-                Rectangle r = ClientRectangle;
-                using (var buffer = _bufferContext.Allocate(g, r))
-                {
-                    buffer.Graphics.FillRectangle(backBrush, r);
-
-                    //Draw outlines
-                    buffer.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Top + 23), new Point(r.Left, r.Bottom));
-                    buffer.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Bottom - 1), new Point(r.Right, r.Bottom - 1));
-                    buffer.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Right - 1, r.Bottom - 1), new Point(r.Right - 1, r.Top + 23));
-                    buffer.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Top + 23), new Point(r.Right - 1, r.Top + 23));
-
-                    // Paint items
-                    foreach (int index in _tabItemStateMap.Keys)
-                    {
-                        DrawTabItemInternal(buffer.Graphics, _tabItemStateMap[index]);
-                    }
-
-                    buffer.Render();
-                }
-                backBrush.Dispose();
-            }
-        }
-
-
-        private void DrawTabItemInternal(Graphics gr, TabItemInfo tabInfo)
-        {
-            if (_tabItemStateMap.Count < 1) return;
-
-            int fullHeight = _tabItemStateMap[this.SelectedIndex].Bounds.Height;
-            //int fullWidth = _tabItemStateMap[this.SelectedIndex].Bounds.Width;
-            tabInfo.Bounds.Height = fullHeight;
-            //tabInfo.Bounds.Width = fullWidth;
-
-            MyColorTable colorTable = new MyColorTable();
-
-            SolidBrush backBrush = new SolidBrush(BackColor);
-
-            SolidBrush activeBrush = new SolidBrush(colorTable.MenuItemBorder);
             SolidBrush borderBrush = new SolidBrush(colorTable.MenuBorder);
+            SolidBrush activeBrush = new SolidBrush(colorTable.MenuItemBorder);
+            SolidBrush backBrush = new SolidBrush(mainWindow.ActiveColors.controlColor);
 
-            StringFormat sf = new StringFormat();
-
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            sf.Trimming = StringTrimming.EllipsisCharacter;
-
-            // Paint selected. 
-            if ((tabInfo.State & DrawItemState.Selected) == DrawItemState.Selected)
+            // Draw tab pages background (selected)
+            if (SelectedTab != null)
             {
-                gr.FillRectangle(backBrush, tabInfo.Bounds);
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Top));
-                gr.DrawLine(new Pen(activeBrush), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Top + 1), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Top + 1));
-                gr.DrawLine(new Pen(activeBrush), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Top + 2), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Top + 2));
-                gr.DrawLine(new Pen(activeBrush), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Top + 3), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Top + 3));
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Left, tabInfo.Bounds.Bottom));
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Right - 1, tabInfo.Bounds.Bottom));
-            }
-            // Paint unselected.
-            else
-            {
-                gr.FillRectangle(backBrush, tabInfo.Bounds);
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Left-2, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Right + 1, tabInfo.Bounds.Top));
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Left-2, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Left-2, tabInfo.Bounds.Bottom-3));
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Right + 1, tabInfo.Bounds.Top), new Point(tabInfo.Bounds.Right + 1, tabInfo.Bounds.Bottom));
-                gr.DrawLine(new Pen(borderBrush), new Point(tabInfo.Bounds.Left-2, tabInfo.Bounds.Bottom - 3), new Point(tabInfo.Bounds.Right +1, tabInfo.Bounds.Bottom - 3 ));
+                Rectangle pageRect = SelectedTab.Bounds;
+                Rectangle r = ClientRectangle;
+                pageRect.Inflate(1, 1);
+                e.Graphics.FillRectangle(new SolidBrush(mainWindow.ActiveColors.controlColor), pageRect);
+
+                //Draw outline around the control
+                e.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Top + 23), new Point(r.Left, r.Bottom));
+                e.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Bottom - 1), new Point(r.Right, r.Bottom - 1));
+                e.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Right - 1, r.Bottom - 1), new Point(r.Right - 1, r.Top + 23));
+                e.Graphics.DrawLine(new Pen(borderBrush), new Point(r.Left, r.Top + 23), new Point(r.Right - 1, r.Top + 23));
             }
 
-            gr.DrawString(this.TabPages[tabInfo.Index].Text, new Font(tabInfo.Font.FontFamily, 8.25f), SystemBrushes.HighlightText, tabInfo.Bounds, sf);
+            // Draw tabs
+            for (int i = 0; i < TabCount; i++)
+            {
+                Rectangle tabRect = GetTabRect(i);
+                bool isSelected = (i == SelectedIndex);
+                Color fill = isSelected ? Color.FromArgb(60, 60, 60) : Color.FromArgb(40, 40, 40);
+                Color textColor = isSelected ? Color.White : Color.Gainsboro;
 
-            backBrush.Dispose();
+                e.Graphics.FillRectangle(backBrush, tabRect);
+
+                if (isSelected)
+                {
+                    tabRect.Inflate(2, 2);
+
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Left, tabRect.Top), new Point(tabRect.Right - 1, tabRect.Top));
+                    e.Graphics.DrawLine(new Pen(activeBrush), new Point(tabRect.Left, tabRect.Top + 1), new Point(tabRect.Right - 1, tabRect.Top + 1));
+                    e.Graphics.DrawLine(new Pen(activeBrush), new Point(tabRect.Left, tabRect.Top + 2), new Point(tabRect.Right - 1, tabRect.Top + 2));
+                    e.Graphics.DrawLine(new Pen(activeBrush), new Point(tabRect.Left, tabRect.Top + 3), new Point(tabRect.Right - 1, tabRect.Top + 3));
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Left, tabRect.Top), new Point(tabRect.Left, tabRect.Bottom));
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Right - 1, tabRect.Top), new Point(tabRect.Right - 1, tabRect.Bottom));
+                }
+                else
+                {
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Left, tabRect.Top), new Point(tabRect.Right - 1, tabRect.Top));
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Left, tabRect.Top), new Point(tabRect.Left, tabRect.Bottom));
+                    e.Graphics.DrawLine(new Pen(borderBrush), new Point(tabRect.Right - 1, tabRect.Top), new Point(tabRect.Right - 1, tabRect.Bottom));
+                }
+
+                TextRenderer.DrawText(
+                e.Graphics,
+                TabPages[i].Text,
+                new Font("Arial", 8.25f),
+                tabRect,
+                mainWindow.ActiveColors.foreColor,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+                );
+            }
         }
     }
 
@@ -406,6 +297,9 @@ namespace MemcardRex
         [DllImport("DwmApi")] //System.Runtime.InteropServices
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
 
+        private static bool darkThemeState = false;
+        private static bool registryChecked = false;
+
         protected override void OnHandleCreated(EventArgs e)
         {
             if (!IsDarkModeEnabled()) return;
@@ -419,19 +313,30 @@ namespace MemcardRex
             public Color foreColor;
             public Color menuBorder;
             public Color menuHighlight;
+            public Color controlColor;
         }
 
-        ThemeColors darkColors = new ThemeColors
+        private static ThemeColors darkColors = new ThemeColors
         {
             backColor = Color.FromArgb(32, 32, 32),
             foreColor = Color.FromArgb(0xFF, 0xFF, 0xFF),
             menuBorder = Color.FromKnownColor(KnownColor.MenuHighlight),
-            menuHighlight = Color.FromArgb(128, Color.FromKnownColor(KnownColor.MenuHighlight))
+            menuHighlight = Color.FromArgb(128, Color.FromKnownColor(KnownColor.MenuHighlight)),
+            controlColor = Color.FromArgb(32, 32, 32)
         };
 
-        public ThemeColors ActiveColors
+        private static ThemeColors lightColors = new ThemeColors
         {
-            get { return darkColors; }
+            backColor = Color.FromKnownColor(KnownColor.Window),
+            foreColor = Color.FromKnownColor(KnownColor.WindowText),
+            menuBorder = Color.FromKnownColor(KnownColor.MenuHighlight),
+            menuHighlight = Color.FromArgb(128, Color.FromKnownColor(KnownColor.MenuHighlight)),
+            controlColor = Color.FromKnownColor(KnownColor.Control)
+        };
+
+        public static ThemeColors ActiveColors
+        {
+            get { if (darkThemeState) return darkColors; else return lightColors; }
         }
 
         public void ChangeTheme(Control.ControlCollection container)
@@ -462,6 +367,8 @@ namespace MemcardRex
 
         static bool IsDarkModeEnabled()
         {
+            if (registryChecked) return darkThemeState;
+
             // The registry key for dark mode setting
             string key = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
             string valueName = "AppsUseLightTheme"; // 0 = dark, 1 = light
@@ -469,14 +376,19 @@ namespace MemcardRex
             // Check if the value exists and retrieve it
             object value = Registry.GetValue(key, valueName, null);
 
+            //We checked the registry once
+            registryChecked = true;
+
+            // Default to light mode if the value is not set or invalid
+            darkThemeState = false;
+
             if (value != null && value is int)
             {
                 // If the value is 0, dark mode is enabled, otherwise light mode is enabled
-                return (int)value == 0;
+                darkThemeState = (int)value == 0;
             }
 
-            // Default to light mode if the value is not set or invalid
-            return false;
+            return darkThemeState;
         }
 
         private void ApplyTheme()
