@@ -1,5 +1,5 @@
 ﻿//Main window of the MemcardRex application
-//Shendo 2009 - 2024
+//Shendo 2009 - 2025
 
 using System;
 using System.Collections.Generic;
@@ -816,7 +816,7 @@ namespace MemcardRex
                 OpenFileDialog openFileDlg = new OpenFileDialog
                 {
                     Title = "Import save",
-                    Filter = ssSupportedExtensions + "|" + ssExtensions + "|RAW single save|B???????????*"
+                    Filter = ssSupportedExtensions + "|" + ssExtensions + "|RAW single save|*"
                 };
 
                 //If user selected a save load it
@@ -862,8 +862,13 @@ namespace MemcardRex
             int masterSlot = memCard.GetMasterLinkForSlot(slotNumber);
             iconWindow iconDlg = new iconWindow();
 
+            iconDlg.gridColorValue = appSettings.GridColorValue;
+            iconDlg.gridEnabled = appSettings.IconGridEnabled == 1;
             iconDlg.initializeDialog(memCard.saveName[masterSlot], memCard.iconFrames[masterSlot], memCard.GetIconBytes(masterSlot));
             iconDlg.ShowDialog(this);
+
+            appSettings.GridColorValue = iconDlg.gridColorValue;
+            appSettings.IconGridEnabled = iconDlg.gridEnabled ? 1 : 0;
 
             //Update data if OK has been pressed
             if (iconDlg.okPressed)
@@ -1144,6 +1149,10 @@ namespace MemcardRex
             if (closeAllCards() == 1)
                 e.Cancel = true;
 
+            //Write window position
+            appSettings.WindowPositionX = this.Left;
+            appSettings.WindowPositionY = this.Top;
+
             //Save settings
             appSettings.SaveSettings(appPath, appName, appVersion);
         }
@@ -1190,6 +1199,13 @@ namespace MemcardRex
 
             //Load settings from settings file
             appSettings.LoadSettings(appPath);
+
+            //Restore saved window position if needed
+            if(appSettings.RestoreWindowPosition == 1)
+            {
+                this.Left = appSettings.WindowPositionX;
+                this.Top = appSettings.WindowPositionY;
+            }
 
             //Set active interface after loaded settings
             EnableDisableHardwareMenus();
@@ -1786,7 +1802,47 @@ namespace MemcardRex
             //Cycle through every dropped file
             foreach (string fileName in droppedFiles)
             {
-                openCard(fileName);
+                //If there are any cards try importing the save first
+                if(PScard.Count > 0)
+                {
+                    int listIndex;
+                    int slotNumber;
+                    int reqSlots;
+
+                    if(!validityCheck(out listIndex, out slotNumber))
+                    {
+                        //Something is not right with current selection, try opening file as a card
+                        openCard(fileName);
+                    }
+                    else
+                    {
+                        if (PScard[listIndex].OpenSingleSave(fileName, slotNumber, out reqSlots) != true) {
+                            if (reqSlots > 0)
+                            {
+                                //Single save was valid but not enough free slots
+                                MessageBox.Show("To import this save " + reqSlots.ToString() + " free slots are required." + 
+                                    "\nCreate a new card or remove some existing saves.", appName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                //Not a single save, try opening as a card
+                                openCard(fileName);
+                            }
+                        }
+
+                        else
+                        {
+                            //Save was properly imported, show it in the list
+                            refreshListView(listIndex, slotNumber);
+                            pushHistory("Save imported", listIndex, prepareIcons(listIndex, slotNumber, false));
+                        }
+                    }
+                }
+                else
+                {
+                    //Basic card open operation
+                    openCard(fileName);
+                }
             }
         }
 

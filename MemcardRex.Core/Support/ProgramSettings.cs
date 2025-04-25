@@ -13,11 +13,15 @@ namespace MemcardRex.Core
         public string CommunicationPort = "COM1";          //Communication port for Hardware interfaces
         public int LastSaveFormat = 0;                     //Last used format to save memory card
         public int LastExportFormat = 0;                   //Last used format to export save
-        public string RemoteCommAddress = "192.168.4.1";   // Address / hostname of the remote serial bridge host
-        public int RemoteCommPort = 23;                    // Port to open a socket for the remote serial bridge
+        public string RemoteCommAddress = "192.168.4.1";   //Address / hostname of the remote serial bridge host
+        public int RemoteCommPort = 23;                    //Port to open a socket for the remote serial bridge
         public int CardSlot = 0;                           //Active card slot for reading data from PS1CardLink or Unirom
         public int ActiveInterface = 0;                    //Currently active hardware interface
         public int WarningMessages = 1;                    //Show warning messages for dangerous tasks
+        public int WindowPositionX = 0;                    //Saved window X coordinate
+        public int WindowPositionY = 0;                    //Saved window Y coordinate
+        public int GridColorValue = 128;                   //Saved grid value for icon editor
+        public int IconGridEnabled = 1;                    //Show grid in icon editor
 
         private const string settingsFilename = "Settings.xml";
 
@@ -55,6 +59,10 @@ namespace MemcardRex.Core
 
             RestoreWindowPosition = xmlAppSettings.readXmlEntryInt("RestoreWindowPosition", 0, 1);
 
+            WindowPositionX = xmlAppSettings.readXmlEntryInt("WindowPositionX", -65535, 65535);
+
+            WindowPositionY = xmlAppSettings.readXmlEntryInt("WindowPositionY", -65535, 65535);
+
             FormatType = xmlAppSettings.readXmlEntryInt("HardwareFormatType", 0, 1);
 
             FixCorruptedCards = xmlAppSettings.readXmlEntryInt("FixCorruptedCards", 0, 1);
@@ -68,6 +76,10 @@ namespace MemcardRex.Core
             ActiveInterface = xmlAppSettings.readXmlEntryInt("ActiveInterface", 0, 10);
 
             WarningMessages = xmlAppSettings.readXmlEntryInt("WarningMessages", 0, 1);
+
+            GridColorValue = xmlAppSettings.readXmlEntryInt("GridColorValue", 0, 255);
+
+            IconGridEnabled = xmlAppSettings.readXmlEntryInt("IconGridEnabled", 0, 1);
         }
 
         /// <summary>
@@ -96,6 +108,10 @@ namespace MemcardRex.Core
 
             xmlAppSettings.writeXmlEntry("RestoreWindowPosition", RestoreWindowPosition.ToString());
 
+            xmlAppSettings.writeXmlEntry("WindowPositionX", WindowPositionX.ToString());
+
+            xmlAppSettings.writeXmlEntry("WindowPositionY", WindowPositionY.ToString());
+
             xmlAppSettings.writeXmlEntry("HardwareFormatType", FormatType.ToString());
 
             xmlAppSettings.writeXmlEntry("FixCorruptedCards", FixCorruptedCards.ToString());
@@ -109,6 +125,10 @@ namespace MemcardRex.Core
             xmlAppSettings.writeXmlEntry("ActiveInterface", ActiveInterface.ToString());
 
             xmlAppSettings.writeXmlEntry("WarningMessages", WarningMessages.ToString());
+
+            xmlAppSettings.writeXmlEntry("GridColorValue", GridColorValue.ToString());
+
+            xmlAppSettings.writeXmlEntry("IconGridEnabled", IconGridEnabled.ToString());
 
             xmlAppSettings.closeXmlWriter();
         }

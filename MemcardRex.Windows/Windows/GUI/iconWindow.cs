@@ -8,18 +8,31 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Runtime.Versioning;
+using System.Diagnostics;
 
 namespace MemcardRex
 {
     [SupportedOSPlatform("windows")]
     public partial class iconWindow : Form
     {
+        private enum ToolTypes : int
+        {
+            Pen,
+            Bucket,
+            Eraser
+        };
+
         //Icon data
         public byte[] iconData;
         Color[] iconPalette = new Color[16];
         Bitmap[] iconBitmap = new Bitmap[3];
+        Bitmap chequeredBitmap = null;
+        Bitmap chequeredPalette = null;
         int[] selectedColor = new int[2];
+        int transparentEntry = -1;
         int selectedIcon = 0;
+        int previewIndex = 0;
+        int frameCount = 0;
 
         double xScale = 1.0;
         double yScale = 1.0;
@@ -27,6 +40,12 @@ namespace MemcardRex
         int pixelHeight = 11;
         int paletteWidth = 15;
         int paletteHeight = 15;
+
+        public bool gridEnabled = true;
+        public int gridColorValue = 128;
+
+        //Drawing tools
+        ToolTypes selectedTool = ToolTypes.Pen;
 
         //If dialog was closed with OK this will be true
         public bool okPressed = false;
@@ -42,35 +61,45 @@ namespace MemcardRex
             this.Text = dialogTitle;
             iconData = iconBytes;
             using (Graphics graphics = CreateGraphics())
-            { 
+            {
                 xScale = graphics.DpiX / 96.0;
                 yScale = graphics.DpiY / 96.0;
             }
 
-            switch (iconFrames)
+            frameCount = iconFrames;
+
+            //Populate icon list with items
+            if (iconFrames > 0) iconListView.Items.Add("1st frame");
+            if (iconFrames > 1) iconListView.Items.Add("2nd frame");
+            if (iconFrames > 2) iconListView.Items.Add("3rd frame");
+
+            //Assign icon indexes
+            for (int i = 0; i < iconListView.Items.Count; i++)
             {
-                default:        //Assume that there is only one icon frame
-                    frameCombo.Items.Add("1st frame");
-                    frameCombo.Enabled = false;
-                    break;
-
-                case 2:         //Two icons
-                    frameCombo.Items.Add("1st frame");
-                    frameCombo.Items.Add("2nd frame");
-                    break;
-
-                case 3:         //Three icons
-                    frameCombo.Items.Add("1st frame");
-                    frameCombo.Items.Add("2nd frame");
-                    frameCombo.Items.Add("3rd frame");
-                    break;
+                iconListView.Items[i].ImageIndex = i;
             }
+
+            //Add preview pane if the icons are animated
+            if (iconFrames > 1)
+            {
+                iconListView.Items.Add("Preview");
+
+                //Preview icon is always index 3
+                iconListView.Items[iconListView.Items.Count - 1].ImageIndex = 3;
+            }
+
+            gridSlider.Value = gridColorValue;
+            gridSlider.Enabled = gridEnabled;
+            gridCheckbox.Checked = gridEnabled;
 
             //Draw palette and icon
             setUpDisplay();
 
             //Select first frame
-            frameCombo.SelectedIndex = 0;
+            iconListView.Items[0].Selected = true;
+
+            //Enable timer if there are more than one frame
+            if (iconFrames > 1) iconTimer.Enabled = true;
         }
 
         //Set everything up for drawing
@@ -90,10 +119,12 @@ namespace MemcardRex
         //Load palette, copied from ps1class :p
         private void loadPalette()
         {
+            int alphaChannel = 0;
             int redChannel = 0;
             int greenChannel = 0;
             int blueChannel = 0;
             int colorCounter = 0;
+            int blackFlag = 0;
 
             //Clear existing data
             iconPalette = new Color[16];
@@ -107,9 +138,17 @@ namespace MemcardRex
                 redChannel = (iconData[byteCount] & 0x1F) << 3;
                 greenChannel = ((iconData[byteCount + 1] & 0x3) << 6) | ((iconData[byteCount] & 0xE0) >> 2);
                 blueChannel = ((iconData[byteCount + 1] & 0x7C) << 1);
+                blackFlag = (iconData[byteCount + 1] & 0x80);
+
+                //If the color value is 0 along with no flag it is treated as transparent
+                if ((redChannel | greenChannel | blueChannel | blackFlag) == 0) alphaChannel = 0;
+                else alphaChannel = 255;
+
+                //Save transparent entry for eraser
+                if (alphaChannel == 0) transparentEntry = colorCounter;
 
                 //Get the color value
-                iconPalette[colorCounter] = Color.FromArgb(redChannel, greenChannel, blueChannel);
+                iconPalette[colorCounter] = Color.FromArgb(alphaChannel, redChannel, greenChannel, blueChannel);
                 colorCounter++;
             }
         }
@@ -138,35 +177,79 @@ namespace MemcardRex
                     }
                 }
             }
+
+            //Place icons in the image list
+            iconList.Images.Clear();
+
+            iconList.Images.Add(iconBitmap[0]);
+            iconList.Images.Add(iconBitmap[1]);
+            iconList.Images.Add(iconBitmap[2]);
+
+            //Add current preview index icon
+            iconList.Images.Add(iconBitmap[previewIndex]);
         }
 
         //Draw selected icon to render
         private void drawIcon()
         {
-            pixelWidth = (int)(xScale * 11);
-            pixelHeight = (int)(yScale * 11);
-            Bitmap drawBitmap = new Bitmap(pixelWidth * 16 + 1, pixelHeight * 16 + 1);
-            Graphics drawGraphics = Graphics.FromImage(drawBitmap);
-            Pen blackPen = new Pen(Color.Black);
+            int iconFrame = 0;
 
+            if (selectedIcon > frameCount - 1)
+            {
+                iconFrame = previewIndex;
+            }
+            else
+            {
+                iconFrame = selectedIcon;
+            }
+
+            pixelWidth = (int)(xScale * 13);
+            pixelHeight = (int)(yScale * 13);
+            Bitmap drawBitmap = new Bitmap(pixelWidth * 16 + 1, pixelHeight * 16 + 1);
+
+            Graphics drawGraphics = Graphics.FromImage(drawBitmap);
+            Pen blackPen = new Pen(Color.FromArgb(gridColorValue, gridColorValue, gridColorValue));
+
+            //Create chequered bitmap only on the first run
+            if (chequeredBitmap == null)
+            {
+                chequeredBitmap = new Bitmap(32, 32);
+
+                bool isEvenRow;
+                for (int y = 0; y < 32; y++)
+                {
+                    isEvenRow = (y % 2 == 0);
+                    for (int x = 0; x < 32; x += 2)
+                    {
+                        chequeredBitmap.SetPixel(x, y, isEvenRow ? Color.White : Color.Gray);
+                        chequeredBitmap.SetPixel(x + 1, y, isEvenRow ? Color.Gray : Color.White);
+                    }
+                }
+            }
             //Load icon data
             loadIcons();
 
             drawGraphics.PixelOffsetMode = PixelOffsetMode.Half;
             drawGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
+            //Draw background bitmap
+            drawGraphics.DrawImage(chequeredBitmap, 0, 0, pixelWidth * 16, pixelHeight * 16);
+
             //Draw selected icon to drawBitmap
-            drawGraphics.DrawImage(iconBitmap[selectedIcon], 0, 0, pixelWidth * 16, pixelHeight * 16);
+            drawGraphics.DrawImage(iconBitmap[iconFrame], 0, 0, pixelWidth * 16, pixelHeight * 16);
 
             //Set offset mode to default so grid can be drawn
             drawGraphics.PixelOffsetMode = PixelOffsetMode.Default;
 
             //Draw grid
-            for (int y = 0; y < 17; y++)
-                drawGraphics.DrawLine(blackPen, 0, (y * pixelHeight), pixelWidth * 16, (y * pixelHeight));
+            if (gridEnabled)
+            {
+                for (int y = 0; y < 17; y++)
+                    drawGraphics.DrawLine(blackPen, 0, (y * pixelHeight), pixelWidth * 16, (y * pixelHeight));
 
-            for (int x = 0; x < 17; x++)
-                drawGraphics.DrawLine(blackPen, (x * pixelWidth), 0, (x * pixelWidth), pixelHeight * 16);
+                for (int x = 0; x < 17; x++)
+                    drawGraphics.DrawLine(blackPen, (x * pixelWidth), 0, (x * pixelWidth), pixelHeight * 16);
+            }
 
             drawGraphics.Dispose();
             iconRender.Image = drawBitmap;
@@ -175,7 +258,6 @@ namespace MemcardRex
         //Draw palette image to render
         private void drawPalette()
         {
-            
             paletteWidth = (int)(xScale * 15);
             paletteHeight = (int)(yScale * 15);
             Bitmap paletteBitmap = new Bitmap(8, 2);
@@ -185,6 +267,23 @@ namespace MemcardRex
             int colorCounter = 0;
             colorRender.Height = paletteHeight * 2 + 1;
             colorRender2.Height = paletteHeight * 2 + 1;
+
+            //Create chequered bitmap only on the first run
+            if (chequeredPalette == null)
+            {
+                chequeredPalette = new Bitmap(16, 4);
+
+                bool isEvenRow;
+                for (int y = 0; y < 4; y++)
+                {
+                    isEvenRow = (y % 2 == 0);
+                    for (int x = 0; x < 16; x += 2)
+                    {
+                        chequeredPalette.SetPixel(x, y, isEvenRow ? Color.White : Color.Gray);
+                        chequeredPalette.SetPixel(x + 1, y, isEvenRow ? Color.Gray : Color.White);
+                    }
+                }
+            }
 
             //Load palette data
             loadPalette();
@@ -201,6 +300,9 @@ namespace MemcardRex
                     colorCounter++;
                 }
             }
+
+            //Draw chequered background
+            drawGraphics.DrawImage(chequeredPalette, 0, 0, 8 * paletteWidth, 2 * paletteHeight);
 
             //Draw palette to drawBitmap
             drawGraphics.DrawImage(paletteBitmap, 0, 0, 8 * paletteWidth, 2 * paletteHeight);
@@ -222,43 +324,126 @@ namespace MemcardRex
         //Set selected color
         private void setSelectedColor(int selColor, int selectedColorIndex)
         {
+            Bitmap bgBitmap = new Bitmap(2, 2);
+            Bitmap renderBitmap = new Bitmap(colorRender.Width, colorRender.Height);
+            Graphics bgGraphics = Graphics.FromImage(renderBitmap);
+
+            Color blockOne = Color.White;
+            Color blockTwo = Color.Gray;
+
+            selectedColor[selectedColorIndex] = selColor;
+
+            //Change to real colors if it is not a transparent color
+            if (iconPalette[selectedColor[selectedColorIndex]].A != 0)
+            {
+                blockOne = iconPalette[selectedColor[selectedColorIndex]];
+                blockTwo = iconPalette[selectedColor[selectedColorIndex]];
+            }
+
+            bgBitmap.SetPixel(0, 0, blockOne);
+            bgBitmap.SetPixel(1, 0, blockTwo);
+            bgBitmap.SetPixel(0, 1, blockTwo);
+            bgBitmap.SetPixel(1, 1, blockOne);
+
+            bgGraphics.PixelOffsetMode = PixelOffsetMode.Half;
+            bgGraphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+            bgGraphics.DrawImage(bgBitmap, 0, 0, renderBitmap.Width, renderBitmap.Height);
+            bgGraphics.Dispose();
+
             if (selectedColorIndex == 0)
-            {
-                selectedColor[0] = selColor;
-                colorRender.BackColor = iconPalette[selectedColor[0]];
-            }
+                colorRender.Image = renderBitmap;
             else
-            {
-                selectedColor[1] = selColor;
-                colorRender2.BackColor = iconPalette[selectedColor[1]];
-            }
+                colorRender2.Image = renderBitmap;
         }
 
         //Place pixel on the selected icon
-        private void putPixel(int X, int Y, int selectedColorIndex)
+        private void putPixel(int X, int Y, int colorIndex)
         {
-            //Calculate destination byte to draw pixel to
-            int destinationByte = (int)(X + (Y * 16)) / 2;
+            int offset = 32 + (selectedIcon * 128);
+            int pixelIndex = X + (Y * 16);
+            int destinationByte = pixelIndex / 2;
+            int targetIndex = offset + destinationByte;
 
-            //Check what nibble to draw pixel to
-            if ((X + (Y * 16)) % 2 == 0)
+            // Apply color to either the lower or upper nibble
+            if (pixelIndex % 2 == 0)
             {
-                iconData[32 + destinationByte + (selectedIcon * 128)] &= 0xF0;
-                iconData[32 + destinationByte + (selectedIcon * 128)] |= (byte)selectedColor[selectedColorIndex];
+                iconData[targetIndex] = (byte)((iconData[targetIndex] & 0xF0) | colorIndex);
             }
             else
             {
-                iconData[32 + destinationByte + (selectedIcon * 128)] &= 0x0F;
-                iconData[32 + destinationByte + (selectedIcon * 128)] |= (byte)(selectedColor[selectedColorIndex] << 4);
+                iconData[targetIndex] = (byte)((iconData[targetIndex] & 0x0F) | (colorIndex << 4));
             }
 
-            //Redraw icon
             drawIcon();
+        }
+
+
+        //Get color index of a single pixel
+        private int getPixel(int X, int Y)
+        {
+            int offset = 32 + (selectedIcon * 128);
+            int pixelIndex = X + (Y * 16);
+            int destinationByte = pixelIndex / 2;
+            int targetIndex = offset + destinationByte;
+
+            byte data = iconData[targetIndex];
+
+            // Return the color index from either the lower or upper nibble
+            if (pixelIndex % 2 == 0)
+            {
+                return data & 0x0F; // Lower nibble
+            }
+            else
+            {
+                return (data >> 4) & 0x0F; // Upper nibble
+            }
+        }
+
+        //Bucket flood fill tool
+        public void FloodFill(int startX, int startY, int selectedColorIndex)
+        {
+            const int width = 16;
+            const int height = 16;
+
+            int targetColor = getPixel(startX, startY);
+
+            // Avoid filling if the color is the same
+            if (targetColor == selectedColorIndex)
+                return;
+
+            Queue<(int, int)> pixels = new Queue<(int, int)>();
+            pixels.Enqueue((startX, startY));
+
+            while (pixels.Count > 0)
+            {
+                var (x, y) = pixels.Dequeue();
+
+                // Skip if out of bounds
+                if (x < 0 || x >= width || y < 0 || y >= height)
+                    continue;
+
+                // Skip if not the target color
+                if (getPixel(x, y) != targetColor)
+                    continue;
+
+                // Set the pixel to the new color
+                putPixel(x, y, selectedColorIndex);
+
+                // Add neighboring pixels
+                pixels.Enqueue((x + 1, y));
+                pixels.Enqueue((x - 1, y));
+                pixels.Enqueue((x, y + 1));
+                pixels.Enqueue((x, y - 1));
+            }
         }
 
         //Import currently selected icon
         private void importIcon()
         {
+            //Do not import to previews
+            if (selectedIcon >= frameCount) return;
+
             Bitmap OpenedBitmap = null;
 
             int redChannel = 0;
@@ -284,7 +469,8 @@ namespace MemcardRex
                 OpenedBitmap = new Bitmap(openDlg.FileName);
             }
             catch (Exception e)
-            {;
+            {
+                ;
                 MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 OpenedBitmap.Dispose();
                 return;
@@ -304,7 +490,7 @@ namespace MemcardRex
                 for (int x = 0; x < 16; x++)
                 {
                     //Check if the given color exists and add it if it doesn't
-                    if(!foundColors.Contains(OpenedBitmap.GetPixel(x,y)))foundColors.Add(OpenedBitmap.GetPixel(x,y));
+                    if (!foundColors.Contains(OpenedBitmap.GetPixel(x, y))) foundColors.Add(OpenedBitmap.GetPixel(x, y));
                 }
             }
 
@@ -333,7 +519,14 @@ namespace MemcardRex
                 //Set color to iconData (convert 24 bit color to 15 bit)
                 iconData[i * 2] = (byte)(redChannel | ((greenChannel & 0x07) << 5));
                 iconData[(i * 2) + 1] = (byte)((blueChannel << 2) | ((greenChannel & 0x18) >> 3));
+
+                //Make sure to get true black and not transparent
+                if (iconData[i * 2] == 0 && iconData[(i * 2) + 1] == 0)
+                    iconData[(i * 2) + 1] |= 0x80;
             }
+
+            //No transparent entry available
+            transparentEntry = -1;
 
             //Copy image data from opened bitmap
             for (int y = 0; y < 16; y++)
@@ -373,6 +566,9 @@ namespace MemcardRex
         //Export currently selected icon
         private void exportIcon()
         {
+            //Do not export previews
+            if (selectedIcon >= frameCount) return;
+
             SaveFileDialog saveDlg = new SaveFileDialog();
             saveDlg.Title = "Save icon";
             saveDlg.Filter = "Bitmap (*.bmp)|*.bmp|GIF (*.gif)|*.gif|JPEG (*.jpeg;*.jpg)|*.jpeg;*.jpg|PNG (*.png)|*.png";
@@ -500,10 +696,10 @@ namespace MemcardRex
 
             for (int y = 0; y < 16; y++)
             {
-                for (int x = 0; x < 16; x+=2)
+                for (int x = 0; x < 16; x += 2)
                 {
                     returnData[x, y] = (byte)(iconData[byteCount] & 0x0F);
-                    returnData[x + 1, y] = (byte)((iconData[byteCount] & 0xF0)>>4);
+                    returnData[x + 1, y] = (byte)((iconData[byteCount] & 0xF0) >> 4);
                     byteCount++;
                 }
             }
@@ -519,7 +715,7 @@ namespace MemcardRex
             {
                 for (int x = 0; x < 16; x += 2)
                 {
-                    iconData[byteCount] = (byte)(gridData[x, y] | (gridData[x + 1, y]<<4));
+                    iconData[byteCount] = (byte)(gridData[x, y] | (gridData[x + 1, y] << 4));
                     byteCount++;
                 }
             }
@@ -534,7 +730,7 @@ namespace MemcardRex
             if (Xpos > 7) Xpos = 7;
             if (Ypos > 1) Ypos = 1;
 
-            if(e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
                 setSelectedColor(Xpos + (Ypos * 8), 0);     //Left color selector
             else
                 setSelectedColor(Xpos + (Ypos * 8), 1);     //Right color selector
@@ -553,7 +749,7 @@ namespace MemcardRex
             colorDlg.FullOpen = true;
 
             //Apply selected palette color
-            if(colorDlg.ShowDialog() == DialogResult.OK)
+            if (colorDlg.ShowDialog() == DialogResult.OK)
             {
                 //Get each color channel
                 int redChannel = (colorDlg.Color.R >> 3);
@@ -563,6 +759,13 @@ namespace MemcardRex
                 //Set color to iconData (convert 24 bit color to 15 bit)
                 iconData[selectedColor[selectedColorIndex] * 2] = (byte)(redChannel | ((greenChannel & 0x07) << 5));
                 iconData[(selectedColor[selectedColorIndex] * 2) + 1] = (byte)((blueChannel << 2) | ((greenChannel & 0x18) >> 3));
+
+                //Make sure black does not become transparent
+                if (iconData[selectedColor[selectedColorIndex] * 2] == 0 && iconData[(selectedColor[selectedColorIndex] * 2) + 1] == 0)
+                    iconData[(selectedColor[selectedColorIndex] * 2) + 1] |= 0x80;
+
+                //If this current entry was transparent reset index as it's no longer not
+                if (transparentEntry == selectedColor[selectedColorIndex]) transparentEntry = -1;
 
                 //Draw palette to color selector
                 drawPalette();
@@ -576,20 +779,18 @@ namespace MemcardRex
             }
         }
 
-        //Draw selected icon
-        private void frameCombo_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            selectedIcon = frameCombo.SelectedIndex;
-            drawIcon();
-        }
-
         //User has selected a pixel to draw to
         private void iconRender_MouseDownMove(object sender, MouseEventArgs e)
         {
+            //Only draw on frames, not preview
+            if (selectedIcon >= frameCount) return;
+
             int XposOriginal = e.X / pixelWidth;
             int YposOriginal = e.Y / pixelHeight;
             int Xpos = e.X / pixelWidth;
             int Ypos = e.Y / pixelHeight;
+
+            int paletteIndex = e.Button == MouseButtons.Right ? 1 : 0;
 
             if (Xpos > 15) Xpos = 15;
             if (Ypos > 15) Ypos = 15;
@@ -599,17 +800,25 @@ namespace MemcardRex
             Xlabel.Text = "X: " + Xpos.ToString();
             Ylabel.Text = "Y: " + Ypos.ToString();
 
-            //Draw pixels if arrow is in range and left mouse button is pressed
+            //Draw pixels if arrow is in range and mousebutton is pressed
             if (XposOriginal >= 0 && XposOriginal <= 15 && YposOriginal >= 0
-                && YposOriginal <= 15)
+                && YposOriginal <= 15 && (e.Button == MouseButtons.Right || e.Button == MouseButtons.Left))
             {
-                //Color with first selected color
-                if(e.Button == MouseButtons.Left)
-                    putPixel(Xpos, Ypos, 0);
+                switch (selectedTool)
+                {
+                    case ToolTypes.Pen:
+                        putPixel(Xpos, Ypos, selectedColor[paletteIndex]);
+                        break;
 
-                //Color with second selected color
-                if(e.Button == MouseButtons.Right)
-                    putPixel(Xpos, Ypos, 1);
+                    case ToolTypes.Bucket:
+                        FloodFill(Xpos, Ypos, selectedColor[paletteIndex]);
+                        break;
+
+                    case ToolTypes.Eraser:
+                        //Erase only if transparent entry is available
+                        if (transparentEntry >= 0) putPixel(Xpos, Ypos, transparentEntry);
+                        break;
+                }
             }
         }
 
@@ -633,38 +842,38 @@ namespace MemcardRex
             this.Close();
         }
 
-        private void importButton_Click(object sender, EventArgs e)
-        {
-            //Open selected icon from image file
-            importIcon();
-        }
-
-        private void exportButton_Click(object sender, EventArgs e)
-        {
-            //Save selected icon as image file
-            exportIcon();
-        }
-
         private void hFlipButton_Click(object sender, EventArgs e)
         {
+            //Only draw on frames, not preview
+            if (selectedIcon >= frameCount) return;
+
             //H flip
             horizontalFlip();
         }
 
         private void vFlipButton_Click(object sender, EventArgs e)
         {
+            //Only draw on frames, not preview
+            if (selectedIcon >= frameCount) return;
+
             //V flip
             verticalFlip();
         }
 
         private void leftButton_Click(object sender, EventArgs e)
         {
+            //Only draw on frames, not preview
+            if (selectedIcon >= frameCount) return;
+
             //Rotate left
             leftRotate();
         }
 
         private void rightButton_Click(object sender, EventArgs e)
         {
+            //Only draw on frames, not preview
+            if (selectedIcon >= frameCount) return;
+
             //Rotate right
             rightRotate();
         }
@@ -672,6 +881,92 @@ namespace MemcardRex
         private void iconWindow_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void iconTimer_Tick(object sender, EventArgs e)
+        {
+            if (previewIndex < frameCount - 1) previewIndex++; else previewIndex = 0;
+
+            iconList.Images.RemoveAt(3);
+            iconList.Images.Add(iconBitmap[previewIndex]);
+            iconListView.Refresh();
+
+            //Also animate main render if preview is selected
+            if (selectedIcon > frameCount - 1) drawIcon();
+        }
+
+        private void iconListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (iconListView.SelectedItems.Count < 1) return;
+
+            selectedIcon = iconListView.SelectedItems[0].Index;
+            drawIcon();
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //Open selected icon from image file
+            importIcon();
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            //Save selected icon as image file
+            exportIcon();
+        }
+
+        private void penRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!penRadio.Checked) return;
+            selectedTool = ToolTypes.Pen;
+        }
+
+        private void bucketRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!bucketRadio.Checked) return;
+            selectedTool = ToolTypes.Bucket;
+        }
+
+        private void gridSlider_Scroll(object sender, EventArgs e)
+        {
+            gridColorValue = gridSlider.Value;
+            drawIcon();
+        }
+
+        private void eraserRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!eraserRadio.Checked) return;
+            selectedTool = ToolTypes.Eraser;
+
+            //Notify user of a required transparent entry
+            if(transparentEntry < 0)
+            {
+                if(MessageBox.Show("Eraser tool requires transparent entry in the palette." +
+                    "\nDo you want to change currently selected color to transparent?", "Transparent entry required",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                {
+                    //Set transparent color to iconData
+                    iconData[selectedColor[0] * 2] = 0;
+                    iconData[(selectedColor[0] * 2) + 1] = 0;
+
+                    //Draw palette to color selector
+                    drawPalette();
+
+                    //Update selected colors
+                    setSelectedColor(selectedColor[0], 0);
+                    setSelectedColor(selectedColor[1], 1);
+
+                    //Draw icon on the icon render
+                    drawIcon();
+                }
+            }
+        }
+
+        private void gridCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            gridEnabled = gridCheckbox.Checked;
+            gridSlider.Enabled = gridEnabled;
+            drawIcon();
         }
     }
 }

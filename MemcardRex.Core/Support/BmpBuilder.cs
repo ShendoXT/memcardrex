@@ -73,7 +73,7 @@ namespace MemcardRex.Core
         /// <returns></returns>
 		public byte[] BuildBmp(Color[] RawImageData)
         {
-            byte[] argbBmpHeader = new byte[] // All values are little-endian
+            byte[] ArgbBmpHeader = new byte[] // All values are little-endian
             {
                 0x42, 0x4D,             // Signature 'BM'
                 0x8a, 0x40, 0x00, 0x00, // Size: 1162 bytes
@@ -114,40 +114,35 @@ namespace MemcardRex.Core
                 0x00, 0x00, 0x00, 0x00, // Unknown
             };
 
-            byte[] bmpImage = new byte[1162];
+            const int totalSize = 1162;
+            const int width = 16;
+            const int dataOffset = 138;
 
-            //Copy BMP header to bmp data array
-            Array.Copy(argbBmpHeader, bmpImage, argbBmpHeader.Length);
+            byte[] bmpImage = new byte[totalSize];
 
-            Color[] FlippedRawImageData = new Color[RawImageData.Length];
+            // Copy BMP header
+            Buffer.BlockCopy(ArgbBmpHeader, 0, bmpImage, 0, ArgbBmpHeader.Length);
 
-            //Y flip color data for compatibility with BMP
-            for (int y = 0; y < 8; y++)
+            // Flip Y-axis directly when writing data
+            for (int y = 0; y < width; y++)
             {
-                for (int x = 0; x < 16; x++)
-                {
-                    // Convert 2D (y, x) to 1D index
-                    int indexTop = y * 16 + x;           // Current position
-                    int indexBottom = (15 - y) * 16 + x; // Mirrored position
+                int srcRowStart = y * width;
+                int destRowStart = dataOffset + (width - 1 - y) * width * 4;
 
-                    // Swap the colors
-                    FlippedRawImageData[indexTop] = RawImageData[indexBottom];
-                    FlippedRawImageData[indexBottom] = RawImageData[indexTop];
+                for (int x = 0; x < width; x++)
+                {
+                    Color pixel = RawImageData[srcRowStart + x];
+                    int destIndex = destRowStart + x * 4;
+
+                    // Write BGRA format directly (little-endian for BMP)
+                    bmpImage[destIndex] = pixel.B;
+                    bmpImage[destIndex + 1] = pixel.G;
+                    bmpImage[destIndex + 2] = pixel.R;
+                    bmpImage[destIndex + 3] = pixel.A;
                 }
             }
 
-            int index = 255;
-            for (int i = 0; i < 256 * 4; i += 4)
-            {
-                bmpImage[bmpImage.Length - i - 1] = FlippedRawImageData[index].A;
-                bmpImage[bmpImage.Length - i - 2] = FlippedRawImageData[index].R;
-                bmpImage[bmpImage.Length - i - 3] = FlippedRawImageData[index].G;
-                bmpImage[bmpImage.Length - i - 4] = FlippedRawImageData[index].B;
-                index--;
-            }
-
             return bmpImage;
-
         }
     }
 }
