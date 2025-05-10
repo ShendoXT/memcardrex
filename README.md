@@ -1,6 +1,6 @@
 # MemcardRex
 ### Advanced PlayStation 1 Memory Card editor
-![memcardrex](https://github.com/user-attachments/assets/cc168728-1a3a-4548-a83f-5393a0e59460)
+![memcardrex](https://github.com/user-attachments/assets/82553694-5cd2-49e8-b900-524dc32ccade)
 
 <br>**Features:**
 * Tabbed interface - multiple Memory Cards can be opened at the same time.
@@ -90,6 +90,7 @@ This USB driver can be easily created and installed using [Zadig](https://zadig.
 * Zadig should display the PS3 MCA as an "Unknown Device". Verify that the USB ID matches: 054C 02EA
 * Click the Edit checkbox and name the device "PS3 Memory Card Adaptor"
 * Ensure that "WinUSB" is selected from the list of Driver options and click the Install Driver button.
+    - If you need LibUSB driver support place "libusb-1.0.dll" inside MemcardRex's directory (2.0 RC1 and up only).
 * After about 30 seconds Zadig should show a message that the driver was installed successfully.
 
 With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you should now be able to read, write and format PS1 Memory Cards.
@@ -104,4 +105,4 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 <br>Gamesoul Master, Xtreme2damax, Carmax91 and NKO.
 
 **Thanks to:**
-<br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e, DeadlySystem and Padraig Flood.
+<br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e, DeadlySystem, Padraig Flood and Martin Korth (nocash).
