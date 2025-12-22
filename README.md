@@ -2,9 +2,15 @@
 ### Advanced PlayStation 1 Memory Card editor
 ![memcardrex](https://github.com/user-attachments/assets/82553694-5cd2-49e8-b900-524dc32ccade)
 
+<br>**Quick download links:**
+* [Latest Windows release](https://github.com/ShendoXT/memcardrex/releases/tag/9909f69)
+* [Latest macOS release](https://github.com/ShendoXT/memcardrex/releases/tag/e85f601)
+* Linux version in the works, [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N51QR68V) to speed things up 😁
+
 <br>**Features:**
 * Tabbed interface - multiple Memory Cards can be opened at the same time.
 * Ability to copy, delete, restore, export, import and edit saves.
+* Undo/Redo with traversable history list.
 * Plugin support for 3rd party save editors.
 * Hardware interfaces for communication with real Memory Cards.
 * PocketStation support (read serial, dump BIOS, push PC time)
@@ -106,3 +112,4 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 
 **Thanks to:**
 <br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e, DeadlySystem, Padraig Flood and Martin Korth (nocash).
+
