@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="AdwWindow" id="preferences_window">
+    <property name="title">Preferences</property>
+    <child>
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">raised</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">False</property>
+            <property name="show-start-title-buttons">False</property>
+            <child type="start">
+              <object class="GtkButton" id="cancel_button">
+                <property name="action-name">prefs-win.cancel</property>
+                <property name="label" translatable="yes">Cancel</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="ok_button">
+                <property name="action-name">prefs-win.ok</property>
+                <property name="css-classes">suggested-action</property>
+                <property name="label" translatable="yes">OK</property>
+                <property name="receives-default">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkGrid">
+                <property name="column-homogeneous">True</property>
+                <property name="column-spacing">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-top">6</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Save title font:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkFontButton"/>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="column-homogeneous">True</property>
+                        <property name="column-spacing">6</property>
+                        <property name="row-spacing">6</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Icon filter:</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Nearest Neighbor</item>
+                                  <item translatable="yes">Bilinear</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Icon size:</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Medium</item>
+                                  <item translatable="yes">Large</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Icon background color:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDropDown">
+                        <property name="model">
+                          <object class="GtkStringList">
+                            <items>
+                              <item translatable="yes">Transparent</item>
+                              <item translatable="yes">Black (slim PS1 models)</item>
+                              <item translatable="yes">Gray (older European PS1 models)</item>
+                              <item translatable="yes">Blue (standard BIOS color)</item>
+                            </items>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Hardware format type:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDropDown">
+                        <property name="model">
+                          <object class="GtkStringList">
+                            <items>
+                              <item translatable="yes">Quick format</item>
+                              <item translatable="yes">Full format</item>
+                            </items>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="column-homogeneous">True</property>
+                        <property name="column-spacing">6</property>
+                        <property name="row-spacing">6</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Communication port:</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Active hardware interface:</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">0</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="serialPortCombo">
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <property name="strings">MemCARDuino
+DexDrive
+PS3MCA</property>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">1</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkCheckButton">
+                        <property name="label" translatable="yes">Show grid on slot list.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton">
+                        <property name="label" translatable="yes">Backup Memory Cards upon opening.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton">
+                        <property name="label" translatable="yes">Show warning messages (save editing).</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton">
+                        <property name="label" translatable="yes">Try to fix corrupted Memory Cards.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Unirom card slot</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDropDown">
+                        <property name="model">
+                          <object class="GtkStringList">
+                            <items>
+                              <item translatable="yes">Slot 1</item>
+                              <item translatable="yes">Slot 2</item>
+                            </items>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="column-homogeneous">True</property>
+                        <property name="column-spacing">6</property>
+                        <property name="row-spacing">6</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Remote Address:</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry">
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Remote Port:</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton">
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="ok_button"/>
+      <widget name="cancel_button"/>
+    </widgets>
+  </object>
+</interface>

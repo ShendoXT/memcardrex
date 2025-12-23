@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="AdwApplicationWindow" id="main_window">
+    <property name="default-height">600</property>
+    <property name="default-width">600</property>
+    <property name="title">MemcardRex</property>
+    <child>
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">raised</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle" id="windowTitle">
+                <property name="title">MemcardRex</property>
+              </object>
+            </property>
+            <child type="start">
+              <object class="GtkPopoverMenuBar">
+                <property name="menu-model">app_menubar</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child type="top">
+          <object class="AdwTabBar">
+            <property name="view">tabView</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="stack">
+            <child>
+              <object class="GtkStackPage">
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="description">Select Open from the menu, or New to create a new one.</property>
+                    <property name="title">Open a Memory Card</property>
+                  </object>
+                </property>
+                <property name="name">welcome</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage">
+                <property name="child">
+                  <object class="AdwTabView" id="tabView"/>
+                </property>
+                <property name="name">tabs</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <menu id="app_menubar">
+      <submenu>
+        <attribute name="label" translatable="yes">_File</attribute>
+        <section>
+          <item>
+            <attribute name="action">win.new-card</attribute>
+            <attribute name="label" translatable="yes">_New</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.open</attribute>
+            <attribute name="label" translatable="yes">_Open…</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.close-tab</attribute>
+            <attribute name="label" translatable="yes">_Close</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">win.save</attribute>
+            <attribute name="label" translatable="yes">_Save</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.save-as</attribute>
+            <attribute name="label" translatable="yes">Save _As…</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">app.quit</attribute>
+            <attribute name="label" translatable="yes">_Quit</attribute>
+          </item>
+        </section>
+      </submenu>
+      <submenu>
+        <attribute name="label" translatable="yes">_Edit</attribute>
+        <section>
+          <item>
+            <attribute name="action">win.properties</attribute>
+            <attribute name="label" translatable="yes">Information</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">win.compare-save</attribute>
+            <attribute name="label" translatable="yes">Compare with temp buffer</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">win.delete-save</attribute>
+            <attribute name="label" translatable="yes">_Delete save</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.restore-save</attribute>
+            <attribute name="label" translatable="yes">_Restore save</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.erase-save</attribute>
+            <attribute name="label" translatable="yes">Remove and _format save</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">win.copy-save</attribute>
+            <attribute name="label" translatable="yes">_Copy save to temp buffer</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.paste-save</attribute>
+            <attribute name="label" translatable="yes">_Paste save from temp buffer</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">win.import-save</attribute>
+            <attribute name="label" translatable="yes">_Import save…</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.export-save</attribute>
+            <attribute name="label" translatable="yes">_Export save…</attribute>
+          </item>
+        </section>
+      </submenu>
+      <submenu>
+        <attribute name="label" translatable="yes">_View</attribute>
+        <section>
+          <item>
+            <attribute name="action">app.preferences</attribute>
+            <attribute name="label" translatable="yes">_Preferences</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">app.readme</attribute>
+            <attribute name="label" translatable="yes">_Readme</attribute>
+          </item>
+          <item>
+            <attribute name="action">app.about</attribute>
+            <attribute name="label" translatable="yes">_About</attribute>
+          </item>
+        </section>
+      </submenu>
+    </menu>
+  </object>
+</interface>

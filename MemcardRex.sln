@@ -7,6 +7,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.Core", "MemcardRex.Core\MemcardRex.Core.csproj", "{5567EB5B-5E1F-4C7E-B174-214C57BFAEAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.macOS", "MemcardRex.macOS\MemcardRex.macOS.csproj", "{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcardRex.Linux", "MemcardRex.Linux\MemcardRex.Linux.csproj", "{4912AC06-FBCA-45A5-8B5F-B45744C320EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +41,14 @@ Global
 		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|x64.ActiveCfg = Release|Any CPU
 		{6EE5516B-12A6-4B9D-9750-BACCE0AAB60F}.Release|x64.Build.0 = Release|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Debug|x64.Build.0 = Debug|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Release|x64.ActiveCfg = Release|Any CPU
+		{4912AC06-FBCA-45A5-8B5F-B45744C320EA}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

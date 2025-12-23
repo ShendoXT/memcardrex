@@ -364,3 +364,6 @@ FodyWeavers.xsd
 /MemcardRex/.DS_Store
 .DS_Store
 MemcardRex.macOS/Resources/.DS_Store
+
+# GTK generated resources
+*.gresource
