@@ -34,6 +34,7 @@
 * PS3 virtual Memory Card(*.VM1)
 * PS Vita "MCX" PocketStation Memory Card(*.BIN)
 * POPStarter Virtual Memory Card(*.VMC)
+* MiSTer FPGA (PSX Core) Memory Card(*.sav)
 
 <br>**Supported single save formats:**
 * PSXGame Edit single save(*.mcs)
