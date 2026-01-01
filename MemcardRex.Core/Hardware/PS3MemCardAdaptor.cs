@@ -138,7 +138,6 @@ namespace MemcardRex.Core
             if (LastErrorCode != ErrorCode.None || bytesWritten != CmdGetCardType.Length)
             {
                 return UsbDevice.LastErrorString;
-                return "Failed to write command to the PS3 Memory Card Adaptor device.";
             }
 
             // Check if it's a PS1 memory card

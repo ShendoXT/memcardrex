@@ -69,6 +69,10 @@
             <attribute name="action">win.close-tab</attribute>
             <attribute name="label" translatable="yes">_Close</attribute>
           </item>
+          <item>
+            <attribute name="action">win.close-all-tab</attribute>
+            <attribute name="label" translatable="yes">_Close All</attribute>
+          </item>
         </section>
         <section>
           <item>
@@ -89,16 +93,40 @@
       </submenu>
       <submenu>
         <attribute name="label" translatable="yes">_Edit</attribute>
-        <section>
+          <section>
           <item>
-            <attribute name="action">win.properties</attribute>
-            <attribute name="label" translatable="yes">Information</attribute>
+            <attribute name="action">win.undo</attribute>
+            <attribute name="label" translatable="yes">Undo</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.redo</attribute>
+            <attribute name="label" translatable="yes">Redo</attribute>
+          </item>
+        </section>
+          <section>
+          <item>
+            <attribute name="action">win.edit-header</attribute>
+            <attribute name="label" translatable="yes">Edit save header...</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.edit-comment</attribute>
+            <attribute name="label" translatable="yes">Edit save comment...</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.edit-plugin</attribute>
+            <attribute name="label" translatable="yes">Edit with plugin</attribute>
           </item>
         </section>
         <section>
           <item>
             <attribute name="action">win.compare-save</attribute>
             <attribute name="label" translatable="yes">Compare with temp buffer</attribute>
+          </item>
+        </section>
+          <section>
+          <item>
+            <attribute name="action">win.edit-icon</attribute>
+            <attribute name="label" translatable="yes">Edit icon...</attribute>
           </item>
         </section>
         <section>
@@ -135,15 +163,49 @@
             <attribute name="label" translatable="yes">_Export save…</attribute>
           </item>
         </section>
+          <section>
+          <item>
+            <attribute name="action">win.properties</attribute>
+            <attribute name="label" translatable="yes">Properties</attribute>
+          </item>
+        </section>
       </submenu>
       <submenu>
-        <attribute name="label" translatable="yes">_View</attribute>
+        <attribute name="label" translatable="yes">_Hardware</attribute>
+        <section>
+          <item>
+            <attribute name="action">app.hardware-read</attribute>
+            <attribute name="label" translatable="yes">Read save data</attribute>
+          </item>
+          <item>
+            <attribute name="action">app.hardware-write</attribute>
+            <attribute name="label" translatable="yes">Write save data</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="action">app.hardware-format</attribute>
+            <attribute name="label" translatable="yes">Format card</attribute>
+          </item>
+        </section>
+      </submenu>
+      <submenu>
+        <attribute name="label" translatable="yes">_Options</attribute>
         <section>
           <item>
             <attribute name="action">app.preferences</attribute>
-            <attribute name="label" translatable="yes">_Preferences</attribute>
+            <attribute name="label" translatable="yes">_Preferences...</attribute>
           </item>
         </section>
+        <section>
+          <item>
+            <attribute name="action">app.plugins</attribute>
+            <attribute name="label" translatable="yes">Plugins</attribute>
+          </item>
+        </section>
+      </submenu>
+      <submenu>
+      <attribute name="label" translatable="yes">_About</attribute>
         <section>
           <item>
             <attribute name="action">app.readme</attribute>
