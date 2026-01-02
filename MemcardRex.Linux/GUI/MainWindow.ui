@@ -3,9 +3,10 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.4"/>
   <object class="AdwApplicationWindow" id="main_window">
-    <property name="default-height">600</property>
-    <property name="default-width">600</property>
+    <property name="default-height">500</property>
+    <property name="default-width">650</property>
     <property name="title">MemcardRex</property>
+    <property name="resizable">false</property>
     <child>
       <object class="AdwToolbarView">
         <property name="top-bar-style">raised</property>
@@ -21,6 +22,124 @@
                 <property name="menu-model">app_menubar</property>
               </object>
             </child>
+          </object>
+        </child>
+          <child type="top">
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+
+            <child>
+              <object class="GtkButton" id="btnNew">
+                <property name="icon-name">document-new-symbolic</property>
+                <property name="tooltip-text">New</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnOpen">
+                <property name="icon-name">folder-open-symbolic</property>
+                <property name="tooltip-text">Open</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnSave">
+                <property name="icon-name">document-save-symbolic</property>
+                <property name="tooltip-text">Save</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkSeparator">
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnSaveHeader">
+                <property name="icon-name">view-list-bullet-symbolic</property>
+                <property name="tooltip-text">Edit save header</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnSaveComment">
+                <property name="icon-name">chat-message-new-symbolic</property>
+                <property name="tooltip-text">Edit save comment</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkSeparator">
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnSaveIcon">
+                <property name="icon-name">document-edit-symbolic</property>
+                <property name="tooltip-text">Edit save icon</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkSeparator">
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnImportSave">
+                <property name="icon-name">view-app-grid-symbolic</property>
+                <property name="tooltip-text">Import save</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnExportSave">
+                <property name="icon-name">send-to-symbolic</property>
+                <property name="tooltip-text">Export save</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkSeparator">
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btnTempBuffer">
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">6</property>
+
+                    <!-- Ikona -->
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">action-unavailable-symbolic</property>
+                      </object>
+                    </child>
+
+                    <!-- Tekst -->
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Temp buffer is empty</property>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+                <property name="tooltip-text">Temp buffer is empty</property>
+              </object>
+            </child>
+
           </object>
         </child>
         <child type="top">
@@ -205,7 +324,7 @@
         </section>
       </submenu>
       <submenu>
-      <attribute name="label" translatable="yes">_About</attribute>
+      <attribute name="label" translatable="yes">_Help</attribute>
         <section>
           <item>
             <attribute name="action">app.readme</attribute>

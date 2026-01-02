@@ -126,7 +126,7 @@ public class PS1CardTab : Gtk.Box
                 cell.Slot = data;
             }
         };
-        titleColumn = Gtk.ColumnViewColumn.New("Title", titleFactory);
+        titleColumn = Gtk.ColumnViewColumn.New("Icon, region and title", titleFactory);
         titleColumn.SetExpand(true);
         saveList.AppendColumn(titleColumn);
 
