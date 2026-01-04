@@ -17,7 +17,7 @@ public class ListCell : Gtk.Box
     public Gtk.GestureClick Controller { get; }
     public string? Text;
     private Gtk.Label? label;
-    private Gtk.Image? image;
+    private Gtk.Picture? image;
 
     public void SetText(string text)
     {
@@ -34,11 +34,15 @@ public class ListCell : Gtk.Box
 
     public void SetImage(Gdk.Paintable? paintable)
     {
-        if (image == null) {
-            image = new();
+        if (image == null)
+        {
+            image = Gtk.Picture.New();
+            image.SetCanShrink(false);
+            //image.SetKeepAspectRatio(false);
             this.Append(image);
         }
-        image.SetFromPaintable(paintable);
+
+        image.SetPaintable(paintable);
     }
 
     public ListCell(PS1Slot? slot) : base()
@@ -107,7 +111,7 @@ public class PS1CardTab : Gtk.Box
                 cell.Slot = data;
             }
         };
-        iconColumn = Gtk.ColumnViewColumn.New("", iconFactory);
+        iconColumn = Gtk.ColumnViewColumn.New("Icon", iconFactory);
         saveList.AppendColumn(iconColumn);
 
         titleFactory = Gtk.SignalListItemFactory.New();
@@ -126,7 +130,7 @@ public class PS1CardTab : Gtk.Box
                 cell.Slot = data;
             }
         };
-        titleColumn = Gtk.ColumnViewColumn.New("Icon, region and title", titleFactory);
+        titleColumn = Gtk.ColumnViewColumn.New("Title", titleFactory);
         titleColumn.SetExpand(true);
         saveList.AppendColumn(titleColumn);
 

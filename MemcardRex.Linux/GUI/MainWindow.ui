@@ -12,11 +12,16 @@
         <property name="top-bar-style">raised</property>
         <child type="top">
           <object class="AdwHeaderBar">
-            <property name="title-widget">
-              <object class="AdwWindowTitle" id="windowTitle">
-                <property name="title">MemcardRex</property>
-              </object>
-            </property>
+          <property name="title-widget">
+            <object class="GtkMenuButton" id="appMenuButton">
+              <property name="menu-model">app_menu</property>
+              <child>
+                <object class="AdwWindowTitle" id="windowTitle">
+                  <property name="title">MemcardRex 2.0a</property>
+                </object>
+              </child>
+            </object>
+          </property>
             <child type="start">
               <object class="GtkPopoverMenuBar">
                 <property name="menu-model">app_menubar</property>
@@ -35,6 +40,7 @@
 
             <child>
               <object class="GtkButton" id="btnNew">
+                <property name="action-name">win.new-card</property>
                 <property name="icon-name">document-new-symbolic</property>
                 <property name="tooltip-text">New</property>
               </object>
@@ -42,6 +48,7 @@
 
             <child>
               <object class="GtkButton" id="btnOpen">
+                <property name="action-name">win.open</property>
                 <property name="icon-name">folder-open-symbolic</property>
                 <property name="tooltip-text">Open</property>
               </object>
@@ -49,6 +56,7 @@
 
             <child>
               <object class="GtkButton" id="btnSave">
+                <property name="action-name">win.save</property>
                 <property name="icon-name">document-save-symbolic</property>
                 <property name="tooltip-text">Save</property>
               </object>
@@ -172,6 +180,26 @@
         </child>
       </object>
     </child>
+      <menu id="app_menu">
+    <section>
+      <item>
+        <attribute name="label">About</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label">Preferences</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label">Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
     <menu id="app_menubar">
       <submenu>
         <attribute name="label" translatable="yes">_File</attribute>
@@ -201,12 +229,6 @@
           <item>
             <attribute name="action">win.save-as</attribute>
             <attribute name="label" translatable="yes">Save _As…</attribute>
-          </item>
-        </section>
-        <section>
-          <item>
-            <attribute name="action">app.quit</attribute>
-            <attribute name="label" translatable="yes">_Quit</attribute>
           </item>
         </section>
       </submenu>
@@ -305,34 +327,6 @@
           <item>
             <attribute name="action">app.hardware-format</attribute>
             <attribute name="label" translatable="yes">Format card</attribute>
-          </item>
-        </section>
-      </submenu>
-      <submenu>
-        <attribute name="label" translatable="yes">_Options</attribute>
-        <section>
-          <item>
-            <attribute name="action">app.preferences</attribute>
-            <attribute name="label" translatable="yes">_Preferences...</attribute>
-          </item>
-        </section>
-        <section>
-          <item>
-            <attribute name="action">app.plugins</attribute>
-            <attribute name="label" translatable="yes">Plugins</attribute>
-          </item>
-        </section>
-      </submenu>
-      <submenu>
-      <attribute name="label" translatable="yes">_Help</attribute>
-        <section>
-          <item>
-            <attribute name="action">app.readme</attribute>
-            <attribute name="label" translatable="yes">_Readme</attribute>
-          </item>
-          <item>
-            <attribute name="action">app.about</attribute>
-            <attribute name="label" translatable="yes">_About</attribute>
           </item>
         </section>
       </submenu>

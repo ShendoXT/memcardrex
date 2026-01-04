@@ -24,6 +24,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources/memcardrex.gresource" />
     <EmbeddedResource Include="Resources/logo.svg" />
+    <EmbeddedResource Include="Resources/amflag.bmp" />
+    <EmbeddedResource Include="Resources/euflag.bmp" />
+    <EmbeddedResource Include="Resources/jpflag.bmp" />
     <EmbeddedResource Include="Resources/extra.png" />
     <EmbeddedResource Include="Resources/unknown.png" />
     <EmbeddedResource Include="GUI/MainWindow.ui" />
