@@ -53,12 +53,30 @@ public class ListCell : Gtk.Box
     }
 }
 
+
+public class HistoryRow : GObject.Object
+{
+    public Gdk.Texture? Icon { get; }
+    public string Text { get; }
+
+    public HistoryRow(Gdk.Texture? icon, string text)
+        : base(true, [])
+    {
+        Icon = icon;
+        Text = text;
+    }
+}
+
+
 public class PS1CardTab : Gtk.Box
 {
     [Connect] private readonly Gtk.ColumnView saveList;
+    [Connect] private readonly Gtk.ColumnView historyList;
     [Connect] private readonly Gtk.PopoverMenu contextMenu;
     [Connect] private readonly Gtk.PopoverMenu freeContextMenu;
-    private readonly Gtk.SingleSelection model;
+    private readonly Gtk.MultiSelection model;
+    private Gtk.SingleSelection historyModel;
+    private bool internalSelectionChange = false;
     private readonly Gtk.SignalListItemFactory iconFactory;
     private readonly Gtk.SignalListItemFactory titleFactory;
     private readonly Gtk.SignalListItemFactory productCodeFactory;
@@ -67,7 +85,6 @@ public class PS1CardTab : Gtk.Box
     private readonly Gtk.ColumnViewColumn titleColumn;
     private readonly Gtk.ColumnViewColumn productCodeColumn;
     private readonly Gtk.ColumnViewColumn identifierColumn;
-    private bool selectionChanging = false;
 
     public bool HasUnsavedChanges { get; set; }
     public string? Title {
@@ -83,15 +100,21 @@ public class PS1CardTab : Gtk.Box
         memcard = card;
 
         saveList ??= new();
+        historyList ??= new();
         contextMenu ??= new();
         freeContextMenu ??= new();
         var listStore = Gio.ListStore.New(PS1Slot.GetGType());
-        model = Gtk.SingleSelection.New(listStore);
-        model.CanUnselect = true;
-        model.Autoselect = false;
-        var signal = new Signal<SingleSelection>("selection-changed", "selectionChanged");
-        signal.Connect(model, OnSelectionChanged);
+        var historyStore = Gio.ListStore.New(HistoryRow.GetGType());
+        model = Gtk.MultiSelection.New(listStore);
+        //model.Autoselect = false;
+        historyModel = Gtk.SingleSelection.New(historyStore);
+        historyModel.Autoselect = false;
+        historyModel.CanUnselect = true;
+        var signal = new Signal<MultiSelection>("selection-changed", "selectionChanged");
+        signal.Connect(model, OnSaveSelectionChanged);
+
         saveList.SetModel(model);
+        historyList.SetModel(historyModel);
 
         saveList.OnActivate += (_, args) => Properties();
 
@@ -131,7 +154,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         titleColumn = Gtk.ColumnViewColumn.New("Title", titleFactory);
-        titleColumn.SetExpand(true);
+        titleColumn.SetFixedWidth(350);
         saveList.AppendColumn(titleColumn);
 
         productCodeFactory = Gtk.SignalListItemFactory.New();
@@ -151,6 +174,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         productCodeColumn = Gtk.ColumnViewColumn.New("Product code", productCodeFactory);
+        productCodeColumn.SetFixedWidth(120);
         saveList.AppendColumn(productCodeColumn);
 
         identifierFactory = Gtk.SignalListItemFactory.New();
@@ -170,6 +194,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         identifierColumn = Gtk.ColumnViewColumn.New("Identifier", identifierFactory);
+        identifierColumn.SetFixedWidth(120);
         saveList.AppendColumn(identifierColumn);
 
         for (int i = 0; i < 15; i++)
@@ -177,6 +202,36 @@ public class PS1CardTab : Gtk.Box
             var data = new PS1Slot(card, i);
             listStore.Append(data);
         }
+
+        var historyFactory = Gtk.SignalListItemFactory.New();
+
+        historyFactory.OnSetup += (_, args) =>
+        {
+            var listItem = (Gtk.ListItem)args.Object;
+            var cell = new ListCell(null);
+            listItem.SetChild(cell);
+        };
+
+        historyFactory.OnBind += (_, args) =>
+        {
+            var listItem = (Gtk.ListItem)args.Object;
+            var row = (HistoryRow?)listItem.GetItem();
+            var cell = (ListCell?)listItem.GetChild();
+
+            if (row != null && cell != null)
+            {
+                cell.SetImage(row.Icon);
+                cell.SetText(row.Text);
+            }
+        };
+
+        var historyColumn = Gtk.ColumnViewColumn.New("History", historyFactory);
+        historyColumn.SetFixedWidth(120);
+        historyList.AppendColumn(historyColumn);
+
+        historyStore.Append(
+            new HistoryRow(null, "Card created")
+        );
     }
 
     public void SetPage(Adw.TabPage page)
@@ -294,16 +349,37 @@ public class PS1CardTab : Gtk.Box
         menu.Popup();
     }
 
-    public void OnSelectionChanged(Gtk.SingleSelection _model, EventArgs args)
+    //User selected a save slot
+    public void OnSaveSelectionChanged(Gtk.MultiSelection sel, EventArgs args)
     {
-        if (selectionChanging) return;
-        selectionChanging = true;
-        selectionChanging = false;
+        //For multislot don't trigger on each link
+        if (internalSelectionChange)
+            return;
+
+        var bitset = sel.GetSelection();
+
+        ulong index = bitset.GetMinimum();
+
+        if (index == Gtk.Constants.INVALID_LIST_POSITION)
+            return;
+
+        internalSelectionChange = true;
+        int masterSlot = memcard.GetMasterLinkForSlot((int)index);
+
+        sel.UnselectAll();
+
+        foreach (int slot in memcard.FindSaveLinks(masterSlot))
+            sel.SelectItem((uint)slot, false);
+
+        //Console.WriteLine(memcard.FindSaveLinks((int)index).Count());
+
+        internalSelectionChange = false;
     }
 
     private PS1Slot? SelectedSave()
     {
-        return (PS1Slot?) model.GetSelectedItem();
+        return null;
+        //return (PS1Slot?) model.GetSelectedItem();
     }
 
     public PS1CardTab(ps1card card) : this(card, new Gtk.Builder("MemcardRex.Linux.GUI.PS1CardTab.ui"), "card_tab") {}

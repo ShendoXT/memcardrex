@@ -4,7 +4,7 @@
   <requires lib="libadwaita" version="1.4"/>
   <object class="AdwApplicationWindow" id="main_window">
     <property name="default-height">500</property>
-    <property name="default-width">650</property>
+    <property name="default-width">800</property>
     <property name="title">MemcardRex</property>
     <property name="resizable">false</property>
     <child>

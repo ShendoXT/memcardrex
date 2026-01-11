@@ -2,9 +2,20 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <object class="GtkBox" id="card_tab">
-    <property name="orientation">vertical</property>
+    <property name="orientation">horizontal</property>
+    <property name="spacing">0</property>
     <child>
       <object class="GtkColumnView" id="saveList">
+        <property name="css-classes">
+view
+data-table</property>
+        <property name="hexpand">True</property>
+        <property name="reorderable">False</property>
+        <property name="vexpand">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkColumnView" id="historyList">
         <property name="css-classes">
 view
 data-table</property>

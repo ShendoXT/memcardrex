@@ -1,7 +1,7 @@
 /* Copyright (C) 2024 Rob Hall
  * SPDX-License-Identifier: GPL-3.0-or-later */
 
-﻿using System;
+using System;
 using System.Reflection;
 using GdkPixbuf;
 using Gio;
@@ -126,6 +126,9 @@ public class MainWindow : Gtk.ApplicationWindow
         this.AddAction(actionProperties);
 
         SetCardActionsEnabled(false);
+
+        //Add new untitled card on load
+        this.ActivateAction("new-card", null);
     }
 
     private void SetCardActionsEnabled(bool enabled)
