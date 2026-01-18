@@ -77,7 +77,7 @@ namespace MemcardRex.Core
         /// <summary>
         /// All supported Memory Card file extensions
         /// </summary>
-        public string[] SupportedExtensions { get; } = { "mcr", "ddf", "gme", "mc", "mcd", "mci", "bin", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc" };
+        public string[] SupportedExtensions { get; } = { "mcr", "ddf", "gme", "mc", "mcd", "mci", "bin", "mem", "ps", "psm", "srm", "vgs", "vm1", "vmp", "vmc", "sav" };
 
         /// <summary>
         /// All supported single save file extensions

@@ -86,9 +86,14 @@ public class PS1CardTab : Gtk.Box
     private readonly Gtk.ColumnViewColumn productCodeColumn;
     private readonly Gtk.ColumnViewColumn identifierColumn;
 
-    public bool HasUnsavedChanges { get; set; }
+    public bool HasUnsavedChanges {
+        get { return memcard.changedFlag; }
+    }
     public string? Title {
         get { return memcard.cardName; }
+    }
+    public string Location{
+        get { return memcard.cardLocation; }
     }
     private Adw.TabPage? Page;
 
@@ -154,7 +159,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         titleColumn = Gtk.ColumnViewColumn.New("Title", titleFactory);
-        titleColumn.SetFixedWidth(350);
+        titleColumn.SetFixedWidth(400);
         saveList.AppendColumn(titleColumn);
 
         productCodeFactory = Gtk.SignalListItemFactory.New();
@@ -254,7 +259,7 @@ public class PS1CardTab : Gtk.Box
 
         if (memcard.SaveMemoryCard(memcard.cardLocation, memcard.cardType, false)) {
             Page.SetIcon(null);
-            HasUnsavedChanges = false;
+            //HasUnsavedChanges = false;
         }
         return;
     }
@@ -310,7 +315,7 @@ public class PS1CardTab : Gtk.Box
             try {
                 bool result = memcard.SaveMemoryCard(file!.GetPath()!, memcard.cardType, false);
                 if (result) {
-                    HasUnsavedChanges = false;
+                    //HasUnsavedChanges = false;
                 }
                 else {
                     Console.WriteLine("Failed to save memory card: {0}", result);

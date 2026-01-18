@@ -18,6 +18,7 @@ public class MainWindow : Gtk.ApplicationWindow
     [Connect] private readonly Adw.TabView tabView;
     [Connect] private readonly Gtk.Stack stack;
     [Connect] private readonly Adw.WindowTitle windowTitle;
+    [Connect] private readonly Gtk.Label statusLabel = null!;
 
     // Card actions
     private readonly Gio.SimpleAction actionNew;
@@ -56,8 +57,11 @@ public class MainWindow : Gtk.ApplicationWindow
                 var page = tabView.GetSelectedPage();
                 if (page != null) {
                     var child = (PS1CardTab?)page.GetChild();
-                    if (child != null && child.Title != null)
+                    if (child != null && child.Title != null){
                         windowTitle.SetSubtitle(child.Title);
+                        statusLabel.SetText(child.Location);
+                    }
+
                 }
             }
             else if (args.Pspec.GetName() == "n-pages") {
@@ -157,8 +161,8 @@ public class MainWindow : Gtk.ApplicationWindow
     {
         var fileChooser = Gtk.FileChooserNative.New("Open Memory Card", this, Gtk.FileChooserAction.Open, "Open", "Cancel");
         fileChooser.SetModal(true);
-        fileChooser.AddFilter(AllFilesFilter());
         fileChooser.AddFilter(MemoryCardsFilter());
+        fileChooser.AddFilter(AllFilesFilter());
         fileChooser.Show();
         fileChooser.OnResponse += (sender, args) => {
             var file = fileChooser.GetFile();
@@ -172,11 +176,23 @@ public class MainWindow : Gtk.ApplicationWindow
                     Utils.ErrorMessage(this, "Open Failed", result);
                     return;
                 }
+
+                //Filter null untitled card
+                if(tabView.GetNPages() == 1){
+                    var page = (PS1CardTab) tabView.GetNthPage(0).GetChild();
+                    if(!page.HasUnsavedChanges && page.Location == null)
+                        tabView.ClosePage(tabView.GetNthPage(0));
+                }
+
                 var tab = new PS1CardTab(card);
                 var child = tabView.Append(tab);
                 tab.SetPage(child);
                 tabView.SetSelectedPage(child);
                 SetCardActionsEnabled(true);
+
+                //Update location in status bar
+                //statusLabel.SetText(card.cardLocation);
+
             }
             catch { return; }
         };
@@ -311,7 +327,7 @@ public class MainWindow : Gtk.ApplicationWindow
     internal static Gtk.FileFilter MemoryCardsFilter()
     {
         var filter = Gtk.FileFilter.New();
-        string[] patterns = [".BIN", "*.mcr", "*.VMP", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"];
+        string[] patterns = ["*.bin", "*.gme", "*.sav", "*.mcr", "*.VMP", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"];
         filter.Name = "All Supported Files";
         foreach (string pattern in patterns)
         {
