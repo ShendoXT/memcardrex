@@ -7,6 +7,7 @@ using GdkPixbuf;
 using Gio;
 using GObject;
 using Gtk;
+using Gdk;
 using Adw;
 using MemcardRex.Core;
 using static MemcardRex.Core.ps1card;
@@ -49,7 +50,7 @@ public class MainWindow : Gtk.ApplicationWindow
         windowTitle ??= new();
 
         var style_manager = Adw.StyleManager.GetDefault();
-        style_manager.SetColorScheme(ColorScheme.PreferDark);
+        //style_manager.SetColorScheme(ColorScheme.PreferDark);
 
         tabView.OnClosePage += OnTabCloseRequest;
         tabView.OnNotify += (_, args) => {
@@ -58,7 +59,8 @@ public class MainWindow : Gtk.ApplicationWindow
                 if (page != null) {
                     var child = (PS1CardTab?)page.GetChild();
                     if (child != null && child.Title != null){
-                        windowTitle.SetSubtitle(child.Title);
+                        if(tabView.GetNPages() == 1) windowTitle.SetSubtitle(child.Title);
+                        else windowTitle.SetSubtitle("");
                         statusLabel.SetText(child.Location);
                     }
 
@@ -69,8 +71,9 @@ public class MainWindow : Gtk.ApplicationWindow
                     var page = tabView.GetSelectedPage();
                     if (page != null) {
                         var child = (PS1CardTab?)page.GetChild();
-                        if (child != null && child.Title != null)
+                        if (child != null && child.Title != null && tabView.GetNPages() == 1)
                             windowTitle.SetSubtitle(child.Title);
+                        else windowTitle.SetSubtitle("");
                     }
                     stack.SetVisibleChildName("tabs");
                     SetCardActionsEnabled(true);
@@ -131,6 +134,17 @@ public class MainWindow : Gtk.ApplicationWindow
 
         SetCardActionsEnabled(false);
 
+        //Add file drag and drop support
+        GtkDragDrop.AddFileDropTarget(this, paths =>
+        {
+            foreach (var path in paths)
+            {
+                //This will filter out directories
+                if (System.IO.File.Exists(path))
+                    OpenCardFile(path);
+            }
+        });
+
         //Add new untitled card on load
         this.ActivateAction("new-card", null);
     }
@@ -157,6 +171,44 @@ public class MainWindow : Gtk.ApplicationWindow
         SetCardActionsEnabled(true);
     }
 
+    private void OpenCardFile(string filename){
+
+        //Check if this file is already opened in the application
+        for (uint i = 0; i < tabView.GetNPages(); i++)
+        {
+            var page = tabView.GetNthPage((int)i);
+            var existingTab = (PS1CardTab)page.GetChild();
+            
+            if (existingTab.Location != null && 
+                Path.GetFullPath(existingTab.Location) == Path.GetFullPath(filename))
+            {
+                // File je već otvoren - aktiviraj taj tab
+                tabView.SetSelectedPage(page);
+                return;
+            }
+        }
+
+        var card = new ps1card();
+        string? result = card.OpenMemoryCard(filename, false);
+        if (result != null) {
+            Utils.ErrorMessage(this, "Open Failed", result);
+            return;
+        }
+        
+        //Filter null untitled card
+        if(tabView.GetNPages() == 1){
+            var page = (PS1CardTab) tabView.GetNthPage(0).GetChild();
+            if(!page.HasUnsavedChanges && page.Location == null)
+                tabView.ClosePage(tabView.GetNthPage(0));
+        }
+
+        var tab = new PS1CardTab(card);
+        var child = tabView.Append(tab);
+        tab.SetPage(child);
+        tabView.SetSelectedPage(child);
+        SetCardActionsEnabled(true);
+    }
+
     private void OpenCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
         var fileChooser = Gtk.FileChooserNative.New("Open Memory Card", this, Gtk.FileChooserAction.Open, "Open", "Cancel");
@@ -170,29 +222,7 @@ public class MainWindow : Gtk.ApplicationWindow
             if (args.ResponseId != (int) Gtk.ResponseType.Accept)
                 return;
             try {
-                var card = new ps1card();
-                string? result = card.OpenMemoryCard(file!.GetPath()!, false);
-                if (result != null) {
-                    Utils.ErrorMessage(this, "Open Failed", result);
-                    return;
-                }
-
-                //Filter null untitled card
-                if(tabView.GetNPages() == 1){
-                    var page = (PS1CardTab) tabView.GetNthPage(0).GetChild();
-                    if(!page.HasUnsavedChanges && page.Location == null)
-                        tabView.ClosePage(tabView.GetNthPage(0));
-                }
-
-                var tab = new PS1CardTab(card);
-                var child = tabView.Append(tab);
-                tab.SetPage(child);
-                tabView.SetSelectedPage(child);
-                SetCardActionsEnabled(true);
-
-                //Update location in status bar
-                //statusLabel.SetText(card.cardLocation);
-
+                OpenCardFile(file!.GetPath()!);
             }
             catch { return; }
         };

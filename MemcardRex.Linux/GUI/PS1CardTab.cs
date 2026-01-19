@@ -3,6 +3,7 @@
 
 using Adw;
 using Gtk;
+using Gdk;
 using GObject;
 using MemcardRex.Core;
 using System.ComponentModel;
@@ -159,7 +160,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         titleColumn = Gtk.ColumnViewColumn.New("Title", titleFactory);
-        titleColumn.SetFixedWidth(400);
+        titleColumn.SetFixedWidth(350);
         saveList.AppendColumn(titleColumn);
 
         productCodeFactory = Gtk.SignalListItemFactory.New();
@@ -179,7 +180,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         productCodeColumn = Gtk.ColumnViewColumn.New("Product code", productCodeFactory);
-        productCodeColumn.SetFixedWidth(120);
+        productCodeColumn.SetFixedWidth(130);
         saveList.AppendColumn(productCodeColumn);
 
         identifierFactory = Gtk.SignalListItemFactory.New();
@@ -199,7 +200,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         identifierColumn = Gtk.ColumnViewColumn.New("Identifier", identifierFactory);
-        identifierColumn.SetFixedWidth(120);
+        identifierColumn.SetFixedWidth(130);
         saveList.AppendColumn(identifierColumn);
 
         for (int i = 0; i < 15; i++)
@@ -231,12 +232,16 @@ public class PS1CardTab : Gtk.Box
         };
 
         var historyColumn = Gtk.ColumnViewColumn.New("History", historyFactory);
-        historyColumn.SetFixedWidth(120);
+        historyColumn.SetFixedWidth(160);
         historyList.AppendColumn(historyColumn);
 
         historyStore.Append(
             new HistoryRow(null, "Card created")
         );
+
+        //Select first items on the list
+        model.SelectItem(0, false);
+        historyModel.SelectItem(0, false);
     }
 
     public void SetPage(Adw.TabPage page)
@@ -375,8 +380,6 @@ public class PS1CardTab : Gtk.Box
 
         foreach (int slot in memcard.FindSaveLinks(masterSlot))
             sel.SelectItem((uint)slot, false);
-
-        //Console.WriteLine(memcard.FindSaveLinks((int)index).Count());
 
         internalSelectionChange = false;
     }
