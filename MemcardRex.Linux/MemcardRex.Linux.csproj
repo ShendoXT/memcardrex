@@ -33,6 +33,7 @@
     <EmbeddedResource Include="GUI/PS1CardTab.ui" />
     <EmbeddedResource Include="GUI/PreferencesWindow.ui" />
     <EmbeddedResource Include="GUI/PropertiesDialog.ui" />
+    <EmbeddedResource Include="GUI/SaveInfoDialog.ui" />
   </ItemGroup>
 
 </Project>

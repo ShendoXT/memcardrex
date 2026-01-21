@@ -8,8 +8,7 @@
       <object class="GtkColumnView" id="saveList">
         <property name="css-classes">
 view
-data-table
-zebra</property>
+data-table</property>
         <property name="hexpand">True</property>
         <property name="reorderable">False</property>
         <property name="vexpand">True</property>

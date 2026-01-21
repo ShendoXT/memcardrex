@@ -39,7 +39,6 @@ public class ListCell : Gtk.Box
         {
             image = Gtk.Picture.New();
             image.SetCanShrink(false);
-            //image.SetKeepAspectRatio(false);
             this.Append(image);
         }
 
@@ -112,7 +111,6 @@ public class PS1CardTab : Gtk.Box
         var listStore = Gio.ListStore.New(PS1Slot.GetGType());
         var historyStore = Gio.ListStore.New(HistoryRow.GetGType());
         model = Gtk.MultiSelection.New(listStore);
-        //model.Autoselect = false;
         historyModel = Gtk.SingleSelection.New(historyStore);
         historyModel.Autoselect = false;
         historyModel.CanUnselect = true;
@@ -289,12 +287,42 @@ public class PS1CardTab : Gtk.Box
     {
         var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType());
         var slot = SelectedSave();
-        if (slot == null || slot.Type == SlotTypes.formatted) return;
+        if (slot == null) return;
 
-        var dialog = new PropertiesDialog(slot);
+        int masterSlot = (int) slot;
+
+        //PocketStation icons
+        int iconDelay = 0;
+        byte[] mcIconData = memcard.GetPocketStationIcon(masterSlot, ps1card.IconTypes.MCIcon, out iconDelay);
+        byte[] apIconData = memcard.GetPocketStationIcon(masterSlot, ps1card.IconTypes.APIcon, out iconDelay);
+
+        var dialog = new SaveInfoDialog(parent!);
+        dialog.SetSaveInfo(
+            title: memcard.saveName[masterSlot],
+            productCode: memcard.saveProdCode[masterSlot],
+            identifier: memcard.saveIdentifier[masterSlot],
+            region: memcard.saveRegion[masterSlot],
+            fileType: memcard.saveDataType[masterSlot],
+            slots: memcard.FindSaveLinks(masterSlot),
+            size: memcard.saveSize[masterSlot],
+            iconFrames: memcard.iconFrames[masterSlot],
+            saveIcons: memcard.iconColorData,
+            mcIcons: mcIconData,
+            apIcons: apIconData,
+            iconDelay: iconDelay
+        );
+
+        dialog.Present();
+
+        /*informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
+            memCard.saveRegion[masterSlot], memCard.saveDataType[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
+            memCard.iconColorData, mcIconData, apIconData, iconDelay, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor);*/
+
+
+        /*var dialog = new PropertiesDialog(slot);
         dialog.SetTransientFor(parent);
         dialog.SetModal(true);
-        dialog.Show();
+        dialog.Show();*/
     }
 
     public void SaveAs(Gtk.Window window)
@@ -384,10 +412,14 @@ public class PS1CardTab : Gtk.Box
         internalSelectionChange = false;
     }
 
-    private PS1Slot? SelectedSave()
+    //Return selected master slot for the selected save in the list
+    private int? SelectedSave()
     {
-        return null;
-        //return (PS1Slot?) model.GetSelectedItem();
+        var bitset = model.GetSelection();
+        
+        if (bitset.GetSize() > 0)
+            return memcard.GetMasterLinkForSlot((int)bitset.GetNth(0));
+        else return null;
     }
 
     public PS1CardTab(ps1card card) : this(card, new Gtk.Builder("MemcardRex.Linux.GUI.PS1CardTab.ui"), "card_tab") {}
