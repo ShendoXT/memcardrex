@@ -6,7 +6,6 @@ namespace MemcardRex.Linux;
 public class HeaderDialog
 {
     private readonly Dialog dialog;
-    private readonly Label titleLabel;
     private readonly ComboBox regionCombo;
     private readonly Entry productCodeEntry;
     private readonly Entry identifierEntry;
@@ -20,7 +19,6 @@ public class HeaderDialog
         var builder = new Builder("MemcardRex.Linux.GUI.HeaderDialog.ui");
         
         dialog = (Dialog)builder.GetObject("dialog")!;
-        titleLabel = (Label)builder.GetObject("titleLabel")!;
         regionCombo = (ComboBox)builder.GetObject("regionCombo")!;
         productCodeEntry = (Entry)builder.GetObject("productCodeEntry")!;
         identifierEntry = (Entry)builder.GetObject("identifierEntry")!;
@@ -50,7 +48,7 @@ public class HeaderDialog
     }
 
     public void SetSaveInfo(string title, string region, string productCode, string identifier){
-        titleLabel.SetLabel(title);
+        dialog.SetTitle(title);
         productCodeEntry.SetText(productCode);
         identifierEntry.SetText(identifier);
 

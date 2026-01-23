@@ -5,18 +5,8 @@
     <property name="modal">true</property>
     <property name="default-width">450</property>
     <property name="resizable">false</property>
-    
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="show-title-buttons">true</property>
-        <child type="title">
-          <object class="GtkLabel" id="titleLabel">
-            <property name="label"></property>
-          </object>
-        </child>
-      </object>
-    </child>
-    
+    <property name="title"></property>
+
     <child internal-child="content_area">
       <object class="GtkBox">
         <property name="orientation">vertical</property>
@@ -127,11 +117,17 @@
         </child>
         
         <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+          </object>
+        </child>
+
+        <child>
           <object class="GtkBox">
             <property name="orientation">horizontal</property>
             <property name="spacing">6</property>
             <property name="halign">end</property>
-            <property name="margin-top">6</property>
+            <property name="margin-top">0</property>
             
             <child>
               <object class="GtkButton" id="okButton">

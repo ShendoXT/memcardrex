@@ -35,6 +35,7 @@
     <EmbeddedResource Include="GUI/PropertiesDialog.ui" />
     <EmbeddedResource Include="GUI/SaveInfoDialog.ui" />
     <EmbeddedResource Include="GUI/HeaderDialog.ui" />
+    <EmbeddedResource Include="GUI/CommentsDialog.ui" />
   </ItemGroup>
 
 </Project>

@@ -37,7 +37,7 @@ public class MainWindow : Gtk.ApplicationWindow
     private readonly Gio.SimpleAction actionDeleteSave;
     private readonly Gio.SimpleAction actionRestoreSave;
     private readonly Gio.SimpleAction actionEraseSave;
-    //private readonly Gio.SimpleAction actionEditComment;
+    private readonly Gio.SimpleAction actionEditComment;
     private readonly Gio.SimpleAction actionEditHeader;
     //private readonly Gio.SimpleAction actionEditIcon;
     private readonly Gio.SimpleAction actionProperties;
@@ -135,6 +135,11 @@ public class MainWindow : Gtk.ApplicationWindow
         actionEditHeader.OnActivate += (_, _) => CurrentCard()?.EditHeader();
         this.AddAction(actionEditHeader);
         SetCardActionsEnabled(false);
+        actionEditComment = Gio.SimpleAction.New("edit-comment", null);
+        actionEditComment.OnActivate += (_, _) => CurrentCard()?.EditComments();
+        this.AddAction(actionEditComment);
+        SetCardActionsEnabled(false);
+
 
         //Add file drag and drop support
         GtkDragDrop.AddFileDropTarget(this, paths =>

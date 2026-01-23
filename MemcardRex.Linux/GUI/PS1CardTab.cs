@@ -339,6 +339,19 @@ public class PS1CardTab : Gtk.Box
         }
     }
 
+    //Edit save comments of the currently selected save
+    public void EditComments(){
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+
+        var dialog = new CommentsDialog(parent!);
+
+        dialog.SetComments(memcard.saveName[masterSlot], memcard.saveComments[masterSlot]);
+
+        if(dialog.Run()){
+            memcard.SetComment(masterSlot, dialog.GetComments());
+        }
+    }
+
     public void Properties()
     {
         var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType());
