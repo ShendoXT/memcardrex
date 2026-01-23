@@ -352,6 +352,52 @@ public class PS1CardTab : Gtk.Box
         }
     }
 
+
+    //Copy save to global temp buffer
+    public bool CopySave(ref byte[] tempBuffer, ref string tempBufferName, out Gdk.Texture? icon){
+        icon = null;
+        if(!ValidityCheck(out var parent, out int masterSlot)) return false;
+
+        tempBuffer = memcard.GetSaveBytes(masterSlot);
+        tempBufferName = memcard.saveName[masterSlot];
+
+        //Fetch icon for the save
+        BmpBuilder bmpImage = new BmpBuilder();
+        icon = TextureBuilder.BmpToTexture(bmpImage.BuildBmp(memcard.iconColorData[masterSlot, 0]))!;
+
+        return true;
+    }
+
+    //Paste save from global temp buffer
+    public void PasteSave(byte[]? tempBuffer){
+        if (tempBuffer == null) return;
+
+        //Grab parent and master slot, not a real validity check
+        ValidityCheck(out var parent, out int masterSlot);
+
+        int requiredSlots = 0;
+        if (memcard.SetSaveBytes(masterSlot, tempBuffer, out requiredSlots))
+        {
+            RefreshSaveList();
+            //pushHistory("Save pasted", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
+        }
+        else
+        {
+            var dialog = new Adw.MessageDialog
+            {
+                Modal = true,
+                Heading = "Insufficient space",
+                Body = "To complete this operation " + requiredSlots.ToString() + " free slots are required.",
+                TransientFor = parent
+            };
+            dialog.AddResponse("cancel", "Close");
+            dialog.Show();
+            dialog.OnResponse += (_, dialogArgs) => {
+                dialog.Destroy();
+            };
+        }
+    }
+
     public void Properties()
     {
         var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType());

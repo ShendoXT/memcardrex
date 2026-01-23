@@ -20,6 +20,9 @@ public class MainWindow : Gtk.ApplicationWindow
     [Connect] private readonly Gtk.Stack stack;
     [Connect] private readonly Adw.WindowTitle windowTitle;
     [Connect] private readonly Gtk.Label statusLabel = null!;
+    [Connect] private readonly Gtk.Button? btnTempBuffer = null;
+    [Connect] private readonly Gtk.Image? btnTempImage = null;
+    [Connect] private readonly Gtk.Label? btnTempLabel = null;
 
     // Card actions
     private readonly Gio.SimpleAction actionNew;
@@ -48,6 +51,10 @@ public class MainWindow : Gtk.ApplicationWindow
         tabView ??= new();
         stack ??= new();
         windowTitle ??= new();
+
+        //Temp buffer used to store saves
+        byte[]? tempBuffer = null;
+        string? tempBufferName = null;
 
         var style_manager = Adw.StyleManager.GetDefault();
         //style_manager.SetColorScheme(ColorScheme.PreferDark);
@@ -117,10 +124,25 @@ public class MainWindow : Gtk.ApplicationWindow
         actionRestoreSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
         this.AddAction(actionRestoreSave);
         actionCopySave = Gio.SimpleAction.New("copy-save", null);
-        actionCopySave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionCopySave.OnActivate += (_, _) => {
+                Gdk.Texture? icon = null;
+                var card = CurrentCard();
+                if(card is null) return;
+
+                if(card.CopySave(ref tempBuffer!, ref tempBufferName!, out icon)){
+
+                    //Update tolbar from the info
+                    if(icon is Gdk.Texture safeIcon ) btnTempImage!.Paintable = safeIcon;
+
+                    btnTempLabel!.SetText(tempBufferName);
+                    btnTempBuffer!.TooltipText = tempBufferName;
+
+                    btnTempBuffer!.Sensitive = true;
+                }
+            };
         this.AddAction(actionCopySave);
         actionPasteSave = Gio.SimpleAction.New("paste-save", null);
-        actionPasteSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionPasteSave.OnActivate += (_, _) => CurrentCard()?.PasteSave(tempBuffer);
         this.AddAction(actionPasteSave);
         actionCompareSave = Gio.SimpleAction.New("compare-save", null);
         actionCompareSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
@@ -140,6 +162,8 @@ public class MainWindow : Gtk.ApplicationWindow
         this.AddAction(actionEditComment);
         SetCardActionsEnabled(false);
 
+        //Temp buffer toolbar button
+        btnTempBuffer!.OnClicked += (sender, e) => CurrentCard()?.PasteSave(tempBuffer);
 
         //Add file drag and drop support
         GtkDragDrop.AddFileDropTarget(this, paths =>
@@ -151,6 +175,16 @@ public class MainWindow : Gtk.ApplicationWindow
                     OpenCardFile(path);
             }
         });
+
+        //Keyboard shortcuts
+        this.OnRealize += (sender, e) => {
+            var app = this.GetApplication();
+            if (app is not null) 
+            {
+                app.SetAccelsForAction("win.copy-save", new[] { "<Control>c" });
+                app.SetAccelsForAction("win.paste-save", new[] { "<Control>v" });
+            }
+        };
 
         //Add new untitled card on load
         this.ActivateAction("new-card", null);
