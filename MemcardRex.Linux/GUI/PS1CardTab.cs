@@ -67,7 +67,6 @@ public class HistoryRow : GObject.Object
     }
 }
 
-
 public class PS1CardTab : Gtk.Box
 {
     [Connect] private readonly Gtk.ColumnView saveList;
@@ -85,6 +84,8 @@ public class PS1CardTab : Gtk.Box
     private readonly Gtk.ColumnViewColumn titleColumn;
     private readonly Gtk.ColumnViewColumn productCodeColumn;
     private readonly Gtk.ColumnViewColumn identifierColumn;
+
+    private Gio.ListStore listStore;
 
     public bool HasUnsavedChanges {
         get { return memcard.changedFlag; }
@@ -108,7 +109,7 @@ public class PS1CardTab : Gtk.Box
         historyList ??= new();
         contextMenu ??= new();
         freeContextMenu ??= new();
-        var listStore = Gio.ListStore.New(PS1Slot.GetGType());
+        listStore = Gio.ListStore.New(PS1Slot.GetGType());
         var historyStore = Gio.ListStore.New(HistoryRow.GetGType());
         model = Gtk.MultiSelection.New(listStore);
         historyModel = Gtk.SingleSelection.New(historyStore);
@@ -120,7 +121,7 @@ public class PS1CardTab : Gtk.Box
         saveList.SetModel(model);
         historyList.SetModel(historyModel);
 
-        saveList.OnActivate += (_, args) => Properties();
+        //saveList.OnActivate += (_, args) => Properties();
 
         iconFactory = Gtk.SignalListItemFactory.New();
         iconFactory.OnSetup += (_, args) => {
@@ -283,6 +284,61 @@ public class PS1CardTab : Gtk.Box
         Console.WriteLine("Exported save");
     }
 
+    //Check if a selected save is valid for the editing operations
+    private bool ValidityCheck(out Gtk.Window parent, out int masterSlot){
+        parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType())!;
+        masterSlot = 0;
+
+        var slot = SelectedSave();
+        if (slot == null) return false;
+
+        masterSlot = (int) slot;
+
+        //Only initial saves
+        if(memcard.slotType[masterSlot] == SlotTypes.initial ||
+        memcard.slotType[masterSlot] == SlotTypes.deleted_initial) return true;
+
+        return false;
+    }
+
+    //Refresh list view after save editing
+    private void RefreshSaveList(){
+
+        //Refresh icons
+        for (uint i = 0; i < listStore.GetNItems(); i++)
+        {
+            var handle = listStore.GetItem(i);
+            var slot = GObject.Internal.ObjectWrapper.WrapHandle<PS1Slot>(handle, false);
+            slot.ForceRefresh();
+        }
+
+        //Refresh list view
+        saveList.SetModel(null);
+        saveList.SetModel(model);
+    }
+
+    //Edit save header of the currently selected save
+    public void EditHeader(){
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+
+        var dialog = new HeaderDialog(parent!);
+
+        dialog.SetSaveInfo(title: memcard.saveName[masterSlot],
+            region: memcard.saveRegion[masterSlot],
+            productCode: memcard.saveProdCode[masterSlot],
+            identifier: memcard.saveIdentifier[masterSlot]
+        );
+
+        //User pressed OK
+        if (dialog.Run())
+        {
+            memcard.SetHeaderData(masterSlot, dialog.GetProductCode(), dialog.GetIdentifier(), dialog.GetRegion());
+
+            //Refresh list
+            RefreshSaveList();
+        }
+    }
+
     public void Properties()
     {
         var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType());
@@ -290,6 +346,10 @@ public class PS1CardTab : Gtk.Box
         if (slot == null) return;
 
         int masterSlot = (int) slot;
+
+        //Only show properties for the initial saves
+        if((memcard.slotType[masterSlot] != SlotTypes.initial &&
+        memcard.slotType[masterSlot] != SlotTypes.deleted_initial)) return;
 
         //PocketStation icons
         int iconDelay = 0;
@@ -313,16 +373,6 @@ public class PS1CardTab : Gtk.Box
         );
 
         dialog.Present();
-
-        /*informationDlg.initializeDialog(memCard.saveName[masterSlot], memCard.saveProdCode[masterSlot], memCard.saveIdentifier[masterSlot],
-            memCard.saveRegion[masterSlot], memCard.saveDataType[masterSlot], memCard.saveSize[masterSlot], memCard.iconFrames[masterSlot],
-            memCard.iconColorData, mcIconData, apIconData, iconDelay, memCard.FindSaveLinks(masterSlot), appSettings.IconBackgroundColor);*/
-
-
-        /*var dialog = new PropertiesDialog(slot);
-        dialog.SetTransientFor(parent);
-        dialog.SetModal(true);
-        dialog.Show();*/
     }
 
     public void SaveAs(Gtk.Window window)

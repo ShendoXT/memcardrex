@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkDialog" id="dialog">
+    <property name="modal">true</property>
+    <property name="default-width">450</property>
+    <property name="resizable">false</property>
+    
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="show-title-buttons">true</property>
+        <child type="title">
+          <object class="GtkLabel" id="titleLabel">
+            <property name="label"></property>
+          </object>
+        </child>
+      </object>
+    </child>
+    
+    <child internal-child="content_area">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">0</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        
+        <child>
+          <object class="GtkGrid">
+            <property name="row-spacing">8</property>
+            <property name="column-spacing">12</property>
+            <property name="hexpand">true</property>
+            
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Region:</property>
+                <property name="xalign">0</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Product code:</property>
+                <property name="xalign">0</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Identifier:</property>
+                <property name="xalign">0</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            
+          <child>
+            <object class="GtkComboBox" id="regionCombo">
+              <property name="hexpand">false</property>
+              <property name="has-entry">true</property>
+              <property name="width-request">80</property>
+              <property name="entry-text-column">0</property>
+
+              <property name="model">
+                <object class="GtkListStore">
+                  <columns>
+                    <column type="gchararray"/>
+                  </columns>
+                  <data>
+                    <row>
+                      <col id="0">America</col>
+                    </row>
+                    <row>
+                      <col id="0">Europe</col>
+                    </row>
+                    <row>
+                      <col id="0">Japan</col>
+                    </row>
+                  </data>
+                </object>
+              </property>
+
+              <layout>
+                <property name="column">0</property>
+                <property name="row">1</property>
+              </layout>
+            </object>
+          </child>
+            
+            <child>
+              <object class="GtkEntry" id="productCodeEntry">
+                <property name="max-length">10</property>
+                <property name="hexpand">false</property>
+                <property name="width-request">80</property>
+                <property name="text"></property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            
+            <child>
+              <object class="GtkEntry" id="identifierEntry">
+                <property name="max-length">8</property>
+                <property name="hexpand">false</property>
+                <property name="width-request">80</property>
+                <property name="text"></property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">6</property>
+            <property name="halign">end</property>
+            <property name="margin-top">6</property>
+            
+            <child>
+              <object class="GtkButton" id="okButton">
+                <property name="label">OK</property>
+                <property name="width-request">80</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+            
+            <child>
+              <object class="GtkButton" id="cancelButton">
+                <property name="label">Cancel</property>
+                <property name="width-request">80</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

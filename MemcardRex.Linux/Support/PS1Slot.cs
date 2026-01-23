@@ -21,7 +21,13 @@ public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
     public int Size { get { return Card.saveSize[SlotNumber]; } }
     public string Region { get { return Card.saveRegion[SlotNumber]; } }
     public ps1card.SlotTypes Type { get { return (SlotTypes) Card.slotType[SlotNumber]; } }
-    public Gdk.Texture Icon { get { return _icon ??= GetIcon(true); } }
+    public Gdk.Texture Icon { get { 
+        
+        if (_icon != null) return _icon;
+        else _icon = GetIcon(true);
+
+        return _icon;
+     } }
     private Gdk.Texture? _icon = null;
     public string Title {
         get {
@@ -51,6 +57,12 @@ public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
                 _ => "",
             };
         }
+    }
+
+    //Force refresh for the cached icon
+    public void ForceRefresh()
+    {
+        _icon = null;
     }
 
     //Get slot icon as a texture with or without a region flag
@@ -123,7 +135,7 @@ public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
                 flagPixbuf.CopyArea(0, 0, 30, 16, buf!, 17, 0);
             }
         }
-
+        
         //Return composite texture
         return Texture.NewForPixbuf(buf!);
     }

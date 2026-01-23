@@ -31,19 +31,20 @@
                     
                     <child>
                       <object class="GtkImage" id="saveIcon1">
+                        <property name="margin-end">16</property>
                         <property name="pixel-size">48</property>
                       </object>
                     </child>
                     
                     <child>
                       <object class="GtkImage" id="saveIcon2">
-                        <property name="pixel-size">48</property>
+                        <property name="pixel-size">64</property>
                       </object>
                     </child>
                     
                     <child>
                       <object class="GtkImage" id="saveIcon3">
-                        <property name="pixel-size">48</property>
+                        <property name="pixel-size">64</property>
                       </object>
                     </child>
                   </object>
