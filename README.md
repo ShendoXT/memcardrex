@@ -5,7 +5,15 @@
 <br>**Quick download links:**
 * [Latest Windows release](https://github.com/ShendoXT/memcardrex/releases/tag/9909f69)
 * [Latest macOS release](https://github.com/ShendoXT/memcardrex/releases/tag/e85f601)
-* Linux version in the works, [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N51QR68V) to speed things up 😁
+* Linux version in the works.
+
+**Support & Development:**
+
+This project is developed and maintained in personal time and with personal resources.<br>
+Further development (including macOS and Linux support) depends on available time and funding.
+
+If you find this project useful and want to help sustain its development:<br>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N51QR68V)
 
 <br>**Features:**
 * Tabbed interface - multiple Memory Cards can be opened at the same time.
@@ -113,4 +121,5 @@ With the USB driver installed and the PS3 Memory Card Adaptor plugged in, you sh
 
 **Thanks to:**
 <br>@ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004,  Kubusleonidas, Frédéric Brière, Mark James, Cor'e, DeadlySystem, Padraig Flood and Martin Korth (nocash).
+
 
