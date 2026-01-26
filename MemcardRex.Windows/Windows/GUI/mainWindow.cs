@@ -59,13 +59,6 @@ namespace MemcardRex
         //List of icons for the history list
         List<ImageList> historyIconList = new List<ImageList>();
 
-        public struct HardInterfaces
-        {
-            public HardwareInterface hardwareInterface;
-            public HardwareInterface.Modes mode;
-            public string displayName;
-        }
-
         //Registered hardware interfaces
         List<HardInterfaces> registeredInterfaces = new List<HardInterfaces>();
 

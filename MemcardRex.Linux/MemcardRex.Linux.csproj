@@ -31,11 +31,11 @@
     <EmbeddedResource Include="Resources/unknown.png" />
     <EmbeddedResource Include="GUI/MainWindow.ui" />
     <EmbeddedResource Include="GUI/PS1CardTab.ui" />
-    <EmbeddedResource Include="GUI/PreferencesWindow.ui" />
-    <EmbeddedResource Include="GUI/PropertiesDialog.ui" />
     <EmbeddedResource Include="GUI/SaveInfoDialog.ui" />
     <EmbeddedResource Include="GUI/HeaderDialog.ui" />
     <EmbeddedResource Include="GUI/CommentsDialog.ui" />
+    <EmbeddedResource Include="GUI/SettingsDialog.ui" />
+    <EmbeddedResource Include="GUI/AboutDialog.ui" />
   </ItemGroup>
 
 </Project>

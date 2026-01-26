@@ -1,7 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MemcardRex.Core
 {
+    public struct HardInterfaces
+    {
+        public HardwareInterface hardwareInterface;
+        public HardwareInterface.Modes mode;
+        public string displayName;
+    }
+
+	public class HardwareSetup{
+        //Registered hardware interfaces
+    	public List<HardInterfaces> registeredInterfaces = new List<HardInterfaces>();
+	
+	    //Register hardware interfaces
+        public void RegisterInterface(HardwareInterface hardInterface, HardwareInterface.Modes mode)
+        {
+            HardInterfaces regInterface = new HardInterfaces();
+            regInterface.hardwareInterface = hardInterface;
+            regInterface.mode = mode;
+            regInterface.displayName = hardInterface.Name();
+
+            //Append via TCP if interface mode is tcp
+            if(mode == HardwareInterface.Modes.tcp) regInterface.displayName += " via TCP";
+
+            registeredInterfaces.Add(regInterface);
+        }
+        
+        public void AttachInterface(HardwareInterface hardInterface)
+        {
+            //Serial always available
+            RegisterInterface(hardInterface, HardwareInterface.Modes.serial);
+
+            //Check if interface supports TCP mode
+            if((hardInterface.Features() & HardwareInterface.SupportedFeatures.TcpMode) > 0)
+                RegisterInterface(hardInterface, HardwareInterface.Modes.tcp);
+        }
+
+		//List names of all available hardware interfaces
+		public string[] GetAllInterfaceNames(){
+			string[] names = new string[registeredInterfaces.Count];
+
+			for (int i = 0; i < registeredInterfaces.Count; i++)
+			{
+				names[i] = registeredInterfaces[i].displayName;
+			}
+
+			return names;
+		}
+	}
+
 	public class HardwareInterface
 	{
 		private Types _type;

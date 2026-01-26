@@ -17,7 +17,19 @@ namespace MemcardRex.Linux;
 public class Application : Adw.Application
 {
     private MainWindow? mainWindow;
-    public ProgramSettings Settings { get; }
+    private ProgramSettings Settings;
+
+    //Hardware interfaces
+    private HardwareSetup hwSetup = new HardwareSetup();
+
+    //Currently active interface
+    private HardInterfaces activeInterface
+    {
+        get
+        {
+            return hwSetup.registeredInterfaces[Settings.ActiveInterface];
+        }
+    }
 
     public static new Application New(string? id, Gio.ApplicationFlags flags)
     {
@@ -32,16 +44,19 @@ public class Application : Adw.Application
         this.OnActivate += (_, _) => {
             mainWindow = new MainWindow();
             this.AddWindow(mainWindow);
+
+            //Set up hardware interfaces
+            hwSetup.AttachInterface(new DexDrive());
+            hwSetup.AttachInterface(new MemCARDuino());
+            hwSetup.AttachInterface(new PS1CardLink());
+            hwSetup.AttachInterface(new Unirom());
+            hwSetup.AttachInterface(new PS3MemCardAdaptor());
+
             mainWindow.Show();
         };
         this.OnShutdown += (_, _) => {
             Settings.SaveSettings(ConfigDir(), "memcardrex for Linux", "2.0 (alpha)");
         };
-
-        var data = typeof(Utils).Assembly.ReadResourceAsByteArray("MemcardRex.Linux.Resources.memcardrex.gresource");
-        var bytes = GLib.Bytes.NewTake(data);
-        SetResourceBasePath("/io/gitlab/robxnano/memcardrex");
-        Gio.Functions.ResourcesRegister(Gio.Resource.NewFromData(bytes));
     }
 
     private void AddActions()
@@ -77,10 +92,8 @@ public class Application : Adw.Application
 
     private void PreferencesAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
-        var win = new PreferencesWindow();
-        win.SetTransientFor(mainWindow);
-        win.SetModal(true);
-        win.Show();
+        var dialog = new SettingsDialog(mainWindow!, ref Settings, hwSetup.GetAllInterfaceNames());
+        dialog.Present();
     }
 
     private void ReadmeAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
@@ -91,27 +104,10 @@ public class Application : Adw.Application
 
     private void ShowAboutAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
-        var about = new Adw.AboutWindow
-        {
-            ApplicationName = "MemcardRex",
-            Version = "2.0 (alpha)",
-            DeveloperName = "Shendo and robxnano",
-            Comments = "MemcardRex is a PS1 Memory Card editor and writer which supports a variety of different formats.",
-            Copyright = "© 2009-2024 Shendo (Core and Windows version)\n© 2024 robxnano (Linux version)",
-            Developers = [ "Alvaro Tanarro", "bitrot-alpha", "KuromeSan", "lmiori92", "Nico de Poel", "robxnano", "Shendo",
-                          "\nBeta testers:", "Gamesoul Master", "Xtreme2damax", "Carmax91" ],
-            ApplicationIcon = "io.gitlab.robxnano.memcardrex",
-            Website = "https://github.com/ShendoXT/memcardrex/",
-            LicenseType = Gtk.License.Gpl30,
-            DebugInfo = "Runtime:\t" + RuntimeInformation.FrameworkDescription
-                            + "\nPlatform:\t" + RuntimeInformation.RuntimeIdentifier
-                            + "\nGTK version:\t" + String.Format("{0}.{1}.{2}", GetMajorVersion(),
-                                                                 GetMinorVersion(), GetMicroVersion())
-                            + "\n\nEnvironment variables:" + EnvironmentVariables()
-        };
-        about.SetTransientFor(mainWindow);
-        about.SetModal(true);
-        about.Present();
+        var aboutDialog = new AboutDialog();
+        aboutDialog.SetTransientFor(mainWindow); 
+        aboutDialog.SetModal(true);
+        aboutDialog.Show();
     }
 
     static string EnvironmentVariables()
@@ -122,6 +118,7 @@ public class Application : Adw.Application
         return env;
     }
 
+    //Location of the config directory for the current user
     public static string ConfigDir()
     {
         var config_dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);

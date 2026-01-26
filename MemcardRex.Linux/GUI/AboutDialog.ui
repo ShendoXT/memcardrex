@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkBox" id="root_box">
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkBox">
+        <style><class name="header-box"/></style>
+        <property name="orientation">vertical</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="spacing">4</property>
+        <child>
+          <object class="GtkLabel">
+          <property name="use-markup">True</property>
+          <property name="label"><![CDATA[<span size="xx-large" weight="bold">MemcardRex</span>]]></property>
+          <property name="halign">start</property>
+        </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Version: 2.0 alpha</property>
+                <property name="hexpand">True</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Compile date: Unknown</property>
+                <property name="halign">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkSeparator">
+        <property name="orientation">horizontal</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="spacing">10</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="wrap">True</property>
+            <property name="xalign">0</property>
+            <style><class name="credits-label"/></style>
+            <property name="label">Authors: Alvaro Tanarro, bitrot-alpha, lmiori92, Nico de Poel, KuromeSan, Robxnano, Shendo.&#10;&#10;Beta testers: Gamesoul Master, Xtreme2damax, Carmax91, NKO.&#10;&#10;Thanks to: @ruantec, Cobalt, TheCloudOfSmoke, RedawgTS, Hard core Rikki, RainMotorsports, Zieg, Bobbi, OuTman, Kevstah2004, Kubusleonidas, Frédéric Brière, Cor'e, Gemini, DeadlySystem, Padraig Flood, Martin Korth (nocash).&#10;&#10;Special thanks to the following people whose Memory Card utilities inspired me to write my own:&#10;Simon Mallion (PSXMemTool),&#10;Lars Ole Dybdal (PSXGameEdit),&#10;Aldo Vargas (Memory Card Manager),&#10;Neill Corlett (Dexter),&#10;Paul Phoneix (ConvertM).</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="margin-top">20</property>
+        <property name="margin-bottom">10</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Linux version based on work by Robxnano.&#10;Copyright © Shendo 2026</property>
+            <property name="hexpand">True</property>
+            <property name="halign">start</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="_okButton">
+            <property name="label">OK</property>
+            <property name="width-request">80</property>
+              <style>
+                <class name="suggested-action"/>
+              </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkDialog" id="SettingsDialog">
+    <property name="title">Preferences</property>
+    <property name="modal">True</property>
+    <property name="resizable">False</property>
+    <property name="default-width">620</property>
+
+    <child internal-child="content_area">
+      <object class="GtkBox">
+        <property name="valign">start</property>
+        
+        <child>
+          <object class="GtkOverlay">
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">12</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">20</property>
+                <property name="margin-top">20</property>
+                <property name="margin-bottom">0</property> <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <property name="hexpand">True</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">10</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <child><object class="GtkLabel"><property name="label">Com port:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkComboBoxText" id="drpComPort"/></child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <child><object class="GtkLabel"><property name="label">Active hardware interface:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkComboBoxText" id="drpHardware"/></child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="hexpand">True</property>
+                            <child><object class="GtkLabel"><property name="label">Remote Address:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkEntry" id="txtAddress"/></child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <child><object class="GtkLabel"><property name="label">Remote Port:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkSpinButton" id="numPort"><property name="numeric">True</property><property name="adjustment"><object class="GtkAdjustment"><property name="lower">1</property><property name="upper">65535</property><property name="value">23</property><property name="step-increment">1</property></object></property></object></child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <child><object class="GtkLabel"><property name="label">Icon background color:</property><property name="xalign">0</property></object></child>
+                        <child><object class="GtkComboBoxText" id="drpIconBg"/></child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">10</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <child><object class="GtkLabel"><property name="label">Hardware format type:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkComboBoxText" id="drpFormat"/></child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <child><object class="GtkLabel"><property name="label">Hardware card slot:</property><property name="xalign">0</property></object></child>
+                            <child><object class="GtkComboBoxText" id="drpSlot"/></child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
+                    <property name="valign">start</property>
+                    <child><object class="GtkCheckButton" id="chkBackup"><property name="label">Backup Memory Cards upon opening.</property></object></child>
+                    <child><object class="GtkCheckButton" id="chkWarnings"><property name="label">Show warning messages</property></object></child>
+                    <child><object class="GtkCheckButton" id="chkRestorePos"><property name="label">Restore window position on startup</property></object></child>
+                    <child><object class="GtkCheckButton" id="chkFixCorrupted"><property name="label">Try to fix corrupted Memory Cards</property></object></child>
+                  </object>
+                </child>
+              </object>
+            </child>
+
+            <child type="overlay">
+              <object class="GtkBox">
+                <property name="halign">end</property>
+                <property name="valign">end</property>
+                <property name="margin-bottom">0</property>
+                <property name="margin-end">12</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkButton" id="btnOk">
+                    <property name="label">OK</property>
+                    <property name="width-request">80</property>
+                  <style>
+                    <class name="suggested-action"/>
+                  </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btnCancel">
+                    <property name="label">Cancel</property>
+                    <property name="width-request">80</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <action-widgets>
+      <action-widget response="ok">btnOk</action-widget>
+      <action-widget response="cancel">btnCancel</action-widget>
+    </action-widgets>
+  </object>
+</interface>
