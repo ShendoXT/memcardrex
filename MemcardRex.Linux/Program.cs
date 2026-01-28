@@ -22,7 +22,7 @@ namespace MemcardRex.Linux;
 
 public partial class Program(string[] args)
 {
-    private readonly Application app = Application.New("io.github.robxnano.MemcardRex", Gio.ApplicationFlags.FlagsNone);
+    private readonly Application app = Application.New("com.github.shendoxt.MemcardRex", Gio.ApplicationFlags.FlagsNone);
 
     public static int Main(string[] args) => new Program(args).Run();
 

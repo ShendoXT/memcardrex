@@ -123,12 +123,15 @@ namespace MemcardRex.Linux
                     localSettings.CommunicationPort = SavedComPort;
 
                     localSettings.ActiveInterface = drpHardware.GetActive();
+
+                    //Notify application of the settings change
+                    var app = (Application)Gtk.Application.GetDefault()!;
+                    app.SettingsChanged();
+
                 }
                 _dialog.Destroy();
             };
 
-            btnOk.OnClicked += (s, e) => _dialog.Response((int)ResponseType.Ok);
-            btnCancel.OnClicked += (s, e) => _dialog.Response((int)ResponseType.Cancel);
         }
 
         public void Present() => _dialog.Present();

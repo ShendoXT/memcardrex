@@ -4,6 +4,7 @@
 using Adw;
 using GdkPixbuf;
 using Gio;
+using GLib;
 using GObject;
 using Gtk;
 using System.Collections;
@@ -23,7 +24,7 @@ public class Application : Adw.Application
     private HardwareSetup hwSetup = new HardwareSetup();
 
     //Currently active interface
-    private HardInterfaces activeInterface
+    public HardInterfaces activeInterface
     {
         get
         {
@@ -43,7 +44,6 @@ public class Application : Adw.Application
         Settings.LoadSettings(ConfigDir());
         this.OnActivate += (_, _) => {
             mainWindow = new MainWindow();
-            this.AddWindow(mainWindow);
 
             //Set up hardware interfaces
             hwSetup.AttachInterface(new DexDrive());
@@ -52,6 +52,7 @@ public class Application : Adw.Application
             hwSetup.AttachInterface(new Unirom());
             hwSetup.AttachInterface(new PS3MemCardAdaptor());
 
+            this.AddWindow(mainWindow);
             mainWindow.Show();
         };
         this.OnShutdown += (_, _) => {
@@ -83,6 +84,13 @@ public class Application : Adw.Application
         this.SetAccelsForAction("win.save-as", ["<control><shift>s"]);
         this.SetAccelsForAction("app.preferences", ["<control>comma"]);
         this.SetAccelsForAction("app.readme", ["F1"]);
+        this.SetAccelsForAction("win.copy-save", ["<Control>c"]);
+        this.SetAccelsForAction("win.paste-save", ["<Control>v"]);
+    }
+
+    //Notify all required parties of the settings change
+    public void SettingsChanged(){
+        mainWindow!.SettingsChanged();
     }
 
     private void QuitAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)

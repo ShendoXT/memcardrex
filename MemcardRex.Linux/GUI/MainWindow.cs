@@ -23,6 +23,10 @@ public class MainWindow : Gtk.ApplicationWindow
     [Connect] private readonly Gtk.Button? btnTempBuffer = null;
     [Connect] private readonly Gtk.Image? btnTempImage = null;
     [Connect] private readonly Gtk.Label? btnTempLabel = null;
+    
+    private Gio.Menu? app_menubar;
+
+    public static MainWindow Instance { get; private set; } = null!;
 
     // Card actions
     private readonly Gio.SimpleAction actionNew;
@@ -52,6 +56,10 @@ public class MainWindow : Gtk.ApplicationWindow
         stack ??= new();
         windowTitle ??= new();
 
+        Instance = this;
+
+        app_menubar = builder.GetObject("app_menubar") as Gio.Menu;
+
         //Temp buffer used to store saves
         byte[]? tempBuffer = null;
         string? tempBufferName = null;
@@ -66,11 +74,8 @@ public class MainWindow : Gtk.ApplicationWindow
                 if (page != null) {
                     var child = (PS1CardTab?)page.GetChild();
                     if (child != null && child.Title != null){
-                        if(tabView.GetNPages() == 1) windowTitle.SetSubtitle(child.Title);
-                        else windowTitle.SetSubtitle("");
-                        statusLabel.SetText(child.Location);
+                        UpdateTitleLocation(child.HasUnsavedChanges ? "● " + child.Title:child.Title, child.Location);
                     }
-
                 }
             }
             else if (args.Pspec.GetName() == "n-pages") {
@@ -79,7 +84,7 @@ public class MainWindow : Gtk.ApplicationWindow
                     if (page != null) {
                         var child = (PS1CardTab?)page.GetChild();
                         if (child != null && child.Title != null && tabView.GetNPages() == 1)
-                            windowTitle.SetSubtitle(child.Title);
+                            windowTitle.SetSubtitle(child.HasUnsavedChanges ? "● " + child.Title:child.Title);
                         else windowTitle.SetSubtitle("");
                     }
                     stack.SetVisibleChildName("tabs");
@@ -178,16 +183,49 @@ public class MainWindow : Gtk.ApplicationWindow
 
         //Keyboard shortcuts
         this.OnRealize += (sender, e) => {
-            var app = this.GetApplication();
-            if (app is not null) 
-            {
-                app.SetAccelsForAction("win.copy-save", new[] { "<Control>c" });
-                app.SetAccelsForAction("win.paste-save", new[] { "<Control>v" });
-            }
+            //Set name of the active hw interface on the menu
+            UpdateHwInterfaceName();
         };
 
         //Add new untitled card on load
         this.ActivateAction("new-card", null);
+    }
+
+    //Change title and location of the currently opened card
+    public void UpdateTitleLocation(string title, string location){
+        if(tabView.GetNPages() == 1) windowTitle.SetSubtitle(title);
+        else windowTitle.SetSubtitle("");
+        statusLabel.SetText(location);
+    }
+
+    public void SettingsChanged(){
+        UpdateHwInterfaceName();
+    }
+
+    //Update menu item with the 
+    private void UpdateHwInterfaceName(){
+        //This is a bit convoluted way of changin a menu name
+        //Create a new one and delete the old one
+        //I tried to simply change the label of the existing one
+        //but it's either not implemented in gir.core or I'm using it wrong...
+        //Either way this hacky approach worked so I'm leaving it for now
+        if (app_menubar != null)
+        {
+            var app = (Application)Gtk.Application.GetDefault()!;
+            HardInterfaces activeInterface = app.activeInterface;
+
+            string ifName = activeInterface.hardwareInterface.Name();
+            if (activeInterface.mode == HardwareInterface.Modes.tcp) ifName += " (TCP)";
+
+            var newItem = Gio.MenuItem.New(ifName, null);
+            var subMenu = app_menubar.GetItemLink(2, "submenu"); 
+            
+            if (subMenu != null)
+                newItem.SetLink("submenu", subMenu);
+
+            app_menubar.InsertItem(2, newItem);
+            app_menubar.Remove(3);
+        }
     }
 
     private void SetCardActionsEnabled(bool enabled)
@@ -213,7 +251,6 @@ public class MainWindow : Gtk.ApplicationWindow
     }
 
     private void OpenCardFile(string filename){
-
         //Check if this file is already opened in the application
         for (uint i = 0; i < tabView.GetNPages(); i++)
         {
@@ -223,7 +260,7 @@ public class MainWindow : Gtk.ApplicationWindow
             if (existingTab.Location != null && 
                 Path.GetFullPath(existingTab.Location) == Path.GetFullPath(filename))
             {
-                // File je već otvoren - aktiviraj taj tab
+                //File is already opened, select it
                 tabView.SetSelectedPage(page);
                 return;
             }
@@ -391,7 +428,7 @@ public class MainWindow : Gtk.ApplicationWindow
             CardTypes.vgs => FormatFilter("VGS Memory Card", ["*.mem", "*.vgs"]),
             CardTypes.vmp => FormatFilter("PSP/Vita Memory Card", ["*.VMP"]),
             CardTypes.mcx => FormatFilter("PS Vita 'MCX' PocketStation Memory Card", ["*.BIN"]),
-            _ => FormatFilter("Standard Memory Card", ["*.mcr", "*.bin", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.srm", "*.vm1", "*.vmc"]),
+            _ => FormatFilter("Standard Memory Card", ["*.mcr", "*.bin", "*.ddf", "*.mc", "*.mcd", "*.mci", "*.ps", "*.psm", "*.sav", "*.srm", "*.vm1", "*.vmc"]),
         };
     }
 

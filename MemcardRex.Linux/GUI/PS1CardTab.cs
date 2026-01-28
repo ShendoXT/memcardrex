@@ -243,13 +243,15 @@ public class PS1CardTab : Gtk.Box
         historyModel.SelectItem(0, false);
     }
 
+    private void UpdatePageInfo(){
+        Page!.SetTitle(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName);
+        Page.SetTooltip(memcard.cardLocation);
+    }
+
     public void SetPage(Adw.TabPage page)
     {
         Page = page;
-        Page.SetTitle(memcard.cardName);
-        Page.SetTooltip(memcard.cardLocation);
-        if (HasUnsavedChanges)
-            Page.SetIcon(Gio.ThemedIcon.New("document-modified-symbolic"));
+        UpdatePageInfo();
     }
 
     public void Save(Gtk.Window window)
@@ -262,8 +264,7 @@ public class PS1CardTab : Gtk.Box
         }
 
         if (memcard.SaveMemoryCard(memcard.cardLocation, memcard.cardType, false)) {
-            Page.SetIcon(null);
-            //HasUnsavedChanges = false;
+            RefreshSaveList();
         }
         return;
     }
@@ -303,7 +304,6 @@ public class PS1CardTab : Gtk.Box
 
     //Refresh list view after save editing
     private void RefreshSaveList(){
-
         //Refresh icons
         for (uint i = 0; i < listStore.GetNItems(); i++)
         {
@@ -315,6 +315,10 @@ public class PS1CardTab : Gtk.Box
         //Refresh list view
         saveList.SetModel(null);
         saveList.SetModel(model);
+
+        UpdatePageInfo();
+
+        MainWindow.Instance.UpdateTitleLocation(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName, memcard.cardLocation);
     }
 
     //Edit save header of the currently selected save
@@ -398,6 +402,7 @@ public class PS1CardTab : Gtk.Box
         }
     }
 
+    //Show properties of a selected save
     public void Properties()
     {
         var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType());
@@ -434,39 +439,63 @@ public class PS1CardTab : Gtk.Box
         dialog.Present();
     }
 
+    //Select name and format of the Memory Card to save
     public void SaveAs(Gtk.Window window)
     {
         var fileChooser = Gtk.FileChooserNative.New("Save Memory Card", window, Gtk.FileChooserAction.Save, "Save", "Cancel");
         fileChooser.SetModal(true);
 
-        ps1card.CardTypes[] types = [CardTypes.raw, CardTypes.gme, CardTypes.vgs, CardTypes.vmp, CardTypes.mcx];
-        var currentFilter = MainWindow.FilterForType(this.memcard.cardType);
-        fileChooser.AddFilter(currentFilter);
+        var filterToType = new Dictionary<Gtk.FileFilter, CardTypes>();
+
+        CardTypes[] types = [CardTypes.raw, CardTypes.gme, CardTypes.vgs, CardTypes.vmp, CardTypes.mcx];
+        
         foreach (CardTypes type in types)
         {
-            if (type != this.memcard.cardType)
-                fileChooser.AddFilter(MainWindow.FilterForType(type));
+            var filter = MainWindow.FilterForType(type);
+            fileChooser.AddFilter(filter);
+            filterToType[filter] = type;
+
+            if (type == this.memcard.cardType)
+                fileChooser.SetFilter(filter);
         }
-        fileChooser.SetFilter(currentFilter);
+
         fileChooser.Show();
         fileChooser.OnResponse += (sender, args) => {
-            var file = fileChooser.GetFile();
-            fileChooser.Destroy();
-            if (args.ResponseId != (int) Gtk.ResponseType.Accept)
+            if (args.ResponseId != (int)Gtk.ResponseType.Accept)
+            {
+                fileChooser.Destroy();
                 return;
-            try {
-                bool result = memcard.SaveMemoryCard(file!.GetPath()!, memcard.cardType, false);
-                if (result) {
-                    //HasUnsavedChanges = false;
+            }
+
+            var selectedFilter = fileChooser.GetFilter();
+            var targetType = filterToType[selectedFilter!]; 
+
+            var file = fileChooser.GetFile();
+            string path = file!.GetPath()!;
+            fileChooser.Destroy();
+
+            string extension = targetType switch {
+                    CardTypes.gme => ".gme",
+                    CardTypes.vgs => ".vgs",
+                    CardTypes.vmp => ".vmp",
+                    CardTypes.mcx => ".bin",
+                    _ => ".mcr" // default za raw
+                };
+
+                if (!path.EndsWith(extension, StringComparison.OrdinalIgnoreCase)) {
+                    path += extension;
                 }
-                else {
-                    Console.WriteLine("Failed to save memory card: {0}", result);
-                    return;
+
+            try {
+                bool result = memcard.SaveMemoryCard(path, targetType, false);
+                if (result) {
+                    this.memcard.cardType = targetType;
+                    UpdatePageInfo();
+                    RefreshSaveList();
                 }
             }
             catch { return; }
         };
-        return;
     }
 
     private void ExportAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)

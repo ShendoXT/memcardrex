@@ -360,6 +360,24 @@
             <attribute name="label" translatable="yes">Format card</attribute>
           </item>
         </section>
+        <section>
+          <submenu>
+            <attribute name="action">app.pocketstation</attribute>
+            <attribute name="label" translatable="yes">PocketStation</attribute>
+              <item>
+                <attribute name="action">app.pocketstation-serial</attribute>
+                <attribute name="label" translatable="yes">Read serial</attribute>
+              </item>
+              <item>
+                <attribute name="action">app.pocketstation.bios</attribute>
+                <attribute name="label" translatable="yes">Dump BIOS</attribute>
+              </item>
+              <item>
+                <attribute name="action">app.pocketstation.time</attribute>
+                <attribute name="label" translatable="yes">Set date / time</attribute>
+              </item>
+          </submenu>
+        </section>
       </submenu>
     </menu>
   </object>
