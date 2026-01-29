@@ -92,6 +92,7 @@
 
             <child>
               <object class="GtkButton" id="btnSaveIcon">
+                <property name="action-name">win.edit-icon</property>
                 <property name="icon-name">document-edit-symbolic</property>
                 <property name="tooltip-text">Edit save icon</property>
               </object>
@@ -105,6 +106,7 @@
 
             <child>
               <object class="GtkButton" id="btnImportSave">
+                <property name="action-name">win.import-save</property>
                 <property name="icon-name">view-app-grid-symbolic</property>
                 <property name="tooltip-text">Import save</property>
               </object>
@@ -112,6 +114,7 @@
 
             <child>
               <object class="GtkButton" id="btnExportSave">
+                <property name="action-name">win.export-save</property>
                 <property name="icon-name">send-to-symbolic</property>
                 <property name="tooltip-text">Export save</property>
               </object>
@@ -276,10 +279,6 @@
           <item>
             <attribute name="action">win.edit-comment</attribute>
             <attribute name="label" translatable="yes">Edit save comment...</attribute>
-          </item>
-          <item>
-            <attribute name="action">win.edit-plugin</attribute>
-            <attribute name="label" translatable="yes">Edit with plugin</attribute>
           </item>
         </section>
         <section>

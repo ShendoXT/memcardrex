@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
+    <BuildDate>$([System.DateTime]::Now.ToString("yyyy-MM-dd"))</BuildDate>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,13 @@
       <Name>MemcardRex.Core</Name>
     </ProjectReference>
     <PackageReference Include="GirCore.Adw-1" Version="0.5.0" />
+  </ItemGroup>
+
+<ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildDate</_Parameter1>
+      <_Parameter2>$(BuildDate)</_Parameter2>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
@@ -37,5 +45,18 @@
     <EmbeddedResource Include="GUI/SettingsDialog.ui" />
     <EmbeddedResource Include="GUI/AboutDialog.ui" />
   </ItemGroup>
+
+  <Target Name="SetGitHash" BeforeTargets="BeforeBuild">
+      <Exec Command="git rev-parse --short HEAD" ConsoleToMSBuild="true" StandardOutputImportance="low">
+        <Output TaskParameter="ConsoleOutput" PropertyName="GitHash" />
+      </Exec>
+      
+      <ItemGroup>
+        <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+          <_Parameter1>GitHash</_Parameter1>
+          <_Parameter2>$(GitHash)</_Parameter2>
+        </AssemblyAttribute>
+      </ItemGroup>
+    </Target>
 
 </Project>

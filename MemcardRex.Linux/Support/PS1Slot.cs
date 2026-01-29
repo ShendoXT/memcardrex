@@ -34,9 +34,8 @@ public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
             return Type switch
             {
                 SlotTypes.formatted => "Free slot",
-                SlotTypes.initial or SlotTypes.deleted_initial => Card.saveName[SlotNumber],
-                SlotTypes.middle_link or SlotTypes.end_link or SlotTypes.deleted_middle_link or SlotTypes.deleted_end_link => "Linked slot",
-                _ => "Corrupted data",
+                SlotTypes.corrupted => "Corrupted slot",
+                _ => Card.saveName[SlotNumber],
             };
         }
     }
@@ -107,8 +106,24 @@ public class PS1Slot(ps1card card, int slotNumber) : GObject.Object(true, [])
         }
         var pixbuf = GdkPixbuf.Pixbuf.NewFromBytes(GLib.Bytes.New(bytesRgb), Colorspace.Rgb, true, 8, 16, 16, 16 * 4);
 
+        //Deleted saves should appear faded
+        int alphaChan = Type switch
+        {
+            SlotTypes.deleted_initial or 
+            SlotTypes.deleted_middle_link or 
+            SlotTypes.deleted_end_link => 128,
+            
+            _ => 255
+        };
+
         //Copy icon to composite pixbuff
-        pixbuf.CopyArea(0, 0, 16, 16, buf!, 0, 0);
+        pixbuf.Composite(
+            buf!, 
+            0, 0, 16, 16, 
+            0, 0, 1.0, 1.0, 
+            GdkPixbuf.InterpType.Nearest, 
+            alphaChan
+        );
 
         //Set region flag resource name
         if(WithFlag){

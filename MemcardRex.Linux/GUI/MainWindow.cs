@@ -38,6 +38,7 @@ public class MainWindow : Gtk.ApplicationWindow
     // Single save actions
     private readonly Gio.SimpleAction actionImportSave;
     private readonly Gio.SimpleAction actionExportSave;
+    private readonly Gio.SimpleAction actionExportRawSave;
     private readonly Gio.SimpleAction actionCopySave;
     private readonly Gio.SimpleAction actionPasteSave;
     private readonly Gio.SimpleAction actionCompareSave;
@@ -49,6 +50,10 @@ public class MainWindow : Gtk.ApplicationWindow
     //private readonly Gio.SimpleAction actionEditIcon;
     private readonly Gio.SimpleAction actionProperties;
 
+    //Temp buffer used to store saves
+    byte[]? tempBuffer = null;
+    string? tempBufferName = null;
+
     private MainWindow(Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
         builder.Connect(this);
@@ -59,10 +64,6 @@ public class MainWindow : Gtk.ApplicationWindow
         Instance = this;
 
         app_menubar = builder.GetObject("app_menubar") as Gio.Menu;
-
-        //Temp buffer used to store saves
-        byte[]? tempBuffer = null;
-        string? tempBufferName = null;
 
         var style_manager = Adw.StyleManager.GetDefault();
         //style_manager.SetColorScheme(ColorScheme.PreferDark);
@@ -119,14 +120,17 @@ public class MainWindow : Gtk.ApplicationWindow
         actionExportSave = Gio.SimpleAction.New("export-save", null);
         actionExportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
         this.AddAction(actionExportSave);
+        actionExportRawSave = Gio.SimpleAction.New("export-save-raw", null);
+        actionExportRawSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        this.AddAction(actionExportRawSave);
         actionImportSave = Gio.SimpleAction.New("import-save", null);
-        actionImportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionImportSave.OnActivate += (_, _) => CurrentCard()?.ImportSave(this);
         this.AddAction(actionImportSave);
         actionDeleteSave = Gio.SimpleAction.New("delete-save", null);
-        actionDeleteSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionDeleteSave.OnActivate += (_, _) => CurrentCard()?.DeleteRestoreSave();
         this.AddAction(actionDeleteSave);
         actionRestoreSave = Gio.SimpleAction.New("restore-save", null);
-        actionRestoreSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionRestoreSave.OnActivate += (_, _) => CurrentCard()?.DeleteRestoreSave();
         this.AddAction(actionRestoreSave);
         actionCopySave = Gio.SimpleAction.New("copy-save", null);
         actionCopySave.OnActivate += (_, _) => {
@@ -150,10 +154,10 @@ public class MainWindow : Gtk.ApplicationWindow
         actionPasteSave.OnActivate += (_, _) => CurrentCard()?.PasteSave(tempBuffer);
         this.AddAction(actionPasteSave);
         actionCompareSave = Gio.SimpleAction.New("compare-save", null);
-        actionCompareSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionCompareSave.OnActivate += (_, _) => CurrentCard()?.CompareSave(this);
         this.AddAction(actionCompareSave);
         actionEraseSave = Gio.SimpleAction.New("erase-save", null);
-        actionEraseSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionEraseSave.OnActivate += (_, _) => CurrentCard()?.FormatSave();
         this.AddAction(actionEraseSave);
         actionProperties = Gio.SimpleAction.New("properties", null);
         actionProperties.OnActivate += (_, _) => CurrentCard()?.Properties();
@@ -161,7 +165,6 @@ public class MainWindow : Gtk.ApplicationWindow
         actionEditHeader = Gio.SimpleAction.New("edit-header", null);
         actionEditHeader.OnActivate += (_, _) => CurrentCard()?.EditHeader();
         this.AddAction(actionEditHeader);
-        SetCardActionsEnabled(false);
         actionEditComment = Gio.SimpleAction.New("edit-comment", null);
         actionEditComment.OnActivate += (_, _) => CurrentCard()?.EditComments();
         this.AddAction(actionEditComment);
@@ -233,6 +236,34 @@ public class MainWindow : Gtk.ApplicationWindow
         actionSave.SetEnabled(enabled);
         actionSaveAs.SetEnabled(enabled);
         actionCloseTab.SetEnabled(enabled);
+    }
+
+    //Enable or disable actions based on the currently selected slot
+    public void SetSlotActionsEnabled(ps1card.SlotTypes slotType)
+    {
+        // Osnovne provjere (bool uvjeti)
+        bool isNormal = slotType != ps1card.SlotTypes.formatted && slotType != ps1card.SlotTypes.corrupted;
+        bool isFormatted = slotType == ps1card.SlotTypes.formatted;
+        bool isInitial = slotType == ps1card.SlotTypes.initial;
+        bool isDeletedInitial = slotType == ps1card.SlotTypes.deleted_initial;
+
+        // Grupa 1: Akcije koje ovise o tome je li slot "normalan"
+        actionEditHeader.SetEnabled(isNormal);
+        actionEditComment.SetEnabled(isNormal);
+        actionEraseSave.SetEnabled(isNormal);
+        actionCopySave.SetEnabled(isNormal);
+        actionExportSave.SetEnabled(isNormal);
+        actionExportRawSave.SetEnabled(isNormal);
+        actionProperties.SetEnabled(isNormal);
+        actionCompareSave.SetEnabled(isNormal && tempBuffer != null);
+
+        // Grupa 2: Specifične akcije
+        actionDeleteSave.SetEnabled(isInitial);
+        actionRestoreSave.SetEnabled(isDeletedInitial);
+        actionImportSave.SetEnabled(isFormatted);
+        
+        // Paste zahtijeva formatiran slot I podatke u bufferu
+        actionPasteSave.SetEnabled(isFormatted && tempBuffer != null);
     }
 
     private void NewCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)

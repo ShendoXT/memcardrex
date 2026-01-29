@@ -21,15 +21,15 @@
         <child>
           <object class="GtkBox">
             <child>
-              <object class="GtkLabel">
-                <property name="label">Version: 2.0 alpha</property>
+              <object class="GtkLabel" id="lblAppVersion">
+                <property name="label"></property>
                 <property name="hexpand">True</property>
                 <property name="halign">start</property>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="label">Compile date: Unknown</property>
+              <object class="GtkLabel" id="lblCompileDate">
+                <property name="label"></property>
                 <property name="halign">end</property>
               </object>
             </child>

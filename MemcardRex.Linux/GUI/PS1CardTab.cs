@@ -121,7 +121,22 @@ public class PS1CardTab : Gtk.Box
         saveList.SetModel(model);
         historyList.SetModel(historyModel);
 
-        //saveList.OnActivate += (_, args) => Properties();
+        var clickGesture = Gtk.GestureClick.New();
+        clickGesture.SetButton(1); // Left click
+        clickGesture.SetPropagationPhase(Gtk.PropagationPhase.Capture);
+
+        //Activated or OnPressed is leaving ghost selections all over the list
+        //but OnReleased works fine, so OnRelease it is
+        clickGesture.OnReleased += (sender, args) => {
+            //Double click
+            if (args.NPress == 2) 
+            {
+                Properties();
+                clickGesture.SetState(Gtk.EventSequenceState.Claimed);
+            }
+        };
+
+        saveList.AddController(clickGesture);
 
         iconFactory = Gtk.SignalListItemFactory.New();
         iconFactory.OnSetup += (_, args) => {
@@ -243,6 +258,35 @@ public class PS1CardTab : Gtk.Box
         historyModel.SelectItem(0, false);
     }
 
+    //Delete/Restore selected save
+    public void DeleteRestoreSave()
+    {
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+
+        memcard.ToggleDeleteSave(masterSlot);
+
+        RefreshSaveList();
+
+        /*if (memCard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)
+            pushHistory("Save deleted", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
+        else
+            pushHistory("Save restored", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));*/
+    }
+
+    //Format selected save
+    public void FormatSave()
+    {
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+        //Fetch save icon before deletion
+        //Bitmap saveIcon = prepareIcons(listIndex, masterSlot, false);
+
+        memcard.FormatSave(masterSlot);
+
+        RefreshSaveList();
+
+        //pushHistory("Save removed", mainTabControl.SelectedIndex, saveIcon);
+    }
+
     private void UpdatePageInfo(){
         Page!.SetTitle(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName);
         Page.SetTooltip(memcard.cardLocation);
@@ -267,6 +311,14 @@ public class PS1CardTab : Gtk.Box
             RefreshSaveList();
         }
         return;
+    }
+
+    public void CompareSave(Gtk.Window parent){
+
+    }
+
+    public void ImportSave(Gtk.Window parent){
+
     }
 
     public void ExportSave(Gtk.Window parent)
@@ -317,7 +369,7 @@ public class PS1CardTab : Gtk.Box
         saveList.SetModel(model);
 
         UpdatePageInfo();
-
+        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[(int)SelectedSave()!]);
         MainWindow.Instance.UpdateTitleLocation(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName, memcard.cardLocation);
     }
 
@@ -548,6 +600,9 @@ public class PS1CardTab : Gtk.Box
             sel.SelectItem((uint)slot, false);
 
         internalSelectionChange = false;
+
+        //Enable or disable edit menus
+        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[masterSlot]);
     }
 
     //Return selected master slot for the selected save in the list

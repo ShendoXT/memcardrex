@@ -118,14 +118,6 @@ public class Application : Adw.Application
         aboutDialog.Show();
     }
 
-    static string EnvironmentVariables()
-    {
-        string env = "";
-        foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
-           env += "\n" + de.Key + "=" + de.Value;
-        return env;
-    }
-
     //Location of the config directory for the current user
     public static string ConfigDir()
     {
