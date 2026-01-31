@@ -50,9 +50,20 @@ public class MainWindow : Gtk.ApplicationWindow
     //private readonly Gio.SimpleAction actionEditIcon;
     private readonly Gio.SimpleAction actionProperties;
 
+    //Hardware actions
+    private readonly Gio.SimpleAction actionReadData;
+    private readonly Gio.SimpleAction actionWriteData;
+    private readonly Gio.SimpleAction actionFormatData;
+    private readonly Gio.SimpleAction actionPocket;
+    private readonly Gio.SimpleAction actionPocketSerial;
+    private readonly Gio.SimpleAction actionPocketBios;
+    private readonly Gio.SimpleAction actionPocketTime;
+
     //Temp buffer used to store saves
     byte[]? tempBuffer = null;
     string? tempBufferName = null;
+
+    Application mainApp = (Application)Gtk.Application.GetDefault()!;
 
     private MainWindow(Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
@@ -168,6 +179,31 @@ public class MainWindow : Gtk.ApplicationWindow
         actionEditComment = Gio.SimpleAction.New("edit-comment", null);
         actionEditComment.OnActivate += (_, _) => CurrentCard()?.EditComments();
         this.AddAction(actionEditComment);
+
+        //Hardware actions
+        actionReadData = Gio.SimpleAction.New("hardware-read", null);
+        actionReadData.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.read);
+        this.AddAction(actionReadData);
+        actionWriteData = Gio.SimpleAction.New("hardware-write", null);
+        actionWriteData.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.write);
+        this.AddAction(actionWriteData);
+        actionFormatData = Gio.SimpleAction.New("hardware-format", null);
+        actionFormatData.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.format);
+        this.AddAction(actionFormatData);
+
+        actionPocket = Gio.SimpleAction.New("pocketstation", null);
+        //this.AddAction(actionPocket);
+
+        actionPocketSerial = Gio.SimpleAction.New("pocketstation-serial", null);
+        actionPocketSerial.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.psinfo);
+        this.AddAction(actionPocketSerial);
+        actionPocketBios = Gio.SimpleAction.New("pocketstation-bios", null);
+        actionPocketBios.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.psbios);
+        this.AddAction(actionPocketBios);
+        actionPocketTime = Gio.SimpleAction.New("pocketstation-time", null);
+        actionPocketTime.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.pstime);
+        this.AddAction(actionPocketTime);
+
         SetCardActionsEnabled(false);
 
         //Temp buffer toolbar button
@@ -192,6 +228,114 @@ public class MainWindow : Gtk.ApplicationWindow
 
         //Add new untitled card on load
         this.ActivateAction("new-card", null);
+    }
+
+    //Communication with hardware interface started
+    public void HardwareItemActivated(HardwareInterface.CommModes mode){
+        mainApp.activeInterface.hardwareInterface.CommMode = mode;
+
+        //Set serial or TCP mode
+        mainApp.activeInterface.hardwareInterface.Mode = mainApp.activeInterface.mode;
+
+        //Activate interface
+        InitHardwareCommunication(mainApp.activeInterface.hardwareInterface);
+    }
+
+    //Communication with real device
+    public void InitHardwareCommunication(HardwareInterface hardInterface)
+    {
+        //Abort if the interface is not valid
+        if (hardInterface == null) return;
+        
+        //Set card slot
+        hardInterface.CardSlot = mainApp.Settings.CardSlot;
+
+        var parent = (Gtk.Window?) this.GetAncestor(Gtk.Window.GetGType())!;
+        var dialog = new CommunicationDialog(parent, hardInterface);
+        
+        //Update setings
+        dialog.ComPort = mainApp.Settings.CommunicationPort;
+        dialog.RemoteCommAddress = mainApp.Settings.RemoteCommAddress;
+        dialog.RemoteCommPort = mainApp.Settings.RemoteCommPort;
+
+        //If the data is to be written fetch the current raw Memory Card data
+        if (hardInterface.CommMode == HardwareInterface.CommModes.write){
+            if(CurrentCard == null) return;
+            dialog.MemoryCard = CurrentCard()!.GetRawCard();
+        }
+
+        //Create a new blank formatted Memory Card and write it to device
+        else if (hardInterface.CommMode == HardwareInterface.CommModes.format)
+        {
+            ps1card blankCard = new ps1card();
+            blankCard.OpenMemoryCard(null, true);
+            
+            //Show warning message
+            if (mainApp.Settings.WarningMessages == 1)
+            {
+                //if(MessageBox.Show("This operation will wipe all data on the Memory Card.\nProceed?",
+                    //"Format Memory Card", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) return;
+            }
+            
+            dialog.MemoryCard = blankCard.SaveMemoryCardStream(true);
+        }
+
+        dialog.QuickFormat = mainApp.Settings.FormatType == 0;
+
+        dialog.OnComplete += (s, args) => {
+
+            //Check if any errors occured and display them
+            if(dialog.ErrorMessage != null)
+            {
+                Utils.ErrorMessage(this, "Unable to start " + hardInterface.Name(), dialog.ErrorMessage);
+                dialog.Close();
+                return;
+            }
+
+            if(dialog.OperationCompleted){
+                if (hardInterface.CommMode == HardwareInterface.CommModes.read){
+                    CardReaderRead(dialog.MemoryCard, hardInterface.Name());
+                }
+
+                //If this was a serial read display result
+                else if(hardInterface.CommMode == HardwareInterface.CommModes.psinfo)
+                {
+                    //new pocketStationInfo().ShowSerial(cardReader.PocketSerial);
+                }
+
+                //If this was a BIOS read display it in dialog
+                else if(hardInterface.CommMode == HardwareInterface.CommModes.psbios && dialog.OperationCompleted)
+                {
+                    //new pocketStationInfo().ShowBios(cardReader.PocketSerial, cardReader.PocketBIOS);
+                }
+
+                //If this was time command display confirmation dialog
+                else if (hardInterface.CommMode == HardwareInterface.CommModes.pstime)
+                {
+                    //MessageBox.Show("Time set successfully", "PocketStation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+
+            dialog.Close();
+        };
+
+        dialog.Show();
+    }
+
+    //Read a Memory Card from the physical device
+    private void CardReaderRead(byte[] readData, string deviceName)
+    {
+        //Create a new card
+        ps1card card = new ps1card();
+
+        //Fill the card with the new data
+        card.OpenMemoryCardStream(readData, mainApp.Settings.FixCorruptedCards == 1);
+
+        //Create a tab page for the new card
+        CreateNewCard(card);
+
+        //Set the info to history list
+        //pushHistory("Card read (" + deviceName + ")", historyList.Count - 1, new Bitmap(16, 16));
     }
 
     //Change title and location of the currently opened card
@@ -241,13 +385,12 @@ public class MainWindow : Gtk.ApplicationWindow
     //Enable or disable actions based on the currently selected slot
     public void SetSlotActionsEnabled(ps1card.SlotTypes slotType)
     {
-        // Osnovne provjere (bool uvjeti)
         bool isNormal = slotType != ps1card.SlotTypes.formatted && slotType != ps1card.SlotTypes.corrupted;
         bool isFormatted = slotType == ps1card.SlotTypes.formatted;
         bool isInitial = slotType == ps1card.SlotTypes.initial;
         bool isDeletedInitial = slotType == ps1card.SlotTypes.deleted_initial;
 
-        // Grupa 1: Akcije koje ovise o tome je li slot "normalan"
+        //Actions depending on the slot being a normal save slot
         actionEditHeader.SetEnabled(isNormal);
         actionEditComment.SetEnabled(isNormal);
         actionEraseSave.SetEnabled(isNormal);
@@ -257,28 +400,29 @@ public class MainWindow : Gtk.ApplicationWindow
         actionProperties.SetEnabled(isNormal);
         actionCompareSave.SetEnabled(isNormal && tempBuffer != null);
 
-        // Grupa 2: Specifične akcije
+        //Specific actions
         actionDeleteSave.SetEnabled(isInitial);
         actionRestoreSave.SetEnabled(isDeletedInitial);
         actionImportSave.SetEnabled(isFormatted);
         
-        // Paste zahtijeva formatiran slot I podatke u bufferu
+        //Paste needs a free slot and a valid buffer
         actionPasteSave.SetEnabled(isFormatted && tempBuffer != null);
     }
 
-    private void NewCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
-        var card = new ps1card();
-        string? result = card.OpenMemoryCard(null, false);
-        if (result != null) {
-            Console.WriteLine("Failed to create new memory card: {0}", result);
-            return;
-        }
+    //Create a new card tab from the given card
+    private void CreateNewCard(ps1card card){
         var tab = new PS1CardTab(card);
         var child = tabView.Append(tab);
         tab.SetPage(child);
         tabView.SetSelectedPage(child);
         SetCardActionsEnabled(true);
+    }
+
+    private void NewCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
+    {
+        ps1card card = new ps1card();
+        card.OpenMemoryCard(null, mainApp.Settings.FixCorruptedCards == 1);
+        CreateNewCard(card);
     }
 
     private void OpenCardFile(string filename){

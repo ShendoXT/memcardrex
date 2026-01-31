@@ -345,34 +345,34 @@
         <attribute name="label" translatable="yes">_Hardware</attribute>
         <section>
           <item>
-            <attribute name="action">app.hardware-read</attribute>
+            <attribute name="action">win.hardware-read</attribute>
             <attribute name="label" translatable="yes">Read save data</attribute>
           </item>
           <item>
-            <attribute name="action">app.hardware-write</attribute>
+            <attribute name="action">win.hardware-write</attribute>
             <attribute name="label" translatable="yes">Write save data</attribute>
           </item>
         </section>
         <section>
           <item>
-            <attribute name="action">app.hardware-format</attribute>
+            <attribute name="action">win.hardware-format</attribute>
             <attribute name="label" translatable="yes">Format card</attribute>
           </item>
         </section>
         <section>
           <submenu>
-            <attribute name="action">app.pocketstation</attribute>
+            <attribute name="action">win.pocketstation</attribute>
             <attribute name="label" translatable="yes">PocketStation</attribute>
               <item>
-                <attribute name="action">app.pocketstation-serial</attribute>
+                <attribute name="action">win.pocketstation-serial</attribute>
                 <attribute name="label" translatable="yes">Read serial</attribute>
               </item>
               <item>
-                <attribute name="action">app.pocketstation.bios</attribute>
+                <attribute name="action">win.pocketstation-bios</attribute>
                 <attribute name="label" translatable="yes">Dump BIOS</attribute>
               </item>
               <item>
-                <attribute name="action">app.pocketstation.time</attribute>
+                <attribute name="action">win.pocketstation-time</attribute>
                 <attribute name="label" translatable="yes">Set date / time</attribute>
               </item>
           </submenu>

@@ -100,6 +100,8 @@ public class PS1CardTab : Gtk.Box
 
     private readonly ps1card memcard;
 
+    Application mainApp = (Application)Gtk.Application.GetDefault()!;
+
     private PS1CardTab(ps1card card, Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
         builder.Connect(this);
@@ -335,6 +337,11 @@ public class PS1CardTab : Gtk.Box
         dialog.SetResponseAppearance("save", ResponseAppearance.Suggested);
         dialog.Show();
         Console.WriteLine("Exported save");
+    }
+
+    //Get a complete snapshot of the opened Memory Card
+    public byte[] GetRawCard(){
+        return memcard.SaveMemoryCardStream(mainApp.Settings.FixCorruptedCards == 1);
     }
 
     //Check if a selected save is valid for the editing operations

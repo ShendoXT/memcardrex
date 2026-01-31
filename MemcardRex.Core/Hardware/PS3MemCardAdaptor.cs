@@ -113,7 +113,7 @@ namespace MemcardRex.Core
             }
             catch (Exception e)
             {
-                _usbDevice.Close();
+                if(_usbDevice != null)_usbDevice.Close();
                 UsbDevice.Exit();
                 return e.Message;
             }
@@ -153,10 +153,12 @@ namespace MemcardRex.Core
 
         public override void Stop()
         {
-            if (_usbDevice != null && _usbDevice.IsOpen)
+            if (_usbDevice != null)
             {
-                _usbDevice.Close();
-                UsbDevice.Exit();
+                if(_usbDevice.IsOpen){
+                    _usbDevice.Close();
+                    UsbDevice.Exit();
+                }
             }
         }
 

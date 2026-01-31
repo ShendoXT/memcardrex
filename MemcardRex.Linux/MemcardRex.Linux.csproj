@@ -43,6 +43,7 @@
     <EmbeddedResource Include="GUI/HeaderDialog.ui" />
     <EmbeddedResource Include="GUI/CommentsDialog.ui" />
     <EmbeddedResource Include="GUI/SettingsDialog.ui" />
+    <EmbeddedResource Include="GUI/CommunicationDialog.ui" />
     <EmbeddedResource Include="GUI/AboutDialog.ui" />
   </ItemGroup>
 

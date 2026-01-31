@@ -77,7 +77,7 @@
         </child>
         <child>
           <object class="GtkButton" id="_okButton">
-            <property name="label">OK</property>
+            <property name="label">Close</property>
             <property name="width-request">80</property>
               <style>
                 <class name="suggested-action"/>

@@ -18,7 +18,7 @@ namespace MemcardRex.Linux;
 public class Application : Adw.Application
 {
     private MainWindow? mainWindow;
-    private ProgramSettings Settings;
+    public ProgramSettings Settings;
 
     //Hardware interfaces
     private HardwareSetup hwSetup = new HardwareSetup();
@@ -26,10 +26,7 @@ public class Application : Adw.Application
     //Currently active interface
     public HardInterfaces activeInterface
     {
-        get
-        {
-            return hwSetup.registeredInterfaces[Settings.ActiveInterface];
-        }
+        get {return hwSetup.registeredInterfaces[Settings.ActiveInterface];}
     }
 
     public static new Application New(string? id, Gio.ApplicationFlags flags)
