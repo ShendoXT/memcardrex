@@ -1,6 +1,8 @@
 /* Copyright (C) 2024 Rob Hall
  * SPDX-License-Identifier: GPL-3.0-or-later */
 
+using System;
+using System.Text;
 using Adw;
 using Gtk;
 using Gdk;
@@ -319,24 +321,80 @@ public class PS1CardTab : Gtk.Box
 
     }
 
-    public void ImportSave(Gtk.Window parent){
-
+    internal static Gtk.FileFilter SingleSavesFilter()
+    {
+        var filter = Gtk.FileFilter.New();
+        string[] patterns = ["*.mcs", "*.ps1", "*.PSV", "*.mcb", "*.mcx", "*.pda", "*.psx", "B???????????*"];
+        filter.Name = "All Supported Files";
+        foreach (string pattern in patterns)
+        {
+            filter.AddPattern(pattern);
+        }
+        return filter;
     }
 
-    public void ExportSave(Gtk.Window parent)
-    {
-        var dialog = new Adw.MessageDialog
-        {
-            Modal = true,
-            Heading = "Export Save?",
-            Body = "Do you want to export this save?",
-            TransientFor = parent,
+    //Import save data from external supported single save
+    public void ImportSave(Gtk.Window parent){
+        //ValidityCheck(out var parent, out int masterSlot);
+        var fileChooser = Gtk.FileChooserNative.New("Import save", parent, Gtk.FileChooserAction.Open, "Open", "Cancel");
+        fileChooser.SetModal(true);
+        fileChooser.AddFilter(SingleSavesFilter());
+        //fileChooser.AddFilter(AllFilesFilter());
+        fileChooser.Show();
+        fileChooser.OnResponse += (sender, args) => {
+            var file = fileChooser.GetFile();
+            fileChooser.Destroy();
+            if (args.ResponseId != (int) Gtk.ResponseType.Accept)
+                return;
+            try {
+                    if (memcard.OpenSingleSave(file!.GetPath()!, (int) SelectedSave()!, out int requiredSlots))
+                    {
+                        RefreshSaveList();
+                        //pushHistory("Save imported", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
+                    }
+                    else if (requiredSlots > 0)
+                    {
+                        NoSpaceMessage(requiredSlots, parent);
+                    }
+                    else
+                    {
+                        Utils.ErrorMessage(parent, "Import error", "The file could not be opened.");
+                    }
+            }
+            catch { return; }
         };
-        dialog.AddResponse("cancel", "Cancel");
-        dialog.AddResponse("save", "Export");
-        dialog.SetResponseAppearance("save", ResponseAppearance.Suggested);
-        dialog.Show();
-        Console.WriteLine("Exported save");
+    }
+
+    //Export single save
+    public void ExportSave(Gtk.Window parent, bool isRaw){
+        if(!ValidityCheck(out var xparent, out int masterSlot)) return;
+
+        byte singleSaveType;
+        string outputFilename;
+
+        if (isRaw)
+        {
+            //RAW file name on the system
+            outputFilename = memcard.saveRegionRaw[masterSlot] + memcard.saveProdCode[masterSlot] + memcard.saveIdentifier[masterSlot];
+        }
+        else
+        {
+            //Set output filename to be compatible with PS3
+            byte[] identifierASCII = Encoding.ASCII.GetBytes(memcard.saveIdentifier[masterSlot]);
+            outputFilename = memcard.saveRegionRaw[masterSlot] + memcard.saveProdCode[masterSlot] +
+                BitConverter.ToString(identifierASCII).Replace("-", "");
+        }
+
+        //This will help us preserve full file title if illegal characters were found in save file name
+        int illegalCharCount = 0;
+        string completeFileName = outputFilename;
+
+        //Filter illegal characters from the name
+        foreach (char illegalChar in "\\/\":*?<>|".ToCharArray())
+        {
+            if (outputFilename.Contains(illegalChar.ToString())) illegalCharCount++;
+            outputFilename = outputFilename.Replace(illegalChar.ToString(), "");
+        }
     }
 
     //Get a complete snapshot of the opened Memory Card
@@ -415,7 +473,6 @@ public class PS1CardTab : Gtk.Box
         }
     }
 
-
     //Copy save to global temp buffer
     public bool CopySave(ref byte[] tempBuffer, ref string tempBufferName, out Gdk.Texture? icon){
         icon = null;
@@ -429,6 +486,22 @@ public class PS1CardTab : Gtk.Box
         icon = TextureBuilder.BmpToTexture(bmpImage.BuildBmp(memcard.iconColorData[masterSlot, 0]))!;
 
         return true;
+    }
+
+    //Show error message about the lack of space on the Memory Card
+    public void NoSpaceMessage(int requiredSlots, Gtk.Window parent){
+        var dialog = new Adw.MessageDialog
+        {
+            Modal = true,
+            Heading = "Insufficient space",
+            Body = "To complete this operation " + requiredSlots.ToString() + " free slots are required.",
+            TransientFor = parent
+        };
+        dialog.AddResponse("cancel", "Close");
+        dialog.Show();
+        dialog.OnResponse += (_, dialogArgs) => {
+            dialog.Destroy();
+        };
     }
 
     //Paste save from global temp buffer
@@ -446,18 +519,7 @@ public class PS1CardTab : Gtk.Box
         }
         else
         {
-            var dialog = new Adw.MessageDialog
-            {
-                Modal = true,
-                Heading = "Insufficient space",
-                Body = "To complete this operation " + requiredSlots.ToString() + " free slots are required.",
-                TransientFor = parent
-            };
-            dialog.AddResponse("cancel", "Close");
-            dialog.Show();
-            dialog.OnResponse += (_, dialogArgs) => {
-                dialog.Destroy();
-            };
+            NoSpaceMessage(requiredSlots, parent);
         }
     }
 
@@ -538,7 +600,7 @@ public class PS1CardTab : Gtk.Box
                     CardTypes.vgs => ".vgs",
                     CardTypes.vmp => ".vmp",
                     CardTypes.mcx => ".bin",
-                    _ => ".mcr" // default za raw
+                    _ => ".mcr" // default for raw
                 };
 
                 if (!path.EndsWith(extension, StringComparison.OrdinalIgnoreCase)) {

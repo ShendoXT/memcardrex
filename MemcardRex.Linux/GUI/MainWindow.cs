@@ -129,10 +129,10 @@ public class MainWindow : Gtk.ApplicationWindow
         this.AddAction(actionCloseTab);
 
         actionExportSave = Gio.SimpleAction.New("export-save", null);
-        actionExportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionExportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this, false);
         this.AddAction(actionExportSave);
         actionExportRawSave = Gio.SimpleAction.New("export-save-raw", null);
-        actionExportRawSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this);
+        actionExportRawSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this, true);
         this.AddAction(actionExportRawSave);
         actionImportSave = Gio.SimpleAction.New("import-save", null);
         actionImportSave.OnActivate += (_, _) => CurrentCard()?.ImportSave(this);
@@ -237,8 +237,28 @@ public class MainWindow : Gtk.ApplicationWindow
         //Set serial or TCP mode
         mainApp.activeInterface.hardwareInterface.Mode = mainApp.activeInterface.mode;
 
-        //Activate interface
-        InitHardwareCommunication(mainApp.activeInterface.hardwareInterface);
+        //Format is a destructive operation, show warning dialog
+        if(mode == HardwareInterface.CommModes.format && mainApp.Settings.WarningMessages == 1){
+            var dialog = new Adw.MessageDialog
+            {
+                Modal = true,
+                Heading = "Format Memory Card",
+                Body = "This operation will wipe all data on the Memory Card.\nProceed?",
+                TransientFor = this
+            };
+            dialog.AddResponse("yes", "Format");
+            dialog.AddResponse("no", "Cancel");
+            dialog.SetResponseAppearance("yes", Adw.ResponseAppearance.Destructive);
+            dialog.Show();
+            dialog.OnResponse += (_, dialogArgs) => {
+                dialog.Destroy();
+                if (dialogArgs.Response == "yes")
+                InitHardwareCommunication(mainApp.activeInterface.hardwareInterface);
+            };
+        }else
+        {
+            InitHardwareCommunication(mainApp.activeInterface.hardwareInterface);
+        }
     }
 
     //Communication with real device
@@ -269,13 +289,6 @@ public class MainWindow : Gtk.ApplicationWindow
         {
             ps1card blankCard = new ps1card();
             blankCard.OpenMemoryCard(null, true);
-            
-            //Show warning message
-            if (mainApp.Settings.WarningMessages == 1)
-            {
-                //if(MessageBox.Show("This operation will wipe all data on the Memory Card.\nProceed?",
-                    //"Format Memory Card", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) return;
-            }
             
             dialog.MemoryCard = blankCard.SaveMemoryCardStream(true);
         }
@@ -576,18 +589,6 @@ public class MainWindow : Gtk.ApplicationWindow
     {
         var filter = Gtk.FileFilter.New();
         filter.Name = name;
-        foreach (string pattern in patterns)
-        {
-            filter.AddPattern(pattern);
-        }
-        return filter;
-    }
-
-    internal static Gtk.FileFilter SingleSavesFilter()
-    {
-        var filter = Gtk.FileFilter.New();
-        string[] patterns = ["*.mcs", "*.ps1", "*.PSV", "*.mcb", "*.mcx", "*.pda", "*.psx", "B???????????*"];
-        filter.Name = "All Supported Files";
         foreach (string pattern in patterns)
         {
             filter.AddPattern(pattern);

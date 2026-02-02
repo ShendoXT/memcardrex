@@ -158,7 +158,7 @@ namespace MemcardRex.Core
             if(base.CommMode == (int) CommModes.read)
             {
                 PortWrite("MCDN");
-                Thread.Sleep(200);
+                Thread.Sleep(500);
 
                 //Check if this is Unirom
                 if (!"MCDNOKV2".Equals(PortReadExisting()))
@@ -167,7 +167,7 @@ namespace MemcardRex.Core
             else
             {
                 PortWrite("MCUP");
-                Thread.Sleep(200);
+                Thread.Sleep(500);
 
                 //Check if this is Unirom
                 if (!"MCUPOKV2".Equals(PortReadExisting()))

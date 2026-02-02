@@ -98,6 +98,8 @@ public class CommunicationDialog
         //Set title based on the hardware interface name
         _dialog.SetTitle(hardInterface.Name() + " communication");
 
+        firstRun = true;
+
         _dialog.OnRealize += async (s, e) => 
         {
             //Set proper number of frames to read/write
@@ -145,6 +147,7 @@ public class CommunicationDialog
 
         //Abort
         _btnAbort.OnClicked += (s, e) => {
+            if(!_isPulsing && abortWaiting) OpComplete();
             _isPulsing = false;
             abortWaiting = true;
         };
@@ -163,58 +166,41 @@ public class CommunicationDialog
         });
     }
 
+    private void SetReadingMessage(){
+        string interfaceDescription = _hardInterface.Name();
+
+        if (_hardInterface.Firmware() != "") interfaceDescription += " (ver. " + _hardInterface.Firmware() + ")...";
+        else interfaceDescription += "...";
+
+        switch (_hardInterface.CommMode)
+        {
+            case HardwareInterface.CommModes.read:
+                _label.SetText("Reading data from " + interfaceDescription);
+                break;
+
+            case HardwareInterface.CommModes.format:
+                _label.SetText("Formatting card on " + interfaceDescription);
+                break;
+
+            case HardwareInterface.CommModes.write:
+                _label.SetText("Writing data to " + interfaceDescription);
+                break;
+
+            case HardwareInterface.CommModes.psbios:
+                _label.SetText("Dumping BIOS using " + interfaceDescription);
+                break;
+        }
+    }
+
     private void ReportProgress(int value)
     {
-        if (_hardInterface.Type == HardwareInterface.Types.unirom && _hardInterface.CommMode == HardwareInterface.CommModes.read)
-        {
-            /*if (progressBar.Visible == false && _hardInterface.StoredInRam)
-            {
-                progressBar.Visible = true;
-                abortButton.Enabled = true;
-                deviceLabel.Text = "Reading data from Unirom...";
-            }*/
-        }
+        _isPulsing = false;
+
         //First run
-        else if (firstRun)
+        if (firstRun)
         {
-            string interfaceDescription = _hardInterface.Name();
-
-            if (_hardInterface.Firmware() != "") interfaceDescription += " (ver. " + _hardInterface.Firmware() + ")...";
-            else interfaceDescription += "...";
-
-            _btnAbort.SetSensitive(true);
-
-            switch (_hardInterface.CommMode)
-            {
-                case HardwareInterface.CommModes.read:
-                    if (_hardInterface.Type == HardwareInterface.Types.unirom)
-                    {
-                        //Unirom reading mode is special, we have to wait for it to store contents to RAM
-                        _label.SetText("Waiting for Unirom to store contents in RAM.\nTransfer will start after all the sectors have been read.");
-                        //progressBar.Visible = false;
-                        _btnAbort.SetSensitive(false);
-                    }
-                    else
-                    {
-                        _label.SetText("Reading data from " + interfaceDescription);
-                    }
-                    break;
-
-                case HardwareInterface.CommModes.format:
-                    _label.SetText("Formatting card on " + interfaceDescription);
-                    if (_quickFormat) _hardInterface.FrameCount = 64;
-                    break;
-
-                case HardwareInterface.CommModes.write:
-                    _label.SetText("Writing data to " + interfaceDescription);
-                    break;
-
-                case HardwareInterface.CommModes.psbios:
-                    _label.SetText("Dumping BIOS using " + interfaceDescription);
-                    break;
-            }
+            SetReadingMessage();
             firstRun = false;
-            _isPulsing = false;
         }
 
         //Report progress to UI
@@ -293,6 +279,15 @@ public class CommunicationDialog
                 return;
             }
         }
+
+        //Set unirom waiting message or other status messages
+        if(_hardInterface.CommMode == HardwareInterface.CommModes.read && 
+        _hardInterface.Type == HardwareInterface.Types.unirom)
+            _label.SetText("Waiting for Unirom to prepare data for transfer...");
+        else ReportProgress(0);
+
+        //Enable abort button
+        _btnAbort.SetSensitive(true);
 
         //Process all frames of the Memory Card
         while (i < _hardInterface.FrameCount)
