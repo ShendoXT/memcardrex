@@ -52,14 +52,13 @@ sudo apt install libusb-1.0-0-dev libusb-1.0-0
 * Edit save comment
 * Delete, restore and format saves.
 * Copy and paste to and from temp buffer
-* Import saves in all supported formats.
+* Import and export saves in all supported formats.
 * Hardware interfaces.
 * Preferences are working and are preserved between sessions.
 
 ### TODO:
 
 * Undo/Redo with history list.
-* Export saves.
 * Plugins.
 * Icon editor.
 * Compare save with temp buffer.

@@ -596,6 +596,17 @@ public class MainWindow : Gtk.ApplicationWindow
         return filter;
     }
 
+    internal static Gtk.FileFilter FilterForSingleType(SingleSaveTypes type)
+    {
+        return type switch
+        {
+            SingleSaveTypes.mcs => FormatFilter("PSXGameEdit/Memory Juggler", ["*.mcs", "*.ps1"]),
+            SingleSaveTypes.psv => FormatFilter("PS3 single save", ["*.psv"]),
+            SingleSaveTypes.psx => FormatFilter("Smart Link/XP, AR, GS, Caetla/Datel", ["*.mcb", "*.mcx", "*.pda", "*.psx"]),
+            _ => FormatFilter("RAW single save", ["B???????????*"]),
+        };
+    }
+
     internal static Gtk.FileFilter FilterForType(CardTypes type)
     {
         return type switch

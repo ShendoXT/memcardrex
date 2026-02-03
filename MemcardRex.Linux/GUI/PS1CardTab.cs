@@ -369,7 +369,6 @@ public class PS1CardTab : Gtk.Box
     public void ExportSave(Gtk.Window parent, bool isRaw){
         if(!ValidityCheck(out var xparent, out int masterSlot)) return;
 
-        byte singleSaveType;
         string outputFilename;
 
         if (isRaw)
@@ -395,6 +394,81 @@ public class PS1CardTab : Gtk.Box
             if (outputFilename.Contains(illegalChar.ToString())) illegalCharCount++;
             outputFilename = outputFilename.Replace(illegalChar.ToString(), "");
         }
+
+        var fileChooser = Gtk.FileChooserNative.New("Export save", parent, Gtk.FileChooserAction.Save, "Save", "Cancel");
+        fileChooser.SetModal(true);
+        fileChooser.SetCurrentName(outputFilename);
+
+        var filterToType = new Dictionary<Gtk.FileFilter, SingleSaveTypes>();
+
+        SingleSaveTypes[] types = [SingleSaveTypes.raw, SingleSaveTypes.mcs, SingleSaveTypes.psv, SingleSaveTypes.psx];
+        
+        foreach (SingleSaveTypes type in types)
+        {
+            var filter = MainWindow.FilterForSingleType(type);
+
+            if(isRaw && type == SingleSaveTypes.raw){
+                fileChooser.AddFilter(filter);
+            }else if(!isRaw && type != SingleSaveTypes.raw){
+                fileChooser.AddFilter(filter);
+            }
+
+            filterToType[filter] = type;
+        }
+
+        fileChooser.Show();
+        fileChooser.OnResponse += (sender, args) => {
+            if (args.ResponseId != (int)Gtk.ResponseType.Accept)
+            {
+                fileChooser.Destroy();
+                return;
+            }
+
+            var selectedFilter = fileChooser.GetFilter();
+            var targetType = filterToType[selectedFilter!]; 
+
+            var file = fileChooser.GetFile();
+            string path = file!.GetPath()!;
+            fileChooser.Destroy();
+
+            //RAW save type
+            if (isRaw)
+            {
+                targetType = ps1card.SingleSaveTypes.raw;
+
+                //Create text file with full file name if illegal characters were found
+                if (illegalCharCount > 0)
+                {
+                    StreamWriter sw = File.CreateText(path + "_info.txt");
+                    sw.WriteLine(completeFileName);
+                    sw.WriteLine("");
+                    sw.WriteLine("Region: \"" + memcard.saveRegion[masterSlot] + "\"");
+                    sw.WriteLine("Product code: \"" + memcard.saveProdCode[masterSlot] + "\"");
+                    sw.WriteLine("Identifier: \"" + memcard.saveIdentifier[masterSlot] + "\"");
+                    sw.WriteLine("");
+                    sw.WriteLine("This text file was created because the exported RAW save file name contains forbidden characters.");
+                    sw.WriteLine("You can use this info when importing for example with uLaunchELF to make your save valid.");
+                    sw.Write("Rename \"" + outputFilename + "\" to \"" + completeFileName + "\" after importing the save.");
+                    sw.Close();
+                }
+            }else{
+            string extension = targetType switch {
+                    SingleSaveTypes.mcs => ".mcs",
+                    SingleSaveTypes.psv => ".psv",
+                    SingleSaveTypes.psx => ".mcb",
+                    _ => ""
+                };
+
+                if (!path.EndsWith(extension, StringComparison.OrdinalIgnoreCase)) {
+                    path += extension;
+                }
+            }
+
+            try {
+                memcard.SaveSingleSave(path, masterSlot, (int) targetType);
+            }
+            catch { return; }
+        };
     }
 
     //Get a complete snapshot of the opened Memory Card
@@ -617,11 +691,6 @@ public class PS1CardTab : Gtk.Box
             }
             catch { return; }
         };
-    }
-
-    private void ExportAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
-    {
-        Console.WriteLine("Export");
     }
 
     private void ShowContextMenu(GestureClick obj, GestureClick.PressedSignalArgs args)
