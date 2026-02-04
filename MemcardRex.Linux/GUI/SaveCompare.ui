@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkDialog" id="SaveCompareDialog">
+    <property name="title">Compare saves</property>
+    <property name="default-width">500</property>
+    <property name="default-height">400</property>
+    <property name="resizable">false</property>
+    <property name="modal">true</property>
+    <child internal-child="content_area">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">8</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">0</property>
+        <child>
+          <object class="GtkLabel" id="LabelSave1">
+            <property name="xalign">0</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="LabelSave2">
+            <property name="xalign">0</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hexpand">true</property>
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="GtkColumnView" id="DiffColumnView">
+                <property name="hexpand">true</property>
+                <property name="show-column-separators">true</property>
+                <property name="show-row-separators">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="halign">end</property>
+            <property name="margin-top">6</property>
+            <child>
+              <object class="GtkButton" id="BtnOk">
+                <property name="label">Close</property>
+                <property name="width-request">80</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

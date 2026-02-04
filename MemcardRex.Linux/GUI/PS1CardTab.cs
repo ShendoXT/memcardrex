@@ -292,6 +292,7 @@ public class PS1CardTab : Gtk.Box
     }
 
     private void UpdatePageInfo(){
+        if(Page == null) return;
         Page!.SetTitle(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName);
         Page.SetTooltip(memcard.cardLocation);
     }
@@ -317,8 +318,46 @@ public class PS1CardTab : Gtk.Box
         return;
     }
 
-    public void CompareSave(Gtk.Window parent){
+    //Compare currently selected save against the one in temp buffer
+    public void CompareSave(Gtk.Window parent, byte[]? tempBuffer, string? tempBufferName){
+        if (tempBuffer == null) return;
+        if(!ValidityCheck(out var xparent, out int masterSlot)) return;
 
+        byte[] fetchedData = memcard.GetSaveBytes(masterSlot);
+
+        //Check if selected saves have the same size
+        if (fetchedData.Length != tempBuffer.Length)
+        {
+            Utils.ErrorMessage(parent, "Comparison error", "Save file size mismatch. Saves can't be compared.");
+            return;
+        }
+
+        var diffList = new List<string[]>();
+
+        for (int i = 0; i < fetchedData.Length; i++)
+        {
+            if (fetchedData[i] != tempBuffer[i])
+            {
+                diffList.Add(new string[] {
+                    $"0x{i:X4} ({i})",
+                    $"0x{fetchedData[i]:X2} ({fetchedData[i]})",
+                    $"0x{tempBuffer[i]:X2} ({tempBuffer[i]})"
+                });
+            }
+        }
+
+        //Check if the list contains any items
+        if (diffList.Count < 1)
+        {
+            Utils.ErrorMessage(parent, "No differences", "Compared saves are identical.");
+            return;
+        }
+
+        string s1 = memcard.saveName[masterSlot];
+        string s2 = tempBufferName + " (temp buffer)";
+
+        var dialog = new SaveCompare(parent, s1, s2, diffList.ToArray());
+        dialog.Show();
     }
 
     internal static Gtk.FileFilter SingleSavesFilter()
@@ -494,7 +533,7 @@ public class PS1CardTab : Gtk.Box
     }
 
     //Refresh list view after save editing
-    private void RefreshSaveList(){
+    public void RefreshSaveList(){
         //Refresh icons
         for (uint i = 0; i < listStore.GetNItems(); i++)
         {
@@ -558,6 +597,9 @@ public class PS1CardTab : Gtk.Box
         //Fetch icon for the save
         BmpBuilder bmpImage = new BmpBuilder();
         icon = TextureBuilder.BmpToTexture(bmpImage.BuildBmp(memcard.iconColorData[masterSlot, 0]))!;
+
+        //Needed to enable save comparison menu option
+        RefreshSaveList();
 
         return true;
     }

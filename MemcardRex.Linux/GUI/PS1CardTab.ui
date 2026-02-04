@@ -64,6 +64,12 @@ data-table</property>
     </section>
     <section>
       <item>
+        <attribute name="action">win.compare-save</attribute>
+        <attribute name="label" translatable="yes">Compare with temp buffer</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
         <attribute name="action">win.delete-save</attribute>
         <attribute name="label" translatable="yes">Delete save</attribute>
       </item>

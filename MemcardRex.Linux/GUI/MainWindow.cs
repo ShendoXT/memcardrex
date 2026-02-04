@@ -87,6 +87,7 @@ public class MainWindow : Gtk.ApplicationWindow
                     var child = (PS1CardTab?)page.GetChild();
                     if (child != null && child.Title != null){
                         UpdateTitleLocation(child.HasUnsavedChanges ? "● " + child.Title:child.Title, child.Location);
+                        child.RefreshSaveList();
                     }
                 }
             }
@@ -98,6 +99,7 @@ public class MainWindow : Gtk.ApplicationWindow
                         if (child != null && child.Title != null && tabView.GetNPages() == 1)
                             windowTitle.SetSubtitle(child.HasUnsavedChanges ? "● " + child.Title:child.Title);
                         else windowTitle.SetSubtitle("");
+                        if(child != null) child.RefreshSaveList();
                     }
                     stack.SetVisibleChildName("tabs");
                     SetCardActionsEnabled(true);
@@ -165,7 +167,7 @@ public class MainWindow : Gtk.ApplicationWindow
         actionPasteSave.OnActivate += (_, _) => CurrentCard()?.PasteSave(tempBuffer);
         this.AddAction(actionPasteSave);
         actionCompareSave = Gio.SimpleAction.New("compare-save", null);
-        actionCompareSave.OnActivate += (_, _) => CurrentCard()?.CompareSave(this);
+        actionCompareSave.OnActivate += (_, _) => CurrentCard()?.CompareSave(this, tempBuffer, tempBufferName);
         this.AddAction(actionCompareSave);
         actionEraseSave = Gio.SimpleAction.New("erase-save", null);
         actionEraseSave.OnActivate += (_, _) => CurrentCard()?.FormatSave();
