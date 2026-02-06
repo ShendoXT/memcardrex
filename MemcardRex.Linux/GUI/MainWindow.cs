@@ -59,6 +59,10 @@ public class MainWindow : Gtk.ApplicationWindow
     private readonly Gio.SimpleAction actionPocketBios;
     private readonly Gio.SimpleAction actionPocketTime;
 
+    //Undo/Redo
+    private readonly Gio.SimpleAction actionUndo;
+    private readonly Gio.SimpleAction actionRedo;
+
     //Temp buffer used to store saves
     byte[]? tempBuffer = null;
     string? tempBufferName = null;
@@ -129,6 +133,13 @@ public class MainWindow : Gtk.ApplicationWindow
         actionCloseTab = Gio.SimpleAction.New("close-tab", null);
         actionCloseTab.OnActivate += CloseTabAction;
         this.AddAction(actionCloseTab);
+
+        actionUndo = Gio.SimpleAction.New("undo", null);
+        actionUndo.OnActivate += (_, _) => CurrentCard()?.Undo();
+        this.AddAction(actionUndo);
+        actionRedo = Gio.SimpleAction.New("redo", null);
+        actionRedo.OnActivate += (_, _) => CurrentCard()?.Redo();
+        this.AddAction(actionRedo);
 
         actionExportSave = Gio.SimpleAction.New("export-save", null);
         actionExportSave.OnActivate += (_, _) => CurrentCard()?.ExportSave(this, false);
@@ -347,10 +358,7 @@ public class MainWindow : Gtk.ApplicationWindow
         card.OpenMemoryCardStream(readData, mainApp.Settings.FixCorruptedCards == 1);
 
         //Create a tab page for the new card
-        CreateNewCard(card);
-
-        //Set the info to history list
-        //pushHistory("Card read (" + deviceName + ")", historyList.Count - 1, new Bitmap(16, 16));
+        CreateNewCard(card, "Card read (" + deviceName + ")");
     }
 
     //Change title and location of the currently opened card
@@ -397,6 +405,11 @@ public class MainWindow : Gtk.ApplicationWindow
         actionCloseTab.SetEnabled(enabled);
     }
 
+    public void UndoRedoMenuEnable(int undoCount, int redoCount){
+        actionUndo.SetEnabled(undoCount > 0);
+        actionRedo.SetEnabled(redoCount > 0);
+    }
+
     //Enable or disable actions based on the currently selected slot
     public void SetSlotActionsEnabled(ps1card.SlotTypes slotType)
     {
@@ -422,22 +435,26 @@ public class MainWindow : Gtk.ApplicationWindow
         
         //Paste needs a free slot and a valid buffer
         actionPasteSave.SetEnabled(isFormatted && tempBuffer != null);
+
+        //Undo and Redo
+
     }
 
     //Create a new card tab from the given card
-    private void CreateNewCard(ps1card card){
+    private void CreateNewCard(ps1card card, string historyMessage){
         var tab = new PS1CardTab(card);
         var child = tabView.Append(tab);
         tab.SetPage(child);
         tabView.SetSelectedPage(child);
         SetCardActionsEnabled(true);
+        tab.PushHistory(historyMessage, null);
     }
 
     private void NewCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
         ps1card card = new ps1card();
         card.OpenMemoryCard(null, mainApp.Settings.FixCorruptedCards == 1);
-        CreateNewCard(card);
+        CreateNewCard(card, "Card created");
     }
 
     private void OpenCardFile(string filename){
@@ -470,11 +487,7 @@ public class MainWindow : Gtk.ApplicationWindow
                 tabView.ClosePage(tabView.GetNthPage(0));
         }
 
-        var tab = new PS1CardTab(card);
-        var child = tabView.Append(tab);
-        tab.SetPage(child);
-        tabView.SetSelectedPage(child);
-        SetCardActionsEnabled(true);
+        CreateNewCard(card, "Card opened");
     }
 
     private void OpenCardAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)

@@ -83,6 +83,9 @@ public class Application : Adw.Application
         this.SetAccelsForAction("app.readme", ["F1"]);
         this.SetAccelsForAction("win.copy-save", ["<Control>c"]);
         this.SetAccelsForAction("win.paste-save", ["<Control>v"]);
+        //this.SetAccelsForAction("win.erase-save", ["<Shift><Delete>"]);
+        this.SetAccelsForAction("win.undo", ["<Primary>z"]);
+        this.SetAccelsForAction("win.redo", ["<Primary><Shift>z"]);
     }
 
     //Notify all required parties of the settings change

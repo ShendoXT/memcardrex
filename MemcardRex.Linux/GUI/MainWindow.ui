@@ -262,12 +262,10 @@
           <section>
           <item>
             <attribute name="action">win.undo</attribute>
-            <attribute name="accel">&lt;Control&gt;z</attribute>
             <attribute name="label" translatable="yes">Undo</attribute>
           </item>
           <item>
             <attribute name="action">win.redo</attribute>
-            <attribute name="accel">&lt;Control&gt;&lt;Shift&gt;z</attribute>
             <attribute name="label" translatable="yes">Redo</attribute>
           </item>
         </section>
@@ -304,7 +302,6 @@
           </item>
           <item>
             <attribute name="action">win.erase-save</attribute>
-            <attribute name="accel">Delete</attribute>
             <attribute name="label" translatable="yes">Remove save (format slot(s))</attribute>
           </item>
         </section>

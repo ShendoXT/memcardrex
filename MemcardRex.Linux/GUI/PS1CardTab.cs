@@ -86,6 +86,7 @@ public class PS1CardTab : Gtk.Box
     private readonly Gtk.ColumnViewColumn titleColumn;
     private readonly Gtk.ColumnViewColumn productCodeColumn;
     private readonly Gtk.ColumnViewColumn identifierColumn;
+    private readonly Gtk.ColumnViewColumn historyColumn;
 
     private Gio.ListStore listStore;
 
@@ -104,6 +105,11 @@ public class PS1CardTab : Gtk.Box
 
     Application mainApp = (Application)Gtk.Application.GetDefault()!;
 
+    //History list
+    private Gio.ListStore historyStore;
+    private uint currentHistoryIndex = 0;
+    private bool _isInternalUpdate = false;
+
     private PS1CardTab(ps1card card, Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
         builder.Connect(this);
@@ -114,7 +120,7 @@ public class PS1CardTab : Gtk.Box
         contextMenu ??= new();
         freeContextMenu ??= new();
         listStore = Gio.ListStore.New(PS1Slot.GetGType());
-        var historyStore = Gio.ListStore.New(HistoryRow.GetGType());
+        historyStore = Gio.ListStore.New(HistoryRow.GetGType());
         model = Gtk.MultiSelection.New(listStore);
         historyModel = Gtk.SingleSelection.New(historyStore);
         historyModel.Autoselect = false;
@@ -124,6 +130,14 @@ public class PS1CardTab : Gtk.Box
 
         saveList.SetModel(model);
         historyList.SetModel(historyModel);
+
+        historyModel.OnNotify += (s, e) => 
+        {
+            if (e.Pspec.GetName() == "selected")
+            {
+                OnHistorySelectionChanged();
+            }
+        };
 
         var clickGesture = Gtk.GestureClick.New();
         clickGesture.SetButton(1); // Left click
@@ -218,7 +232,7 @@ public class PS1CardTab : Gtk.Box
             }
         };
         identifierColumn = Gtk.ColumnViewColumn.New("Identifier", identifierFactory);
-        identifierColumn.SetFixedWidth(130);
+        identifierColumn.SetFixedWidth(100);
         saveList.AppendColumn(identifierColumn);
 
         for (int i = 0; i < 15; i++)
@@ -249,17 +263,41 @@ public class PS1CardTab : Gtk.Box
             }
         };
 
-        var historyColumn = Gtk.ColumnViewColumn.New("History", historyFactory);
-        historyColumn.SetFixedWidth(160);
+        historyColumn = Gtk.ColumnViewColumn.New("History", historyFactory);
+        historyColumn.SetFixedWidth(190);
         historyList.AppendColumn(historyColumn);
-
-        historyStore.Append(
-            new HistoryRow(null, "Card created")
-        );
 
         //Select first items on the list
         model.SelectItem(0, false);
-        historyModel.SelectItem(0, false);
+        //historyModel.SelectItem(0, false);
+    }
+
+    private void OnHistorySelectionChanged()
+    {
+        if (_isInternalUpdate) return;
+        uint newIndex = historyModel.GetSelected();
+        if (newIndex == uint.MaxValue) return;
+
+        int diff = (int)newIndex - (int)currentHistoryIndex;
+
+        if (diff < 0)
+        {
+            int steps = Math.Abs(diff);
+            for (int i = 0; i < steps; i++)
+            {
+                memcard.Undo();
+            }
+        }
+        else if (diff > 0)
+        {
+            for (int i = 0; i < diff; i++)
+            {
+                memcard.Redo();
+            }
+        }
+
+        RefreshSaveList();
+        currentHistoryIndex = newIndex;
     }
 
     //Delete/Restore selected save
@@ -271,10 +309,10 @@ public class PS1CardTab : Gtk.Box
 
         RefreshSaveList();
 
-        /*if (memCard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)
-            pushHistory("Save deleted", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));
+        if (memcard.slotType[masterSlot] == ps1card.SlotTypes.deleted_initial)
+            PushHistory("Save deleted", GetFirstSelectedItem()!.GetIcon(false));
         else
-            pushHistory("Save restored", mainTabControl.SelectedIndex, prepareIcons(listIndex, masterSlot, false));*/
+            PushHistory("Save restored", GetFirstSelectedItem()!.GetIcon(false));
     }
 
     //Format selected save
@@ -282,13 +320,61 @@ public class PS1CardTab : Gtk.Box
     {
         if(!ValidityCheck(out var parent, out int masterSlot)) return;
         //Fetch save icon before deletion
-        //Bitmap saveIcon = prepareIcons(listIndex, masterSlot, false);
+        Gdk.Texture saveIcon = GetFirstSelectedItem()!.GetIcon(false);
 
         memcard.FormatSave(masterSlot);
 
         RefreshSaveList();
 
-        //pushHistory("Save removed", mainTabControl.SelectedIndex, saveIcon);
+        PushHistory("Save removed", saveIcon);
+    }
+
+    //Bring a new item to the history list
+    public void PushHistory(string description, Gdk.Texture? saveIcon)
+    {
+        _isInternalUpdate = true;
+
+        uint selectedIndex = historyModel.GetSelected();
+        uint totalItems = historyStore.GetNItems();
+
+        if (selectedIndex != uint.MaxValue && selectedIndex < (totalItems - 1))
+        {
+            uint startDeleteIndex = selectedIndex + 1;
+            uint countToRemove = totalItems - startDeleteIndex;
+
+            if (countToRemove > 0)
+            {
+                historyStore.Splice(startDeleteIndex, countToRemove, Array.Empty<GObject.Object>(), 0);
+            }
+        }
+
+        historyStore.Append(new HistoryRow(saveIcon, " " + description));
+
+        uint lastIndex = historyStore.GetNItems() - 1;
+        historyModel.SetSelected(lastIndex);
+        historyList.ScrollTo(lastIndex, null, (Gtk.ListScrollFlags)0, null);
+
+        currentHistoryIndex = lastIndex;
+        _isInternalUpdate = false;
+    }
+
+    public void Undo(){
+        uint current = historyModel.GetSelected();
+        if (current > 0 && current != uint.MaxValue)
+        {
+            historyModel.SetSelected(current - 1);
+            historyList.ScrollTo(current - 1, null, (Gtk.ListScrollFlags)0, null);
+        }
+    }
+
+    public void Redo(){
+        uint current = historyModel.GetSelected();
+        uint total = historyStore.GetNItems();
+        if (current != uint.MaxValue && current < (total - 1))
+        {
+            historyModel.SetSelected(current + 1);
+            historyList.ScrollTo(current + 1, null, (Gtk.ListScrollFlags)0, null);
+        }
     }
 
     private void UpdatePageInfo(){
@@ -374,7 +460,6 @@ public class PS1CardTab : Gtk.Box
 
     //Import save data from external supported single save
     public void ImportSave(Gtk.Window parent){
-        //ValidityCheck(out var parent, out int masterSlot);
         var fileChooser = Gtk.FileChooserNative.New("Import save", parent, Gtk.FileChooserAction.Open, "Open", "Cancel");
         fileChooser.SetModal(true);
         fileChooser.AddFilter(SingleSavesFilter());
@@ -389,7 +474,7 @@ public class PS1CardTab : Gtk.Box
                     if (memcard.OpenSingleSave(file!.GetPath()!, (int) SelectedSave()!, out int requiredSlots))
                     {
                         RefreshSaveList();
-                        //pushHistory("Save imported", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
+                        PushHistory("Save imported", GetFirstSelectedItem()!.GetIcon(false));
                     }
                     else if (requiredSlots > 0)
                     {
@@ -549,6 +634,7 @@ public class PS1CardTab : Gtk.Box
         UpdatePageInfo();
         MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[(int)SelectedSave()!]);
         MainWindow.Instance.UpdateTitleLocation(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName, memcard.cardLocation);
+        MainWindow.Instance.UndoRedoMenuEnable(memcard.UndoCount, memcard.RedoCount);
     }
 
     //Edit save header of the currently selected save
@@ -568,6 +654,8 @@ public class PS1CardTab : Gtk.Box
         {
             memcard.SetHeaderData(masterSlot, dialog.GetProductCode(), dialog.GetIdentifier(), dialog.GetRegion());
 
+            PushHistory("Header edited", GetFirstSelectedItem()!.GetIcon(false));
+
             //Refresh list
             RefreshSaveList();
         }
@@ -583,6 +671,7 @@ public class PS1CardTab : Gtk.Box
 
         if(dialog.Run()){
             memcard.SetComment(masterSlot, dialog.GetComments());
+            PushHistory("Comment edited", GetFirstSelectedItem()!.GetIcon(false));
         }
     }
 
@@ -631,7 +720,7 @@ public class PS1CardTab : Gtk.Box
         if (memcard.SetSaveBytes(masterSlot, tempBuffer, out requiredSlots))
         {
             RefreshSaveList();
-            //pushHistory("Save pasted", mainTabControl.SelectedIndex, prepareIcons(listIndex, slotNumber, false));
+            PushHistory("Save pasted", GetFirstSelectedItem()!.GetIcon(false));
         }
         else
         {
@@ -783,6 +872,19 @@ public class PS1CardTab : Gtk.Box
 
         //Enable or disable edit menus
         MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[masterSlot]);
+    }
+
+    private PS1Slot? GetFirstSelectedItem()
+    {
+        var bitset = model.GetSelection();
+
+        if (bitset.IsEmpty())
+            return null;
+
+        uint firstIndex = bitset.GetMinimum();
+        nint ptr = model.Model.GetItem(firstIndex);
+
+        return GObject.Internal.ObjectWrapper.WrapHandle<PS1Slot>(ptr, false);
     }
 
     //Return selected master slot for the selected save in the list

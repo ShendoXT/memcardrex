@@ -54,12 +54,12 @@ sudo apt install libusb-1.0-0-dev libusb-1.0-0
 * Copy and paste to and from temp buffer
 * Import and export saves in all supported formats.
 * Compare save with temp buffer.
+* Undo/Redo with history list.
 * Hardware interfaces.
 * Preferences are working and are preserved between sessions.
 
 ### TODO:
 
-* Undo/Redo with history list.
 * Plugins.
 * Icon editor.
 * PocketStation serial read/BIOS dump
