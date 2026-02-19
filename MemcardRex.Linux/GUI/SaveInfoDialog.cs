@@ -29,13 +29,15 @@ public class SaveInfoDialog
     Texture[] iconData = new Texture[3];
     Texture[]? mcIconData;
     Texture[]? apIconData;
-    /*int iconIndex = 0;
+    int iconIndex = 0;
     int mcIconIndex = 0;
     int apIconIndex = 0;
     int maxCount = 1;
-    int iconBackColor = 0;*/
+    //int iconBackColor = 0;
     int apIconDelay = 0;
     int apDelayCount = 0;
+
+    private uint _timerId;
 
     public SaveInfoDialog(Window parent)
     {
@@ -58,6 +60,12 @@ public class SaveInfoDialog
         dialog.SetTransientFor(parent);
         
         closeButton.OnClicked += (sender, args) => dialog.Close();
+
+        // 1. Poveži se na Realize signal (izvršava se kad se kreiraju nativni resursi)
+        dialog.OnRealize += (sender, args) => StartAnimTimer();
+        
+        // 2. Obavezno ugasi tajmer kad se dijalog zatvori da ne curi memorija
+        dialog.OnUnrealize += (sender, args) => StopAnimTimer();
     }
 
     public void SetSaveInfo(string title, string productCode, string identifier, 
@@ -74,6 +82,7 @@ public class SaveInfoDialog
         regionLabel.SetLabel(region);
         sizeLabel.SetLabel(size.ToString() + " KB");
         framesString = iconFrames.ToString();
+        maxCount = iconFrames;
 
         //Save file data type
         if (fileType == ps1card.DataTypes.save) fileTypeLabel.SetLabel("Save data");
@@ -128,7 +137,7 @@ public class SaveInfoDialog
 
             //PocketStation starts with a 2nd icon in the APIcon list if there is more than 1 icon
             //Why? I have no idea but we will emulate this in this information dialog
-            //if (apIconData.Length > 1) apIconIndex = 1;
+            if (apIconData.Length > 1) apIconIndex = 1;
         }
 
         iconFramesLabel.SetLabel(framesString);
@@ -138,18 +147,45 @@ public class SaveInfoDialog
 
     private void drawIcons(){
         //Show save icon
-        saveIcon1.SetFromPaintable(iconData[0]);
+        saveIcon1.SetFromPaintable(iconData[iconIndex]);
 
         if (mcIconData != null)
         {
-            saveIcon2.SetFromPaintable(mcIconData[0]);
-            //if (mcIconIndex < (mcIconData.Length - 1)) mcIconIndex++; else mcIconIndex = 0;
+            saveIcon2.SetFromPaintable(mcIconData[mcIconIndex]);
+            if (mcIconIndex < (mcIconData.Length - 1)) mcIconIndex++; else mcIconIndex = 0;
         }
 
         if (apIconData != null)
         {
-            if(mcIconData != null) saveIcon3.SetFromPaintable(apIconData[0]);
-            else saveIcon2.SetFromPaintable(apIconData[0]);
+            if(mcIconData != null) saveIcon3.SetFromPaintable(apIconData[apIconIndex]);
+            else saveIcon2.SetFromPaintable(apIconData[apIconIndex]);
+
+            if (apDelayCount > 0) apDelayCount--;
+            else
+            {
+                if (apIconIndex < (apIconData.Length - 1)) apIconIndex++; else apIconIndex = 0;
+                apDelayCount = apIconDelay;
+            }
+        }
+
+        if (iconIndex < (maxCount - 1)) iconIndex++; else iconIndex = 0;
+    }
+
+    private void StartAnimTimer()
+    {
+        _timerId = GLib.Functions.TimeoutAdd(0, 180, () => 
+        {
+            drawIcons();
+            return true; 
+        });
+    }
+
+    private void StopAnimTimer()
+    {
+        if (_timerId > 0)
+        {
+            GLib.Functions.SourceRemove(_timerId);
+            _timerId = 0;
         }
     }
 
