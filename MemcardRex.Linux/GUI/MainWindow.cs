@@ -47,7 +47,7 @@ public class MainWindow : Gtk.ApplicationWindow
     private readonly Gio.SimpleAction actionEraseSave;
     private readonly Gio.SimpleAction actionEditComment;
     private readonly Gio.SimpleAction actionEditHeader;
-    //private readonly Gio.SimpleAction actionEditIcon;
+    private readonly Gio.SimpleAction actionEditIcon;
     private readonly Gio.SimpleAction actionProperties;
 
     //Hardware actions
@@ -192,6 +192,9 @@ public class MainWindow : Gtk.ApplicationWindow
         actionEditComment = Gio.SimpleAction.New("edit-comment", null);
         actionEditComment.OnActivate += (_, _) => CurrentCard()?.EditComments();
         this.AddAction(actionEditComment);
+        actionEditIcon = Gio.SimpleAction.New("edit-icon", null);
+        actionEditIcon.OnActivate += (_, _) => CurrentCard()?.EditIcon();
+        this.AddAction(actionEditIcon);
 
         //Hardware actions
         actionReadData = Gio.SimpleAction.New("hardware-read", null);
@@ -421,6 +424,7 @@ public class MainWindow : Gtk.ApplicationWindow
         //Actions depending on the slot being a normal save slot
         actionEditHeader.SetEnabled(isNormal);
         actionEditComment.SetEnabled(isNormal);
+        actionEditIcon.SetEnabled(isNormal);
         actionEraseSave.SetEnabled(isNormal);
         actionCopySave.SetEnabled(isNormal);
         actionExportSave.SetEnabled(isNormal);
@@ -435,9 +439,6 @@ public class MainWindow : Gtk.ApplicationWindow
         
         //Paste needs a free slot and a valid buffer
         actionPasteSave.SetEnabled(isFormatted && tempBuffer != null);
-
-        //Undo and Redo
-
     }
 
     //Create a new card tab from the given card

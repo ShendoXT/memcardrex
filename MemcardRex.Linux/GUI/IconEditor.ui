@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkWindow" id="EditorWindow">
+    <property name="title">SoundScope - Icon Editor</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">12</property>
+            
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="width-request">140</property>
+                <property name="height-request">380</property>
+                <property name="hscrollbar-policy">never</property>
+                <style><class name="view"/></style>
+                <child>
+                  <object class="GtkListBox" id="SidebarListBox"/>
+                </child>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
+                    <child>
+                      <object class="GtkFrame">
+                        <child>
+                          <object class="GtkDrawingArea" id="Canvas">
+                            <property name="width-request">320</property>
+                            <property name="height-request">320</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <property name="spacing">8</property>
+                        <child>
+                          <object class="GtkDrawingArea" id="ActiveColorsCanvas">
+                            <property name="width-request">60</property>
+                            <property name="height-request">45</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <child>
+                              <object class="GtkDrawingArea" id="PaletteCanvas">
+                                <property name="width-request">252</property>
+                                <property name="height-request">45</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">4</property>
+                    <child><object class="GtkButton" id="BtnPencil"><property name="label">✎</property></object></child>
+                    <child><object class="GtkButton" id="BtnFill"><property name="label">🫗</property></object></child>
+                    <child><object class="GtkButton" id="BtnEraser"><property name="label">🧽</property></object></child>
+                    <child><object class="GtkSeparator"><property name="margin-top">5</property><property name="margin-bottom">5</property></object></child>
+                    <child><object class="GtkButton" id="BtnFlipH"><property name="label">↔</property></object></child>
+                    <child><object class="GtkButton" id="BtnFlipV"><property name="label">↕</property></object></child>
+                    <child><object class="GtkButton" id="BtnRotateL"><property name="label">↶</property></object></child>
+                    <child><object class="GtkButton" id="BtnRotateR"><property name="label">↷</property></object></child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+            <child><object class="GtkCheckButton" id="CheckActive"/></child>
+            <child>
+              <object class="GtkScale" id="SpeedSlider">
+                <property name="hexpand">True</property>
+                <property name="adjustment"><object class="GtkAdjustment"><property name="upper">100</property></object></property>
+              </object>
+            </child>
+            <child><object class="GtkButton" id="BtnOk"><property name="label">OK</property><property name="width-request">80</property>              <style>
+                <class name="suggested-action"/>
+              </style></object></child>
+            <child><object class="GtkButton" id="BtnCancel"><property name="label">Cancel</property><property name="width-request">80</property></object></child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

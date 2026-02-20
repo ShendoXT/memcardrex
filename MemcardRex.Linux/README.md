@@ -43,6 +43,8 @@ To use PS3 Memory Card Adaptor make sure to install libusb-1.0:
 ```
 sudo apt install libusb-1.0-0-dev libusb-1.0-0
 ```
+and to enable udev rules for USB access to device.
+
 
 ### What currently works:
 
@@ -56,10 +58,10 @@ sudo apt install libusb-1.0-0-dev libusb-1.0-0
 * Compare save with temp buffer.
 * Undo/Redo with history list.
 * Hardware interfaces.
+* Icon editor.
 * Preferences are working and are preserved between sessions.
 
 ### TODO:
 
 * Plugins.
-* Icon editor.
 * PocketStation serial read/BIOS dump

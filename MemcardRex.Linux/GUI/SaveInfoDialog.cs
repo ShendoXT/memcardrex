@@ -61,10 +61,8 @@ public class SaveInfoDialog
         
         closeButton.OnClicked += (sender, args) => dialog.Close();
 
-        // 1. Poveži se na Realize signal (izvršava se kad se kreiraju nativni resursi)
         dialog.OnRealize += (sender, args) => StartAnimTimer();
         
-        // 2. Obavezno ugasi tajmer kad se dijalog zatvori da ne curi memorija
         dialog.OnUnrealize += (sender, args) => StopAnimTimer();
     }
 

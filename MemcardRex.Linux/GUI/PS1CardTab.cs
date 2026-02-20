@@ -300,6 +300,18 @@ public class PS1CardTab : Gtk.Box
         currentHistoryIndex = newIndex;
     }
 
+    public void EditIcon(){
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+
+        var editor = new IconEditor(parent);
+
+        //iconDlg.gridColorValue = appSettings.GridColorValue;
+        //iconDlg.gridEnabled = appSettings.IconGridEnabled == 1;
+        editor.initDialog(memcard.saveName[masterSlot], memcard.iconFrames[masterSlot], memcard.GetIconBytes(masterSlot));
+
+        editor.Show();
+    }
+
     //Delete/Restore selected save
     public void DeleteRestoreSave()
     {
