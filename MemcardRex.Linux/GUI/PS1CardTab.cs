@@ -305,9 +305,21 @@ public class PS1CardTab : Gtk.Box
 
         var editor = new IconEditor(parent);
 
-        //iconDlg.gridColorValue = appSettings.GridColorValue;
-        //iconDlg.gridEnabled = appSettings.IconGridEnabled == 1;
+        editor.gridColorValue = mainApp.Settings.GridColorValue;
+        editor.gridEnabled = mainApp.Settings.IconGridEnabled == 1;
         editor.initDialog(memcard.saveName[masterSlot], memcard.iconFrames[masterSlot], memcard.GetIconBytes(masterSlot));
+
+        editor.OnDialogClosed += (sender, args) => 
+        {
+            mainApp.Settings.GridColorValue = editor.gridColorValue;
+            mainApp.Settings.IconGridEnabled = editor.gridEnabled ? 1 : 0;
+            
+            if(editor.OkResponse){
+                memcard.SetIconBytes(masterSlot, editor.iconData);
+                RefreshSaveList();
+                PushHistory("Icon edited", GetFirstSelectedItem()!.GetIcon(false));
+            }
+        };
 
         editor.Show();
     }
@@ -773,6 +785,9 @@ public class PS1CardTab : Gtk.Box
             apIcons: apIconData,
             iconDelay: iconDelay
         );
+
+        //Needed because save list leaves faintly selected trails when dbl clicked
+        RefreshSaveList();
 
         dialog.Present();
     }
