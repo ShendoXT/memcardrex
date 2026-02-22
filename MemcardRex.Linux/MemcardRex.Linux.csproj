@@ -46,6 +46,7 @@
     <EmbeddedResource Include="GUI/CommunicationDialog.ui" />
     <EmbeddedResource Include="GUI/SaveCompare.ui" />
     <EmbeddedResource Include="GUI/IconEditor.ui" />
+    <EmbeddedResource Include="GUI/PocketStationInfo.ui" />
     <EmbeddedResource Include="GUI/AboutDialog.ui" />
   </ItemGroup>
 

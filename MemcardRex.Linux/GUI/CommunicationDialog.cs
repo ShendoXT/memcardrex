@@ -251,6 +251,7 @@ public class CommunicationDialog
             _pocketSerial = _hardInterface.ReadPocketStationSerial(out _errorMessage);
 
             _hardInterface.Stop();
+            operationCompleted = _errorMessage == null;
             OpComplete();
             return;
         }
@@ -261,6 +262,7 @@ public class CommunicationDialog
             _hardInterface.SetPocketStationTime(out _errorMessage);
 
             _hardInterface.Stop();
+            operationCompleted = _errorMessage == null;
             OpComplete();
             return;
         }

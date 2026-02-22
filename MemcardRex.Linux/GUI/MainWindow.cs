@@ -208,7 +208,7 @@ public class MainWindow : Gtk.ApplicationWindow
         this.AddAction(actionFormatData);
 
         actionPocket = Gio.SimpleAction.New("pocketstation", null);
-        //this.AddAction(actionPocket);
+        this.AddAction(actionPocket);
 
         actionPocketSerial = Gio.SimpleAction.New("pocketstation-serial", null);
         actionPocketSerial.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.psinfo);
@@ -329,19 +329,23 @@ public class MainWindow : Gtk.ApplicationWindow
                 //If this was a serial read display result
                 else if(hardInterface.CommMode == HardwareInterface.CommModes.psinfo)
                 {
-                    //new pocketStationInfo().ShowSerial(cardReader.PocketSerial);
+                    var pocketdlg = new PocketStationInfo(this, false); // false = compact mode
+                    pocketdlg.ShowSerial(dialog.PocketSerial);
+                    pocketdlg.Show();
                 }
 
                 //If this was a BIOS read display it in dialog
                 else if(hardInterface.CommMode == HardwareInterface.CommModes.psbios && dialog.OperationCompleted)
                 {
-                    //new pocketStationInfo().ShowBios(cardReader.PocketSerial, cardReader.PocketBIOS);
+                    var pocketdlg = new PocketStationInfo(this, true);
+                    pocketdlg.ShowBios(dialog.PocketSerial, dialog.PocketBIOS);
+                    pocketdlg.Show();
                 }
 
                 //If this was time command display confirmation dialog
                 else if (hardInterface.CommMode == HardwareInterface.CommModes.pstime)
                 {
-                    //MessageBox.Show("Time set successfully", "PocketStation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Utils.ErrorMessage(this, "PocketStation", "Time set successfully");
                 }
             }
 
@@ -377,7 +381,7 @@ public class MainWindow : Gtk.ApplicationWindow
 
     //Update menu item with the 
     private void UpdateHwInterfaceName(){
-        //This is a bit convoluted way of changin a menu name
+        //This is a bit convoluted way of changing a menu name
         //Create a new one and delete the old one
         //I tried to simply change the label of the existing one
         //but it's either not implemented in gir.core or I'm using it wrong...
@@ -398,6 +402,10 @@ public class MainWindow : Gtk.ApplicationWindow
 
             app_menubar.InsertItem(2, newItem);
             app_menubar.Remove(3);
+
+            //Enable PocketStation action if the interface allows it
+            actionPocket.SetEnabled((activeInterface.hardwareInterface.Features() &
+            HardwareInterface.SupportedFeatures.PocketStation) > 0);
         }
     }
 

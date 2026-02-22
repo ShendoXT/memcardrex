@@ -59,9 +59,9 @@ and to enable udev rules for USB access to device.
 * Undo/Redo with history list.
 * Hardware interfaces.
 * Icon editor.
+* PocketStation serial read/BIOS dump
 * Preferences are working and are preserved between sessions.
 
 ### TODO:
 
 * Plugins.
-* PocketStation serial read/BIOS dump
