@@ -63,11 +63,22 @@ public class MainWindow : Gtk.ApplicationWindow
     private readonly Gio.SimpleAction actionUndo;
     private readonly Gio.SimpleAction actionRedo;
 
+    private readonly Gio.SimpleAction actionPlugin;
+    private readonly Gio.SimpleAction pluginAction;
+
     //Temp buffer used to store saves
     byte[]? tempBuffer = null;
     string? tempBufferName = null;
 
     Application mainApp = (Application)Gtk.Application.GetDefault()!;
+
+    //Supported plugins for the currently selected save
+    int[]? supportedPlugins = null;
+
+    //Currently clicked plugin (0 - clicked flag, 1 - plugin index)
+    int[] clickedPlugin = new int[]{0,0};
+
+    public Gio.Menu? sharedPluginSubMenu;
 
     private MainWindow(Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
@@ -219,6 +230,16 @@ public class MainWindow : Gtk.ApplicationWindow
         actionPocketTime = Gio.SimpleAction.New("pocketstation-time", null);
         actionPocketTime.OnActivate += (_, _) => HardwareItemActivated(HardwareInterface.CommModes.pstime);
         this.AddAction(actionPocketTime);
+
+        pluginAction = Gio.SimpleAction.New("plugin-click", GLib.VariantType.New("i"));
+        pluginAction.OnActivate += (s, args) => {
+            CurrentCard()!.EditWithPlugin(supportedPlugins![(int)args.Parameter!.GetInt32()]);
+        };
+
+        this.AddAction(pluginAction);
+
+        actionPlugin = Gio.SimpleAction.New("plugin-menu-root", null);
+        this.AddAction(actionPlugin);
 
         SetCardActionsEnabled(false);
 
@@ -421,8 +442,50 @@ public class MainWindow : Gtk.ApplicationWindow
         actionRedo.SetEnabled(redoCount > 0);
     }
 
+    //Refresh plugin menu
+    private void RefreshPluginBindings(string productCode)
+    {
+        if (app_menubar == null) return;
+
+        var editMenu = app_menubar.GetItemLink(1, "submenu") as Gio.Menu;
+        if (editMenu == null) return;
+
+        var pluginSubMenu = editMenu.GetItemLink(2, "submenu") as Gio.Menu;
+
+        if (pluginSubMenu == null)
+            pluginSubMenu = Gio.Menu.New();
+        else
+            pluginSubMenu.RemoveAll();
+
+        supportedPlugins = mainApp.pluginSystem.getSupportedPlugins(productCode);
+
+        int count = 0;
+        if(supportedPlugins != null)
+        {
+            foreach (int currentAssembly in supportedPlugins)
+            {
+                string name = mainApp.pluginSystem.assembliesMetadata[currentAssembly].pluginName;
+                var pluginItem = Gio.MenuItem.New(name, $"win.plugin-click({count})");
+                
+                pluginSubMenu.AppendItem(pluginItem);
+                count++;
+            }
+
+            this.sharedPluginSubMenu = pluginSubMenu;
+        }
+
+        var editWithPluginItem = Gio.MenuItem.New("Edit with plugin", "win.plugin-menu-root");
+        editWithPluginItem.SetLink("submenu", pluginSubMenu);
+
+        editMenu.InsertItem(2, editWithPluginItem);
+        editMenu.Remove(3);
+
+        //Disable menu when there are no loaded plugins
+        actionPlugin.SetEnabled(count > 0);
+    }
+
     //Enable or disable actions based on the currently selected slot
-    public void SetSlotActionsEnabled(ps1card.SlotTypes slotType)
+    public void SetSlotActionsEnabled(ps1card.SlotTypes slotType, string productCode)
     {
         bool isNormal = slotType != ps1card.SlotTypes.formatted && slotType != ps1card.SlotTypes.corrupted;
         bool isFormatted = slotType == ps1card.SlotTypes.formatted;
@@ -447,6 +510,10 @@ public class MainWindow : Gtk.ApplicationWindow
         
         //Paste needs a free slot and a valid buffer
         actionPasteSave.SetEnabled(isFormatted && tempBuffer != null);
+
+
+        //Refresh plugins
+        RefreshPluginBindings(productCode);
     }
 
     //Create a new card tab from the given card

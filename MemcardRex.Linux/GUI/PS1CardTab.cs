@@ -110,9 +110,12 @@ public class PS1CardTab : Gtk.Box
     private uint currentHistoryIndex = 0;
     private bool _isInternalUpdate = false;
 
+    private Gtk.Builder? _builder;
+
     private PS1CardTab(ps1card card, Gtk.Builder builder, string name) : base(builder.GetPointer(name), false)
     {
         builder.Connect(this);
+        _builder = builder!;
         memcard = card;
 
         saveList ??= new();
@@ -298,6 +301,20 @@ public class PS1CardTab : Gtk.Box
 
         RefreshSaveList();
         currentHistoryIndex = newIndex;
+    }
+
+    //Edit currently selected save with a plugin
+    public void EditWithPlugin(int pluginIndex){
+        if(!ValidityCheck(out var parent, out int masterSlot)) return;
+
+        mainApp.pluginSystem.setWindowParent(pluginIndex, parent.Handle);
+        byte[] readData = mainApp.pluginSystem.editSaveData(pluginIndex, memcard.GetSaveBytes(masterSlot), memcard.saveProdCode[masterSlot]);
+    
+        if(readData != null){
+            memcard.ReplaceSaveBytes(masterSlot, readData);
+            RefreshSaveList();
+            PushHistory("Edited by plugin", GetFirstSelectedItem()!.GetIcon(false));
+        }
     }
 
     public void EditIcon(){
@@ -656,7 +673,7 @@ public class PS1CardTab : Gtk.Box
         saveList.SetModel(model);
 
         UpdatePageInfo();
-        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[(int)SelectedSave()!]);
+        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[(int)SelectedSave()!], memcard.saveProdCode[(int)SelectedSave()!]);
         MainWindow.Instance.UpdateTitleLocation(HasUnsavedChanges ? "● " + memcard.cardName:memcard.cardName, memcard.cardLocation);
         MainWindow.Instance.UndoRedoMenuEnable(memcard.UndoCount, memcard.RedoCount);
     }
@@ -853,6 +870,40 @@ public class PS1CardTab : Gtk.Box
 
     private void ShowContextMenu(GestureClick obj, GestureClick.PressedSignalArgs args)
     {
+        var contextModel = _builder!.GetObject("context_menu_model") as Gio.Menu;
+
+        if (contextModel != null)
+        {
+            int foundIndex = -1;
+
+            for (int i = 0; i < (int)contextModel.GetNItems(); i++)
+            {
+                var attr = contextModel.GetItemAttributeValue(i, "action", null);
+                if (attr != null)
+                {
+                    string actionName = attr.GetString(out nuint length);
+                    if (actionName == "win.plugin-menu-root")
+                    {
+                        foundIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            var editWithPluginItem = Gio.MenuItem.New("Edit with plugin", "win.plugin-menu-root");
+            editWithPluginItem.SetLink("submenu", MainWindow.Instance.sharedPluginSubMenu);
+
+            if (foundIndex != -1)
+            {
+                contextModel.Remove(foundIndex);
+                contextModel.InsertItem(foundIndex, editWithPluginItem);
+            }
+            else
+            {
+                contextModel.InsertItem(1, editWithPluginItem);
+            }
+        }
+
         var cell = (ListCell?) obj.GetWidget();
         if (cell == null || cell.Slot == null) return;
         uint slotNumber = (uint) cell.Slot.SlotNumber;
@@ -898,7 +949,7 @@ public class PS1CardTab : Gtk.Box
         internalSelectionChange = false;
 
         //Enable or disable edit menus
-        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[masterSlot]);
+        MainWindow.Instance.SetSlotActionsEnabled(memcard.slotType[masterSlot], memcard.saveProdCode[masterSlot]);
     }
 
     private PS1Slot? GetFirstSelectedItem()

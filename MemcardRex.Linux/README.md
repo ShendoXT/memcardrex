@@ -1,8 +1,8 @@
-# MemcardRex for Linux (alpha)
+# MemcardRex for Linux (beta)
 <img width="1848" height="1132" alt="mcrx linux 2 0a" src="https://github.com/user-attachments/assets/3e8e5a13-7f38-4241-a81c-af44190b0fad" />
 
 This version of MemcardRex for Linux runs on the modern .NET runtime.<br>
-WARNING: This is alpha and unfinished software, which has not been fully tested.<br>
+WARNING: This is beta software, which has not been fully tested.<br>
 Make sure you have backups before using it with any sensitive data.
 
 MemcardRex uses [Gir.Core](https://gircore.github.io) to access GTK functions from C# code.<br>
@@ -60,8 +60,8 @@ and to enable udev rules for USB access to device.
 * Hardware interfaces.
 * Icon editor.
 * PocketStation serial read/BIOS dump
+* Plugins.
 * Preferences are working and are preserved between sessions.
 
 ### TODO:
-
-* Plugins.
+* Fix bugs, glitches and quirks in the interface

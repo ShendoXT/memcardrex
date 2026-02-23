@@ -1,6 +1,3 @@
-﻿//Plugin system for the MemcardRex 1.6
-//Shendo 2010 - 2011
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -173,7 +170,7 @@ namespace MemcardRex
         }
 
         //Execute a specified method contained in the assembly
-        void executeMethodVoid(int assemblyIndex, string methodName)
+        void executeMethodVoid(int assemblyIndex, string methodName, IntPtr? parentHandle)
         {
             //Check if assembly list contains any members
             if (loadedAssemblies.Count > 0)
@@ -181,7 +178,11 @@ namespace MemcardRex
                 Type assemblyType = loadedAssemblies[assemblyIndex].GetType("rexPluginSystem.rexPlugin");
                 var tempObject = Activator.CreateInstance(assemblyType);
 
-                assemblyType.InvokeMember(methodName, BindingFlags.Default | BindingFlags.InvokeMethod, null, tempObject, null);
+                object[] outObj = (parentHandle != IntPtr.Zero) 
+                ? new object[] { parentHandle } 
+                : null;
+
+                assemblyType.InvokeMember(methodName, BindingFlags.Default | BindingFlags.InvokeMethod, null, tempObject, outObj);
             }
         }
 
@@ -213,6 +214,12 @@ namespace MemcardRex
             return executeMethodArray(assemblyIndex, "getSupportedProductCodes");
         }
 
+        //Send host window id
+        public void setWindowParent(int assemblyIndex, IntPtr parentHandle)
+        {
+            executeMethodVoid(assemblyIndex, "setWindowParent", parentHandle);
+        }
+
         //Call plugin and pass data to it
         public byte[] editSaveData(int assemblyIndex, byte[] gameSaveData, string saveProductCode)
         {
@@ -222,13 +229,13 @@ namespace MemcardRex
         //Show plugin about dialog
         public void showAboutDialog(int assemblyIndex)
         {
-            executeMethodVoid(assemblyIndex, "showAboutDialog");
+            executeMethodVoid(assemblyIndex, "showAboutDialog", IntPtr.Zero);
         }
 
         //Show plugin config dialog
         public void showConfigDialog(int assemblyIndex)
         {
-            executeMethodVoid(assemblyIndex, "showConfigDialog");
+            executeMethodVoid(assemblyIndex, "showConfigDialog", IntPtr.Zero);
         }
     }
 }

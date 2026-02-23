@@ -17,7 +17,7 @@
               <property name="menu-model">app_menu</property>
               <child>
                 <object class="AdwWindowTitle" id="windowTitle">
-                  <property name="title">MemcardRex 2.0 alpha</property>
+                  <property name="title">MemcardRex 2.0 beta</property>
                 </object>
               </child>
             </object>
@@ -214,8 +214,14 @@
     </section>
     <section>
       <item>
-        <attribute name="label">Preferences</attribute>
+        <attribute name="label">Preferences...</attribute>
         <attribute name="action">app.preferences</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label">Plugins</attribute>
+        <attribute name="action">app.plugins</attribute>
       </item>
     </section>
     <section>

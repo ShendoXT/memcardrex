@@ -11,6 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MemcardRex.Plugins\CrashResign\CrashResign.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Plugins\%(Filename)%(Extension)</Link>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MemcardRex.Core\MemcardRex.Core.csproj">
       <Project>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Project>
       <Name>MemcardRex.Core</Name>
@@ -24,6 +33,15 @@
       <_Parameter2>$(BuildDate)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
+
+<Target Name="CopyPluginDependencies" AfterTargets="Build">
+  <ItemGroup>
+    <PluginFiles Include="..\MemcardRex.Plugins\CrashResign\bin\$(Configuration)\$(TargetFramework)\*.dll" />
+  </ItemGroup>
+  <Copy SourceFiles="@(PluginFiles)" 
+        DestinationFolder="$(OutputPath)Plugins" 
+        SkipUnchangedFiles="true" />
+</Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="glib-compile-resources --sourcedir ./Resources ./Resources/gresource.xml --target=./Resources/memcardrex.gresource" />
@@ -47,6 +65,7 @@
     <EmbeddedResource Include="GUI/SaveCompare.ui" />
     <EmbeddedResource Include="GUI/IconEditor.ui" />
     <EmbeddedResource Include="GUI/PocketStationInfo.ui" />
+    <EmbeddedResource Include="GUI/PluginsDialog.ui" />
     <EmbeddedResource Include="GUI/AboutDialog.ui" />
   </ItemGroup>
 

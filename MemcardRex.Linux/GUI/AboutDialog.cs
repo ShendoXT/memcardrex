@@ -40,7 +40,7 @@ public class AboutDialog : Window
             label.SetLabel($"Compile date: {GetBuildDate()}");
 
         if (builder.GetObject("lblAppVersion") is Gtk.Label verlabel)
-            verlabel.SetLabel($"Version: 2.0a ({GetGitHash()})");
+            verlabel.SetLabel($"Version: 2.0 beta ({GetGitHash()})");
 
         this.SetTitle("About");
         this.SetResizable(false);

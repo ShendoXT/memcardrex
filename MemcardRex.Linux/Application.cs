@@ -34,11 +34,19 @@ public class Application : Adw.Application
         return new Application();
     }
 
+    //Plugin system for the 3rd party save editors
+    public rexPluginSystem pluginSystem = new rexPluginSystem();
+
     public Application(bool owned, params ConstructArgument[] constructArguments) : base(owned, constructArguments)
     {
         this.AddActions();
         this.Settings = new ProgramSettings();
         Settings.LoadSettings(ConfigDir());
+
+        //Load available plugins
+        string pluginsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
+        pluginSystem.fetchPlugins(pluginsPath);
+
         this.OnActivate += (_, _) => {
             mainWindow = new MainWindow();
 
@@ -53,7 +61,7 @@ public class Application : Adw.Application
             mainWindow.Show();
         };
         this.OnShutdown += (_, _) => {
-            Settings.SaveSettings(ConfigDir(), "memcardrex for Linux", "2.0 (alpha)");
+            Settings.SaveSettings(ConfigDir(), "MemcardRex for Linux", "2.0 (beta)");
         };
     }
 
@@ -70,6 +78,9 @@ public class Application : Adw.Application
         this.AddAction(action);
         action = Gio.SimpleAction.New("preferences", null);
         action.OnActivate += PreferencesAction;
+        this.AddAction(action);
+        action = Gio.SimpleAction.New("plugins", null);
+        action.OnActivate += PluginsAction;
         this.AddAction(action);
 
         // Accels
@@ -96,6 +107,12 @@ public class Application : Adw.Application
     private void QuitAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
     {
         mainWindow?.Close();
+    }
+
+    private void PluginsAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)
+    {
+        var pluginDlg = new PluginsDialog(mainWindow!, ref pluginSystem);
+        pluginDlg.Show();
     }
 
     private void PreferencesAction(Gio.SimpleAction sender, Gio.SimpleAction.ActivateSignalArgs args)

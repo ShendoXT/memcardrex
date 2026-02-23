@@ -84,6 +84,11 @@ namespace MemcardRex.Linux
             chkRestorePos.Active = (Settings.RestoreWindowPosition == 1);
             chkFixCorrupted.Active = (Settings.FixCorruptedCards == 1);
 
+            //GTK+Wayland do not want this option for the users
+            //to be as easy as saving and restoring window position
+            //via X and Y coordinates. Disabled function for now.
+            chkRestorePos.Hide();
+
             //Load all COM ports found on the system
             foreach (string port in SerialPort.GetPortNames())
                 drpComPort.Append(port, port);
