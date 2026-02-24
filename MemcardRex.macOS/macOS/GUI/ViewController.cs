@@ -118,11 +118,19 @@ namespace MemcardRex
                     infoSheet.ProductCode = memCard.saveProdCode[selectedSlot];
                     infoSheet.IdentifierString = memCard.saveIdentifier[selectedSlot];
                     infoSheet.Region = memCard.saveRegion[selectedSlot];
+                    infoSheet.Type = memCard.saveDataType[selectedSlot];
                     infoSheet.Size = memCard.saveSize[selectedSlot];
                     infoSheet.Frames = memCard.iconFrames[selectedSlot];
                     infoSheet.Slots = memCard.FindSaveLinks((int)selectedSlot);
                     infoSheet.Icons = memCard.iconColorData;
 
+                    //PocketStation icons
+                    int iconDelay = 0;
+                    infoSheet.McIcons = memCard.GetPocketStationIcon((int)selectedSlot, ps1card.IconTypes.MCIcon, out iconDelay);
+                    infoSheet.ApIcons = memCard.GetPocketStationIcon((int)selectedSlot, ps1card.IconTypes.APIcon, out iconDelay);
+
+                    infoSheet.apDelay = iconDelay;
+                    
                     infoSheet.Presentor = this;
                     break;
 
@@ -425,6 +433,16 @@ namespace MemcardRex
             }
         }
 
+        //Compare save with temp buffer
+        [Action("compareTempBuffer:")]
+        public void CompareTempBuffer(NSObject sender)
+        {
+            //byte[] fetchedData = memCard.GetSaveBytes(memCard.GetMasterLinkForSlot(slotNumber));
+            //string fetchedDataTitle = memCard.saveName[memCard.GetMasterLinkForSlot(slotNumber)];
+            
+            Console.WriteLine("Got bored");
+        }
+
         //Copy save to temp buffer
         [Action("copyToTempBuffer:")]
         public void CopyToTempBuffer(NSObject sender)
@@ -436,7 +454,6 @@ namespace MemcardRex
             BmpBuilder builder = new BmpBuilder();
             NSData iconImage = NSData.FromArray(builder.BuildBmp(memCard.iconColorData[selectedSlot, 0]));
             NSImage icon = new NSImage(iconImage);
-            icon.Flipped = true;
 
             App.TempBuffer = memCard.GetSaveBytes(selectedSlot);
             App.BufferImage = icon;

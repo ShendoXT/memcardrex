@@ -143,9 +143,6 @@ namespace MemcardRex
                     NSImage flagImage;
 
                     string resourceBaseDir = System.AppDomain.CurrentDomain.BaseDirectory + "/../Resources/";
-                    
-                    //Flipped because bmp stores data flipped but the raw icon data is not
-                    image.Flipped = true;
 
                     //Select proper flag for region
                     switch (DataSource.Products[(int)row].SaveRegion)

@@ -18,9 +18,24 @@ namespace MemcardRex
         private string _region = "";
         private int _frames = 0;
         private int _size = 0;
+        private byte[] _mcIcons;
+        private byte[] _apIcons;
+        private ps1card.DataTypes _type = ps1card.DataTypes.save;
         private int[] _slots = new int[1];
         private Color[,][] _icons;
         private NSViewController _presentor;
+        private NSImage[] _iconData = new NSImage[3];
+        private NSImage[] _mcIconData;
+        private NSImage[] _apIconData;
+        private int _apIconDelay;
+        private NSTimer _timer;
+
+        int iconIndex = 0;
+        int mcIconIndex = 0;
+        int apIconIndex = 0;
+        //int iconBackColor = 0;
+        int apDelayCount = 0;
+        
         #endregion
 
         #region Computed Properties
@@ -71,7 +86,24 @@ namespace MemcardRex
             get { return _slots; }
             set { _slots = value; }
         }
+        public ps1card.DataTypes Type
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
 
+        public byte[] McIcons
+        {
+            get { return _mcIcons; }
+            set { _mcIcons = value; }
+        }
+
+        public byte[] ApIcons
+        {
+            get { return _apIcons; }
+            set { _apIcons = value; }
+        }
+        
         public Color[,][] Icons
         {
             get { return _icons; }
@@ -83,12 +115,105 @@ namespace MemcardRex
             get { return _presentor; }
             set { _presentor = value; }
         }
+
+        public int apDelay
+        {
+            get { return _apIconDelay; }
+            set { _apIconDelay = value/10; }
+        }
         #endregion
 
         public InfoDialogController (IntPtr handle) : base (handle)
 		{
 		}
 
+        private void createIcons()
+        {
+            BmpBuilder bmpImage = new BmpBuilder();
+            var targetRect = new CoreGraphics.CGRect(0, 0, 48, 48);
+            
+            //Create icons
+            for (int i = 0; i < 3; i++)
+            {
+                _iconData[i] = new NSImage(new CoreGraphics.CGSize(48, 48));
+                _iconData[i].LockFocus();
+                new NSImage(NSData.FromArray(bmpImage.BuildBmp(Icons[Slots[0],i]))).Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Copy, 1.0f);
+                _iconData[i].UnlockFocus();
+            }
+            
+            //Create mcIcons (if available)
+            if(_mcIcons != null)
+            {
+                _mcIconData = new NSImage[_mcIcons.Length / 0x80];
+                byte[] mcIconArray = new byte[0x80];
+
+                //Add info to icon frames
+                iconFramesLabel.StringValue += " (" + _mcIconData.Length + ")";
+
+                for(int i = 0; i < _mcIconData.Length; i++)
+                {
+                    System.Array.Copy(_mcIcons, i * 0x80, mcIconArray, 0, 0x80);
+                    _mcIconData[i] = new NSImage(new CoreGraphics.CGSize(48, 48));
+                    
+                    _mcIconData[i].LockFocus();
+                    new NSImage(NSData.FromArray(bmpImage.BuildBmp(mcIconArray))).Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Copy, 1.0f);
+                    _mcIconData[i].UnlockFocus();
+                }
+            }
+            
+            //Create apIcons (if available)
+            if(_apIcons != null)
+            {
+                _apIconData = new NSImage[_apIcons.Length / 0x80];
+                byte[] apIconArray = new byte[0x80];
+
+                //Add info to icon frames
+                iconFramesLabel.StringValue += " (" + _apIconData.Length + ")";
+
+                for (int i = 0; i < _apIconData.Length; i++)
+                {
+                    System.Array.Copy(_apIcons, i * 0x80, apIconArray, 0, 0x80);
+                    _apIconData[i] = new NSImage(new CoreGraphics.CGSize(48, 48));
+                    
+                    _apIconData[i].LockFocus();
+                    new NSImage(NSData.FromArray(bmpImage.BuildBmp(apIconArray))).Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Copy, 1.0f);
+                    _apIconData[i].UnlockFocus();
+                }
+
+                //PocketStation starts with a 2nd icon in the APIcon list if there is more than 1 icon
+                //Why? I have no idea but we will emulate this in this information dialog
+                if (_apIconData.Length > 1) apIconIndex = 1;
+                
+                apDelayCount = _apIconDelay;
+            }
+        }
+
+        private void drawIcons()
+        {
+            iconImage.Image = _iconData[iconIndex];
+            
+            if (_mcIcons != null)
+            {
+                icon2Image.Image = _mcIconData[mcIconIndex];
+                if (mcIconIndex < (_mcIconData.Length - 1)) mcIconIndex++; else mcIconIndex = 0;
+            }
+
+            if (_apIcons != null)
+            {
+                if(_mcIcons != null) icon3Image.Image = _apIconData[apIconIndex];
+                else icon2Image.Image = _apIconData[apIconIndex];
+
+                if (apDelayCount > 0) apDelayCount--;
+                else
+                {
+                    if (apIconIndex < (_apIconData.Length - 1)) apIconIndex++; else apIconIndex = 0;
+                    apDelayCount = _apIconDelay;
+                }
+            }
+            
+            if (iconIndex < (_frames - 1)) iconIndex++; else iconIndex = 0;
+        }
+        
         #region Override Methods
         public override void ViewWillAppear()
         {
@@ -105,30 +230,43 @@ namespace MemcardRex
             sizeLabel.StringValue = Size.ToString() + " KB";
             iconFramesLabel.StringValue = Frames.ToString();
 
+            _typeLabel.StringValue = _type == ps1card.DataTypes.software ? "Software (PocketStation)" : "Save data";
+            
             for (int i = 0; i < Slots.Length; i++)
                 ocupiedSlots += (Slots[i] + 1).ToString() + ", ";
 
             //Show ocupied slots
             slotLabel.StringValue = ocupiedSlots.Remove(ocupiedSlots.Length - 2);
-
+            
             //Prepare icons
-            BmpBuilder bmpImage = new BmpBuilder();
+            createIcons();
 
-            NSData imageData = NSData.FromArray(bmpImage.BuildBmp(Icons[Slots[0],0]));
-            NSImage image = new NSImage(imageData);
-            var newImage = new NSImage(new CoreGraphics.CGSize(48, 48));
-            var targetRect = new CoreGraphics.CGRect(0, 0, 48, 48);
-
-            image.Flipped = true;
-
-            newImage.LockFocus();
-            image.Draw(targetRect, CoreGraphics.CGRect.Empty, NSCompositingOperation.Copy, 1.0f);
-            newImage.UnlockFocus();
-
-            iconImage.Image = newImage;
-
+            //Draw them on screenss
+            drawIcons();
+            
             //Disable resizing of modal dialog
             this.View.Window.StyleMask &= ~NSWindowStyle.Resizable;
+        }
+        
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            
+            //Icon timer
+            _timer = NSTimer.CreateRepeatingTimer(0.18, (timer) =>
+            {
+                drawIcons();
+            });
+            
+            NSRunLoop.Main.AddTimer(_timer, NSRunLoopMode.Common);
+        }
+        
+        protected override void Dispose(bool disposing)
+        {
+            //Stop timer on dispose
+            if (disposing)
+                _timer?.Invalidate();
+            base.Dispose(disposing);
         }
         #endregion
 

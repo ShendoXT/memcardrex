@@ -5,7 +5,7 @@
 **Quick download links:**
 * [Latest Windows release](https://github.com/ShendoXT/memcardrex/releases/tag/9909f69)
 * [Latest macOS release](https://github.com/ShendoXT/memcardrex/releases/tag/e85f601)
-* Linux version in pre-beta stage. [Compiling instructions](https://github.com/ShendoXT/memcardrex/tree/master/MemcardRex.Linux).
+* Linux version in beta stage. [Compiling instructions](https://github.com/ShendoXT/memcardrex/tree/master/MemcardRex.Linux).
 
 **Support & Development:**
 

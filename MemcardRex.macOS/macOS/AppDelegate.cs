@@ -22,6 +22,25 @@ namespace MemcardRex
         string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "Library", "Application Support", appName);
 
+        public struct HardInterfaces
+        {
+            public HardwareInterface hardwareInterface;
+            public HardwareInterface.Modes mode;
+            public string displayName;
+        }
+
+        //Registered hardware interfaces
+        List<HardInterfaces> registeredInterfaces = new List<HardInterfaces>();
+
+        //Currently active interface
+        private HardInterfaces activeInterface
+        {
+            get
+            {
+                return registeredInterfaces[appSettings.ActiveInterface];
+            }
+        }
+
         #region Private Variables
         private byte[] _tempBuffer;
         private NSImage _bufferImage;
@@ -92,32 +111,55 @@ namespace MemcardRex
             }
         }
 
-        //Clone all hardware device menus from read to write and format
+        //Register hardware interfaces
+        private void RegisterInterface(HardwareInterface hardInterface, HardwareInterface.Modes mode)
+        {
+            HardInterfaces regInterface = new HardInterfaces();
+            regInterface.hardwareInterface = hardInterface;
+            regInterface.mode = mode;
+            regInterface.displayName = hardInterface.Name();
+
+            //Append via TCP if interface mode is tcp
+            if(mode == HardwareInterface.Modes.tcp) regInterface.displayName += " via TCP";
+
+            registeredInterfaces.Add(regInterface);
+        }
+        
+        private void AttachInterface(HardwareInterface hardInterface)
+        {
+            //Serial always available
+            RegisterInterface(hardInterface, HardwareInterface.Modes.serial);
+
+            //Check if interface supports TCP mode
+            if((hardInterface.Features() & HardwareInterface.SupportedFeatures.TcpMode) > 0)
+                RegisterInterface(hardInterface, HardwareInterface.Modes.tcp);
+        }
+
+        //Add all available hardware interfaces
         private void BuildHardwareMenus()
         {
-            NSMenuItem newReadItem;
-            NSMenuItem newFormatItem;
+            AttachInterface(new DexDrive());
+            AttachInterface(new MemCARDuino());
+            AttachInterface(new PS1CardLink());
+            AttachInterface(new Unirom());
+            AttachInterface(new PS3MemCardAdaptor());
 
-            foreach (NSMenuItem menuItem in hardReadMenu.Items)
-            {
-                if (menuItem.Title == "")
-                {
-                    newReadItem = NSMenuItem.SeparatorItem;
-                    newFormatItem = NSMenuItem.SeparatorItem;
-                }
-                else
-                {
-                    newReadItem = new NSMenuItem(menuItem.Title);
-                    newFormatItem = new NSMenuItem(menuItem.Title);
+            EnableDisableHardwareMenus();
+        }
 
-                    newReadItem.Activated += HardwareItem_Activated;
-                    newFormatItem.Activated += HardwareItem_Activated;
-                    menuItem.Activated += HardwareItem_Activated;
-                }
+        private void EnableDisableHardwareMenus()
+        {
+            //Set currently active interface to hardware menu
+            //Can't be set to root menu item for some reason, looks like it's
+            //some sort of an issue with the macOS because it also happens with swift projects
+            interfaceNameMenu.Title = activeInterface.hardwareInterface.Name();
 
-                hardWriteMenu.AddItem(newReadItem);
-                hardFormatMenu.AddItem(newFormatItem);
-            }
+            //Add TCP if TCP interface
+            if (activeInterface.mode == HardwareInterface.Modes.tcp) interfaceNameMenu.Title += " (TCP)";
+
+            //Enable or disable realtime and PocketStation menus
+            //realtimeConnectionToolStripMenuItem.Enabled = ((activeInterface.hardwareInterface.Features() & HardwareInterface.SupportedFeatures.RealtimeMode) > 0);
+            //pocketStationToolStripMenuItem.Enabled = ((activeInterface.hardwareInterface.Features() & HardwareInterface.SupportedFeatures.PocketStation) > 0);
         }
 
         //Event for hardware menus
@@ -248,7 +290,7 @@ namespace MemcardRex
         {
             editSaveHeaderMItem.Enabled = itemStates;
             editSaveCommentMItem.Enabled = itemStates;
-            compareBufferMItem.Enabled = itemStates;
+            compareBufferMItem.Enabled = itemStates && (_tempBuffer != null);
             editIconMItem.Enabled = itemStates;
             deleteSaveMItem.Enabled = itemStates;
             restoreSaveMItem.Enabled = itemStates;
@@ -264,6 +306,8 @@ namespace MemcardRex
         [Export("newDocument:")]
         public NSWindowController NewDocument(NSObject sender)
         {
+            Console.WriteLine(hardwareMenu.Title);
+            
             // Get new window
             var storyboard = NSStoryboard.FromName("Main", null);
             var controller = storyboard.InstantiateControllerWithIdentifier("MainWindow") as NSWindowController;
@@ -286,6 +330,13 @@ namespace MemcardRex
             window.EditSaveComment(sender);
         }
 
+        [Export("compareTempBuffer:")]
+        void CompareTempBuffer(NSObject sender)
+        {
+            var window = NSApplication.SharedApplication.KeyWindow.ContentViewController as ViewController;
+            window.CompareTempBuffer(sender);
+        }
+        
         [Export("copyToTempBuffer:")]
         void CopyToTempBuffer(NSObject sender)
         {

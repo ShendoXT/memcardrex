@@ -1,7 +1,8 @@
-// WARNING
+﻿// WARNING
 //
-// This file has been generated automatically by Visual Studio to store outlets and
-// actions made in the UI designer. If it is removed, they will be lost.
+// This file has been generated automatically by Rider IDE
+//   to store outlets and actions made in Xcode.
+// If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
 using Foundation;
@@ -42,10 +43,16 @@ namespace MemcardRex
 		AppKit.NSMenu hardReadMenu { get; set; }
 
 		[Outlet]
+		AppKit.NSMenuItem hardwareMenu { get; set; }
+
+		[Outlet]
 		AppKit.NSMenu hardWriteMenu { get; set; }
 
 		[Outlet]
 		AppKit.NSMenuItem importSaveMItem { get; set; }
+
+		[Outlet]
+		AppKit.NSMenuItem interfaceNameMenu { get; set; }
 
 		[Outlet]
 		AppKit.NSMenuItem pasteSaveTempBufferMItem { get; set; }
@@ -121,7 +128,7 @@ namespace MemcardRex
 
 		[Action ("uniromReadTcp:")]
 		partial void uniromReadTcp (Foundation.NSObject sender);
-		
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (compareBufferMItem != null) {
@@ -174,6 +181,11 @@ namespace MemcardRex
 				hardReadMenu = null;
 			}
 
+			if (hardwareMenu != null) {
+				hardwareMenu.Dispose ();
+				hardwareMenu = null;
+			}
+
 			if (hardWriteMenu != null) {
 				hardWriteMenu.Dispose ();
 				hardWriteMenu = null;
@@ -208,6 +220,12 @@ namespace MemcardRex
 				undoMItem.Dispose ();
 				undoMItem = null;
 			}
+
+			if (interfaceNameMenu != null) {
+				interfaceNameMenu.Dispose ();
+				interfaceNameMenu = null;
+			}
+
 		}
 	}
 }
